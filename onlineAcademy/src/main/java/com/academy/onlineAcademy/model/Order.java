@@ -2,7 +2,8 @@ package com.academy.onlineAcademy.model;
 
 
 
-import java.sql.Date;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,6 +40,10 @@ public class Order {
 	@Column(nullable = false)
 	private double price;
 	
+	@JoinColumn
+	@OneToMany(mappedBy = "order")
+	private List<Course> purchasedCourses;
+	
 	public int getId() {
 		return id;
 	}
@@ -74,6 +79,12 @@ public class Order {
 	}
 	public void setPrice(double price) {
 		this.price = price;
+	}
+	public List<Course> getPurchasedCourses() {
+		return purchasedCourses;
+	}
+	public void setPurchasedCourses(List<Course> purchasedCourses) {
+		this.purchasedCourses = purchasedCourses;
 	}
 	
 	public Order() {

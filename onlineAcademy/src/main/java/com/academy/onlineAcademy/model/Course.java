@@ -8,7 +8,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
@@ -18,7 +20,9 @@ public class Course {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name="ID", nullable = false, updatable = false)
+//	@ManyToOne
+//    @Join
+	@Column(name="ID", nullable = false, updatable = false)
 	private int id;
 	
 	@Column(nullable = false)
@@ -55,6 +59,10 @@ public class Course {
 	@Column(name="PEOPLE")
 	@ManyToMany(mappedBy = "listOfCourses")
 	private List<Person> listOfPeople;
+	
+	@ManyToOne
+    @JoinColumn(name="ID", nullable = false, updatable = false)
+	private Order order;
 	
 	public int getId() {
 		return id;
@@ -104,7 +112,7 @@ public class Course {
 	public void setPrice(double price) {
 		this.price = price;
 	}
-	public boolean isGivesCertificate() {
+	public boolean getGivesCertificate() {
 		return givesCertificate;
 	}
 	public void setGivesCertificate(boolean givesCertificate) {

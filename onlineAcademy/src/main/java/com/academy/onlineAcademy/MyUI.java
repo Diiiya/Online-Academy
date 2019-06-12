@@ -2,8 +2,14 @@ package com.academy.onlineAcademy;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.academy.onlineAcademy.view.AdminAddView;
+import com.academy.onlineAcademy.view.CourseView;
 import com.academy.onlineAcademy.view.HomeView;
 import com.academy.onlineAcademy.view.LoginView;
+import com.academy.onlineAcademy.view.UserCoursesView;
+import com.academy.onlineAcademy.view.UserOrdersView;
+import com.academy.onlineAcademy.view.UserProfileView;
+import com.academy.onlineAcademy.view.UserSettingsView;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.navigator.Navigator;
@@ -36,9 +42,19 @@ public class MyUI extends UI {
         
         LoginView loginViewObj = new LoginView();
         HomeView homeViewObj = new HomeView();
+        UserCoursesView userCoursesViewObj = new UserCoursesView();
+        CourseView courseViewObj = new CourseView();
+        UserOrdersView userOrdersViewObj = new UserOrdersView();
+        UserSettingsView userSettingsViewObj = new UserSettingsView();
+        AdminAddView adminAddViewObj = new AdminAddView();
         
         navigator.addView("Login", loginViewObj);
         navigator.addView("Home", homeViewObj);
+        navigator.addView("UserCourses", userCoursesViewObj);
+        navigator.addView("Course", courseViewObj);
+        navigator.addView("UserOrders", userOrdersViewObj);
+        navigator.addView("Settings", userSettingsViewObj);
+        navigator.addView("AdminAdd", adminAddViewObj);
         
         navigator.navigateTo("Home");
         

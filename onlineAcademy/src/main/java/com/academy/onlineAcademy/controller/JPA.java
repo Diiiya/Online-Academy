@@ -28,23 +28,23 @@ public class JPA {
 	public static void main(String[] args) {
         EntityManager entityMgr = getEntityManager();
         entityMgr.getTransaction().begin();
-// 
-//        //List<Course> johnList = new ArrayList<Course>();
+ 
+        List<Course> johnList = new ArrayList<Course>();
 //        //List<Course> samList = new ArrayList<Course>();
 //        //List<Course> emmaList = new ArrayList<Course>();
 //        
-//        //Person person1 = new Person(1, "John Smith", "johnny", "pass", "", Type.ADMIN, johnList);
+        Person person1 = new Person(1, "John Smith", "johnny", "pass", "email", null, Type.ADMIN, johnList, null);
 //        //Person person2 = new Person(2, "Sam Pederson", "sam", "pass", "", Type.ADMIN, samList);
 //        Person person3 = new Person(3, "Emma Stevenson", "emma", "pass", "", Type.USER);
 //        
-//        //entityMgr.persist(person1);
-//        //entityMgr.persist(person2);
+        entityMgr.persist(person1);
+        //entityMgr.persist(person2);
 //        entityMgr.persist(person3);
 // 
-//        entityMgr.getTransaction().commit();
-// 
-//        entityMgr.clear();
-//        System.out.println("Record Successfully Inserted In The Database");
+        entityMgr.getTransaction().commit();
+ 
+        entityMgr.clear();
+        System.out.println("Record Successfully Inserted In The Database");
 		
 //		  Person person1 = entityMgr.find(Person.class, 1);
 //		  Person person2 = entityMgr.find(Person.class, 2);

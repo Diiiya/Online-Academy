@@ -61,7 +61,7 @@ $                 # end-of-string
 	        message="Only images of type JPEG or GIF are supported.")
 	@Lob
 	@Column(length=100000)
-	private byte[] photo;
+	private byte[] photo = null;
 	
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -75,13 +75,13 @@ $                 # end-of-string
         inverseJoinColumns=
             @JoinColumn(name="COURSE_ID", referencedColumnName="ID")
     )
-	@Column(name="COURSES")
+	@JoinColumn(name="COURSES")
 	@Valid
-	private List<Course> listOfCourses;
+	private List<Course> listOfCourses = null;
 	
 	@Column(name="ORDERS")
 	@OneToMany(mappedBy = "userId")
-	private List<Order> listOfOrders;
+	private List<Order> listOfOrders = null;
 	
 	
 	// Properties
@@ -146,7 +146,7 @@ $                 # end-of-string
 	
 	
 	// Constructor
-	public Person(int id, String fullName, String username, String email, String password, String confirmPassword, byte[] photo, Type type,
+	public Person(int id, String fullName, String username, String email, String password, byte[] photo, Type type,
 			List<Course> listOfCourses, List<Order> listOfOrders) {
 		super();
 		this.id = id;
