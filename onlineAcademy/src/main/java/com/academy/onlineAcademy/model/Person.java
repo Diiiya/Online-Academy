@@ -1,10 +1,13 @@
 package com.academy.onlineAcademy.model;
 
 import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,7 +24,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name="person")
+@Table(name="TPERSON")
 public class Person {
 	
 	// Private fields with annotations and data validations
@@ -67,21 +70,17 @@ $                 # end-of-string
 	@Enumerated(EnumType.STRING)
 	private Type type = Type.USER;
 	
+
+	@JoinColumn(name="COURSES", updatable=false)
 	@ManyToMany
-    @JoinTable(
-        name="PERSON_COURSE",
-        joinColumns=
-            @JoinColumn(name="PERSON_ID", referencedColumnName="ID"),
-        inverseJoinColumns=
-            @JoinColumn(name="COURSE_ID", referencedColumnName="ID")
-    )
-	@JoinColumn(name="COURSES")
-	@Valid
+	@JoinTable(name="JOIN_PERSON_COURSE", 
+	              joinColumns = { @JoinColumn(name="id")},
+	              inverseJoinColumns = { @JoinColumn(name="id")})
 	private List<Course> listOfCourses = null;
 	
-	@Column(name="ORDERS")
-	@OneToMany(mappedBy = "userId")
-	private List<Order> listOfOrders = null;
+	@JoinColumn(updatable=false)
+	@OneToMany(targetEntity = Order.class, mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<Order> listOfOrders;
 	
 	
 	// Properties
@@ -147,7 +146,7 @@ $                 # end-of-string
 	
 	// Constructor
 	public Person(int id, String fullName, String username, String email, String password, byte[] photo, Type type,
-			List<Course> listOfCourses, List<Order> listOfOrders) {
+			List<Course> listOfCourses) {
 		super();
 		this.id = id;
 		this.fullName = fullName;
@@ -157,7 +156,6 @@ $                 # end-of-string
 		this.photo = photo;
 		this.type = type;
 		this.listOfCourses = listOfCourses;
-		this.listOfOrders = listOfOrders;
 	}
 
 }

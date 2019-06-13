@@ -9,19 +9,19 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name="course")
+@Table(name="TCOURSE")
 public class Course {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-//	@ManyToOne
-//    @Join
 	@Column(name="ID", nullable = false, updatable = false)
 	private int id;
 	
@@ -53,16 +53,16 @@ public class Course {
 	@Column(name="GIVES_CERTIFICATE", nullable = false)
 	private boolean givesCertificate;
 	
-	@Column(name="COVER_PHOTO, nullable = false")
-	private String coverPhoto;
-	
-	@Column(name="PEOPLE")
-	@ManyToMany(mappedBy = "listOfCourses")
-	private List<Person> listOfPeople;
-	
+	@Lob
+	@Column(name="COVER_PHOTO", length=100000)
+	private byte[] coverPhoto;
+
 	@ManyToOne
-    @JoinColumn(name="ID", nullable = false, updatable = false)
+	@PrimaryKeyJoinColumn(name="CORDER_ID")
 	private Order order;
+	
+	@ManyToMany
+	private List<Person> listOfPeople;
 	
 	public int getId() {
 		return id;
@@ -118,11 +118,25 @@ public class Course {
 	public void setGivesCertificate(boolean givesCertificate) {
 		this.givesCertificate = givesCertificate;
 	}
-	public String getCoverPhoto() {
+	public byte[] getCoverPhoto() {
 		return coverPhoto;
 	}
-	public void setCoverPhoto(String coverPhoto) {
+	public void setCoverPhoto(byte[] coverPhoto) {
 		this.coverPhoto = coverPhoto;
+	}
+	
+	public Order getOrder() {
+		return order;
+	}
+	public void setOrder(Order order) {
+		this.order = order;
+	}
+	
+	public List<Person> getListOfPeople() {
+		return listOfPeople;
+	}
+	public void setListOfPeople(List<Person> listOfPeople) {
+		this.listOfPeople = listOfPeople;
 	}
 	
 	public Course() {
@@ -130,7 +144,7 @@ public class Course {
 	}
 	
 	public Course(int id, String name, String description, String teacherName, int duration, Level level,
-			Category category, double price, boolean givesCertificate) {
+			Category category, double price, boolean givesCertificate, byte[] coverPhoto) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -141,6 +155,7 @@ public class Course {
 		this.category = category;
 		this.price = price;
 		this.givesCertificate = givesCertificate;
+		this.coverPhoto = coverPhoto;
 	}
 
 

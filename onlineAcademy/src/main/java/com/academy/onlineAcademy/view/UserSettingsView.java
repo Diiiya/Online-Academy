@@ -46,7 +46,6 @@ public class UserSettingsView extends VerticalLayout implements View {
 		layoutH.setComponentAlignment(image, Alignment.TOP_RIGHT);
 
 		// 2 - Photo panel
-		
 		VerticalLayout layoutVBody = new VerticalLayout();
 		layoutVBody.setWidth("100%");
 		

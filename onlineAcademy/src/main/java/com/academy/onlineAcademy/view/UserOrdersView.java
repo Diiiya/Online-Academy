@@ -54,9 +54,9 @@ public class UserOrdersView extends VerticalLayout implements View {
 		Date date = new Date();
 		
 		List<Order> orders = Arrays.asList(
-				new Order(1, 1, 1, date, true, 50),
-				new Order(2, 1, 2, date, true, 100),
-				new Order(3, 1, 3, date, true, 300)
+				new Order( 1, 1, date, true, 50),
+				new Order( 1, 2, date, true, 100),
+				new Order( 1, 3, date, true, 300)
 				);
 		
 		Grid<com.academy.onlineAcademy.model.Order> grid = new Grid<>();

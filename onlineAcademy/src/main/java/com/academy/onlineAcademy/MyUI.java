@@ -2,13 +2,13 @@ package com.academy.onlineAcademy;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.academy.onlineAcademy.view.AdminAddCourseView;
 import com.academy.onlineAcademy.view.AdminAddView;
 import com.academy.onlineAcademy.view.CourseView;
 import com.academy.onlineAcademy.view.HomeView;
 import com.academy.onlineAcademy.view.LoginView;
 import com.academy.onlineAcademy.view.UserCoursesView;
 import com.academy.onlineAcademy.view.UserOrdersView;
-import com.academy.onlineAcademy.view.UserProfileView;
 import com.academy.onlineAcademy.view.UserSettingsView;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
@@ -35,7 +35,9 @@ public class MyUI extends UI {
     protected void init(VaadinRequest vaadinRequest) {
         final VerticalLayout layout = new VerticalLayout();
         
+        setSizeFull();
         layout.setSizeFull();
+        layout.setMargin(false);
         
         Navigator navigator = new Navigator(this, layout);
         setNavigator(navigator);
@@ -47,6 +49,7 @@ public class MyUI extends UI {
         UserOrdersView userOrdersViewObj = new UserOrdersView();
         UserSettingsView userSettingsViewObj = new UserSettingsView();
         AdminAddView adminAddViewObj = new AdminAddView();
+        AdminAddCourseView adminAddCourseViewObj = new AdminAddCourseView();
         
         navigator.addView("Login", loginViewObj);
         navigator.addView("Home", homeViewObj);
@@ -55,6 +58,7 @@ public class MyUI extends UI {
         navigator.addView("UserOrders", userOrdersViewObj);
         navigator.addView("Settings", userSettingsViewObj);
         navigator.addView("AdminAdd", adminAddViewObj);
+        navigator.addView("AdminAddCourse", adminAddCourseViewObj);
         
         navigator.navigateTo("Home");
         

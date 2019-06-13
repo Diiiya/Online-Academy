@@ -65,9 +65,9 @@ public class HomeView extends VerticalLayout implements View {
 		Label topCoursesLabel = new Label("Top courses:");
 		
 		List<Course> courses = Arrays.asList(
-				new Course(1, "UX Design", "Some description to be added here", "Sam Johnson", 5, Level.BEGINNER, Category.IT, 50, true),
-				new Course(2, "Programming basics", "Some description to be added here", "Dean Green", 25, Level.BEGINNER, Category.IT, 130, true),
-				new Course(3, "Music", "Some description to be added here", "Sara Stevenson", 10, Level.INTERMEDIATE, Category.ARTS, 50, true)
+				new Course(1, "UX Design", "Some description to be added here", "Sam Johnson", 5, Level.BEGINNER, Category.IT, 50, true, null),
+				new Course(2, "Programming basics", "Some description to be added here", "Dean Green", 25, Level.BEGINNER, Category.IT, 130, true, null),
+				new Course(3, "Music", "Some description to be added here", "Sara Stevenson", 10, Level.INTERMEDIATE, Category.ARTS, 50, true, null)
 				);
 		
 		Grid<com.academy.onlineAcademy.model.Course> grid = new Grid<>();

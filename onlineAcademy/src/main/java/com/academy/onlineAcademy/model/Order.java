@@ -13,10 +13,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
-@Table(name="order")
+@Table(name="TORDER")
 public class Order {
 	
 	@Id
@@ -24,14 +29,14 @@ public class Order {
     @Column(name="ID", nullable = false, updatable = false)
 	private int id;
 	
-	@ManyToOne
-	@JoinColumn(name="USER_ID", nullable = false)
+	@Column(name="USER_ID", nullable = false)
 	private int userId;
 	
-	@JoinColumn(name="COURSE_ID", nullable = false)
+	@Column(name="COURSE_ID", nullable = false)
 	private int courseId;
 	
 	@Column(name="PURCHASE_DATE", nullable = false)
+	@Temporal(TemporalType.DATE)
 	private Date purchaseDate;
 	
 	@Column(name="IS_PAID", nullable = false)
@@ -40,9 +45,13 @@ public class Order {
 	@Column(nullable = false)
 	private double price;
 	
-	@JoinColumn
-	@OneToMany(mappedBy = "order")
+	@JoinColumn(name="PURCHASED_COURSES", updatable=false)
+	@OneToMany(targetEntity = Course.class, mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Course> purchasedCourses;
+	
+	@ManyToOne
+	@PrimaryKeyJoinColumn(name="PERSON_ID")
+	private Person person;
 	
 	public int getId() {
 		return id;
@@ -80,20 +89,27 @@ public class Order {
 	public void setPrice(double price) {
 		this.price = price;
 	}
+	//@OneToMany(target.Entity = Course.class, mappedBy = "order");
 	public List<Course> getPurchasedCourses() {
 		return purchasedCourses;
 	}
 	public void setPurchasedCourses(List<Course> purchasedCourses) {
 		this.purchasedCourses = purchasedCourses;
 	}
+	public Person getPerson() {
+		return person;
+	}
+	public void setPerson(Person person) {
+		this.person = person;
+	}
 	
 	public Order() {
 		
 	}
 	
-	public Order(int id, int userId, int courseId, Date purchaseDate, boolean isPaid, double price) {
+	public Order(/*int id, */int userId, int courseId, Date purchaseDate, boolean isPaid, double price) {
 		super();
-		this.id = id;
+		//this.id = id;
 		this.userId = userId;
 		this.courseId = courseId;
 		this.purchaseDate = purchaseDate;

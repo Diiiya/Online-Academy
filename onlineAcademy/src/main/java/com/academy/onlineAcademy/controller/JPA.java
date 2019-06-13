@@ -29,18 +29,19 @@ public class JPA {
         EntityManager entityMgr = getEntityManager();
         entityMgr.getTransaction().begin();
  
-        List<Course> johnList = new ArrayList<Course>();
-//        //List<Course> samList = new ArrayList<Course>();
-//        //List<Course> emmaList = new ArrayList<Course>();
+        //List<Course> johnList = new ArrayList<Course>();
+        //List<Course> samList = new ArrayList<Course>();
+        List<Course> emmaList = new ArrayList<Course>();
 //        
-        Person person1 = new Person(1, "John Smith", "johnny", "pass", "email", null, Type.ADMIN, johnList, null);
-//        //Person person2 = new Person(2, "Sam Pederson", "sam", "pass", "", Type.ADMIN, samList);
-//        Person person3 = new Person(3, "Emma Stevenson", "emma", "pass", "", Type.USER);
+        //Person person1 = new Person(1, "John Smith", "johnny", "pass", "email", null, Type.ADMIN, johnList);
+        //Person person2 = new Person(2, "Sam Pederson", "sam", "sth@mail.com", "pass", null, Type.ADMIN, samList);
+        Person person3 = new Person(3, "Emma Stevenson", "emma", "st5h@mail.com", "pass", null, Type.USER, emmaList);
 //        
-        entityMgr.persist(person1);
+        //entityMgr.persist(person1);
         //entityMgr.persist(person2);
-//        entityMgr.persist(person3);
+        entityMgr.persist(person3);
 // 
+        
         entityMgr.getTransaction().commit();
  
         entityMgr.clear();
@@ -50,9 +51,12 @@ public class JPA {
 //		  Person person2 = entityMgr.find(Person.class, 2);
 //		  Person person3 = entityMgr.find(Person.class, 3);
 //
-//		  entityMgr.getTransaction().begin();
+
 //		  entityMgr.remove(person1);
-//		  entityMgr.remove(person2);
+		  //entityMgr.remove(person2);
+//		  if (person2 != null) {
+//			  entityMgr.remove(person2);
+//			}
 //		  entityMgr.remove(person3);
 //		  entityMgr.getTransaction().commit();
 
