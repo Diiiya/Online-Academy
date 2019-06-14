@@ -35,7 +35,7 @@ public class JPA {
 //        
         //Person person1 = new Person(1, "John Smith", "johnny", "pass", "email", null, Type.ADMIN, johnList);
         //Person person2 = new Person(2, "Sam Pederson", "sam", "sth@mail.com", "pass", null, Type.ADMIN, samList);
-        Person person3 = new Person(3, "Emma Stevenson", "emma", "st5h@mail.com", "pass", null, Type.USER, emmaList);
+        Person person3 = new Person(3, "Emma Stevenson", "emma", "st5h@mail.com", "pass", null, Type.USER, emmaList, null);
 //        
         //entityMgr.persist(person1);
         //entityMgr.persist(person2);

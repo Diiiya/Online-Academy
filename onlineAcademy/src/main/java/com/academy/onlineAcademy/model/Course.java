@@ -12,12 +12,28 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 @Entity
 @Table(name="TCOURSE")
+@NamedQueries({
+	@NamedQuery(name = "getAllCourses", query = "SELECT c FROM Course c"),
+	@NamedQuery(name = "findCourseByName", query = "SELECT c FROM Course c WHERE c.name = :name"),
+	@NamedQuery(name = "findCourseByCategory", query = "SELECT c FROM Course c WHERE c.category = :category"),
+	@NamedQuery(name = "findCourseByLevel", query = "SELECT c FROM Course c WHERE c.level = :level"),
+	@NamedQuery(name = "findCourseByDuration", query = "SELECT c FROM Course c WHERE c.duration = :duration"),
+	@NamedQuery(name = "orderByPriceAsc", query = "SELECT c FROM Course c ORDER BY c.price ASC"),
+	@NamedQuery(name = "orderByPriceDesc", query = "SELECT c FROM Course c ORDER BY c.price DESC"),
+	@NamedQuery(name = "deleteAllCourses", query = "DELETE FROM Course c"),
+	@NamedQuery(name = "deleteByCourseId", query = "DELETE FROM Course c WHERE c.id = :id"),
+	@NamedQuery(name = "updateCourseById", query = "UPDATE Course c SET c.name = :name, c.description = :description, c.teacherName = :teacherName," + 
+			"			+ \"c.duration = :duration, c.level = :level, c.category = :category, c.price = :price, c.givesCertificate = :givesCertificate," + 
+			"			+ \"c.coverPhoto = :coverPhoto WHERE c.id = :id")
+})
 public class Course {
 	
 	@Id

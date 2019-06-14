@@ -46,7 +46,7 @@ public class Order {
 	private double price;
 	
 	@JoinColumn(name="PURCHASED_COURSES", updatable=false)
-	@OneToMany(targetEntity = Course.class, mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = Course.class, mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval=true)
 	private List<Course> purchasedCourses;
 	
 	@ManyToOne

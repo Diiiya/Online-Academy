@@ -15,6 +15,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.Valid;
@@ -25,6 +27,16 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name="TPERSON")
+@NamedQueries({
+	@NamedQuery(name = "getAllUsers", query = "SELECT p FROM Person p"),
+	@NamedQuery(name = "findUserById", query = "SELECT p FROM Person p WHERE p.id = :id"),
+	@NamedQuery(name = "findUserByName", query = "SELECT p FROM Person p WHERE p.fullName = :fullName"),
+	@NamedQuery(name = "findUserByEmail", query = "SELECT p FROM Person p WHERE p.email = :email"),
+	@NamedQuery(name = "deleteAllUsers", query = "DELETE FROM Person p"),
+	@NamedQuery(name = "deleteByPersonId", query = "DELETE FROM Person p WHERE p.id = :id"),
+	@NamedQuery(name = "updatePersonById", query = "UPDATE Person p SET p.fullname = :fullname, p.username = :username, p.email = :email," + 
+			"			+ \"p.password = :password, p.photo = :photo, p.type = :type WHERE p.id = :id")
+})
 public class Person {
 	
 	// Private fields with annotations and data validations
@@ -71,15 +83,15 @@ $                 # end-of-string
 	private Type type = Type.USER;
 	
 
-	@JoinColumn(name="COURSES", updatable=false)
+	@JoinColumn(name="CCOURSES", updatable=false)
 	@ManyToMany
 	@JoinTable(name="JOIN_PERSON_COURSE", 
 	              joinColumns = { @JoinColumn(name="id")},
 	              inverseJoinColumns = { @JoinColumn(name="id")})
 	private List<Course> listOfCourses = null;
 	
-	@JoinColumn(updatable=false)
-	@OneToMany(targetEntity = Order.class, mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name="CORDERS", updatable=false)
+	@OneToMany(targetEntity = Order.class, mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval=true)
 	private List<Order> listOfOrders;
 	
 	
@@ -146,7 +158,7 @@ $                 # end-of-string
 	
 	// Constructor
 	public Person(int id, String fullName, String username, String email, String password, byte[] photo, Type type,
-			List<Course> listOfCourses) {
+			List<Course> listOfCourses, List<Order> listOfOrders) {
 		super();
 		this.id = id;
 		this.fullName = fullName;
@@ -156,6 +168,7 @@ $                 # end-of-string
 		this.photo = photo;
 		this.type = type;
 		this.listOfCourses = listOfCourses;
+		this.listOfOrders = listOfOrders;
 	}
 
 }
