@@ -1,5 +1,6 @@
 package com.academy.onlineAcademy.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -34,14 +35,14 @@ import javax.validation.constraints.Size;
 	@NamedQuery(name = "findUserByEmail", query = "SELECT p FROM Person p WHERE p.email = :email"),
 	@NamedQuery(name = "deleteAllUsers", query = "DELETE FROM Person p"),
 	@NamedQuery(name = "deleteByPersonId", query = "DELETE FROM Person p WHERE p.id = :id"),
-	@NamedQuery(name = "updatePersonById", query = "UPDATE Person p SET p.fullname = :fullname, p.username = :username, p.email = :email," + 
-			"			+ \"p.password = :password, p.photo = :photo, p.type = :type WHERE p.id = :id")
+	@NamedQuery(name = "updatePersonById", query = "UPDATE Person p SET p.fullName = :fullname, p.username = :username, p.email = :email, p.password = :password, p.photo = :photo, p.type = :type WHERE p.id = :id")
 })
-public class Person {
+public class Person implements Serializable{
 	
 	// Private fields with annotations and data validations
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	//@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY) 
     @Column(name="ID", nullable = false, updatable = false)
 	private int id;
 	
@@ -86,8 +87,8 @@ $                 # end-of-string
 	@JoinColumn(name="CCOURSES", updatable=false)
 	@ManyToMany
 	@JoinTable(name="JOIN_PERSON_COURSE", 
-	              joinColumns = { @JoinColumn(name="id")},
-	              inverseJoinColumns = { @JoinColumn(name="id")})
+	              joinColumns = { @JoinColumn(name="Id")},
+	              inverseJoinColumns = { @JoinColumn(name="Id")}) 
 	private List<Course> listOfCourses = null;
 	
 	@JoinColumn(name="CORDERS", updatable=false)

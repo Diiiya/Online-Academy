@@ -28,39 +28,39 @@ public class CourseController {
         return emFactoryObj.createEntityManager();
     }
 	
-	EntityManagerFactory emf;
+	//EntityManagerFactory emf;
 	EntityManager em;
 	EntityManager emUPD;
 	EntityManager emDEL;
 	
 	public CourseController() {
 	  
-	  em = emf.createEntityManager();
-	  emUPD = emf.createEntityManager();
-	  emDEL = emf.createEntityManager();
+	  em = emFactoryObj.createEntityManager();
+	  emUPD = emFactoryObj.createEntityManager();
+	  emDEL = emFactoryObj.createEntityManager();
 //	  em.getMetamodel().managedType(Course.class);
 //	  emUPD.getMetamodel().managedType(Course.class);
 //	  emDEL.getMetamodel().managedType(Course.class);
 	}
 	
-	public void addCourse(EntityManager em, int id, String name, String description, String teacherName, int duration, Level level,
+	public void addCourse(String name, String description, String teacherName, int duration, Level level,
 			Category category, double price, boolean givesCertificate, byte[] coverPhoto) {
 		try {
 
 		    em.getTransaction().begin();
 		    // Do something with the EntityManager such as persist(), merge() or remove()
-		    Query query = em.createNativeQuery("INSERT INTO Course (id, name, description, teacher_name, duration, level, category, price, "
-					+ "gives_certificate, cover_photo) VALUES (?,?,?,?,?,?,?,?,?,?)");
-		        query.setParameter(1, id);
-		        query.setParameter(2, name);
-		        query.setParameter(3, description);
-		        query.setParameter(4, teacherName);
-		        query.setParameter(5, duration);
-		        query.setParameter(6, level);
-		        query.setParameter(7, category);
-		        query.setParameter(8, price);
-		        query.setParameter(9, givesCertificate);
-		        query.setParameter(10, coverPhoto);
+		    Query query = em.createNativeQuery("INSERT INTO TCourse (name, description, teacher_name, duration, level, category, price, "
+					+ "gives_certificate, cover_photo) VALUES (?,?,?,?,?,?,?,?,?)");
+		        //query.setParameter(1, id);
+		        query.setParameter(1, name);
+		        query.setParameter(2, description);
+		        query.setParameter(3, teacherName);
+		        query.setParameter(4, duration);
+		        query.setParameter(5, level);
+		        query.setParameter(6, category);
+		        query.setParameter(7, price);
+		        query.setParameter(8, givesCertificate);
+		        query.setParameter(9, coverPhoto);
 		        query.executeUpdate();
 		    em.getTransaction().commit();
 		} catch(PersistenceException e) {

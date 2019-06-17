@@ -1,14 +1,19 @@
 package com.academy.onlineAcademy.view;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.academy.onlineAcademy.controller.CourseController;
 import com.academy.onlineAcademy.model.Category;
+import com.academy.onlineAcademy.model.Course;
 import com.academy.onlineAcademy.model.Level;
+import com.vaadin.data.Binder;
 import com.vaadin.navigator.View;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.VaadinService;
@@ -95,8 +100,45 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		content.setMargin(true);
 		panel.setContent(content);
 		
+		//String basepath2 = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+		FileResource coverResource = new FileResource(new File(basepath +
+	            "/1online-courses_0.jpg"));
+		
 		Button addButton = new Button("ADD");
 		addButton.setWidth("100");
+		addButton.addClickListener(e -> {
+			CourseController obj = new CourseController();
+			//getClass().getResourceAsStream("")
+			FileInputStream fileStream = null;
+			
+			try {
+				fileStream = new FileInputStream(new File(basepath + "/1online-courses_0.jpg"));
+				byte[] coverPhotoBytes = fileStream.readAllBytes();
+				
+				// Getting and converting String values from the UI to the required values for the Course constructor
+				String name = nameField.getValue();
+				int duration = Integer.parseInt(durationField.getValue());
+				Level level = Level.valueOf(selectLevelComboBox.getValue());
+				Category category = Category.valueOf(selectCategoryComboBox.getValue());
+				double price = Double.parseDouble(priceField.getValue());
+				Boolean cert = Boolean.parseBoolean(selectCertComboBox.getValue());
+				obj.addCourse(name, descriptionField.getValue(), teacherNameField.getValue(), duration, level, category, price, cert, coverPhotoBytes);
+				System.out.println(name);
+				}
+				catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			finally {
+				if (fileStream != null) {
+					try {
+						fileStream.close();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
 		
 		layoutVBody.addComponents(panel, addButton);
 		layoutVBody.setComponentAlignment(panel, Alignment.MIDDLE_CENTER);

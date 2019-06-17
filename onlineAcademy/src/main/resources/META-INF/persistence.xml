@@ -21,6 +21,7 @@
       <property name="javax.persistence.schema-generation.database.action" value="drop-and-create" />
       <property name="show_sql" value="true"/>
       <property name="hibernate.temp.use_jdbc_metadata_defaults" value="false"/>
+      <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
     </properties>
     <!-- Global cascading property set-up -->
   </persistence-unit>

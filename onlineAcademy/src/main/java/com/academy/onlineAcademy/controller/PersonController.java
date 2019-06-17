@@ -47,7 +47,7 @@ public class PersonController {
 
 		    em.getTransaction().begin();
 		    // Do something with the EntityManager such as persist(), merge() or remove()
-		    Query query = em.createNativeQuery("INSERT INTO Course (id, full_name, username, email, password, photo, type, ccourses, corders VALUES (?,?,?,?,?,?,?,?,?)");
+		    Query query = em.createNativeQuery("INSERT INTO Course (id, full_name, username, email, password, photo, type, ccourses, corders) VALUES (?,?,?,?,?,?,?,?,?)");
 		        query.setParameter(1, id);
 		        query.setParameter(2, fullName);
 		        query.setParameter(3, username);

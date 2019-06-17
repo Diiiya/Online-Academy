@@ -28,19 +28,21 @@ public class JPAOrder {
     }
 
 	public static void main(String[] args) {
-        EntityManager entityMgr = getEntityManager();
-        entityMgr.getTransaction().begin();
- 
-//        
-        Date date = new Date();
-        Order order = new Order(1, 1, date, true, 50);
-        entityMgr.persist(order);
+//        EntityManager entityMgr = getEntityManager();
+//        entityMgr.getTransaction().begin();
 // 
-        
-        entityMgr.getTransaction().commit();
- 
-        entityMgr.clear();
-        System.out.println("Record Successfully Inserted In The Database");
+////        
+//        Date date = new Date();
+//        Order order = new Order(1, 1, date, true, 50);
+//        entityMgr.persist(order);
+//// 
+//        
+//        entityMgr.getTransaction().commit();
+// 
+//        entityMgr.clear();
+//        System.out.println("Record Successfully Inserted In The Database");
+		
+
 		
 
 

@@ -57,9 +57,9 @@ public class UserCoursesView extends VerticalLayout implements View {
 	Label myCoursesLabel = new Label("My courses:");
 	
 	List<Course> courses = Arrays.asList(
-			new Course(1, "UX Design", "Some description to be added here", "Sam Johnson", 5, Level.BEGINNER, Category.IT, 50, true, null),
-			new Course(2, "Programming basics", "Some description to be added here", "Dean Green", 25, Level.BEGINNER, Category.IT, 130, true, null),
-			new Course(3, "Music", "Some description to be added here", "Sara Stevenson", 10, Level.INTERMEDIATE, Category.ARTS, 50, true, null)
+			new Course("UX Design", "Some description to be added here", "Sam Johnson", 5, Level.BEGINNER, Category.IT, 50, true, null),
+			new Course("Programming basics", "Some description to be added here", "Dean Green", 25, Level.BEGINNER, Category.IT, 130, true, null),
+			new Course("Music", "Some description to be added here", "Sara Stevenson", 10, Level.INTERMEDIATE, Category.ARTS, 50, true, null)
 			);
 	
 	Grid<com.academy.onlineAcademy.model.Course> grid = new Grid<>();

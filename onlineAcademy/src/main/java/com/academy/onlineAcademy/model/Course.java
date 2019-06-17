@@ -1,5 +1,6 @@
 package com.academy.onlineAcademy.model;
 
+import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,14 +31,13 @@ import javax.validation.constraints.Size;
 	@NamedQuery(name = "orderByPriceDesc", query = "SELECT c FROM Course c ORDER BY c.price DESC"),
 	@NamedQuery(name = "deleteAllCourses", query = "DELETE FROM Course c"),
 	@NamedQuery(name = "deleteByCourseId", query = "DELETE FROM Course c WHERE c.id = :id"),
-	@NamedQuery(name = "updateCourseById", query = "UPDATE Course c SET c.name = :name, c.description = :description, c.teacherName = :teacherName," + 
-			"			+ \"c.duration = :duration, c.level = :level, c.category = :category, c.price = :price, c.givesCertificate = :givesCertificate," + 
-			"			+ \"c.coverPhoto = :coverPhoto WHERE c.id = :id")
+	@NamedQuery(name = "updateCourseById", query = "UPDATE Course c SET c.name = :name, c.description = :description, c.teacherName = :teacherName, c.duration = :duration, c.level = :level, c.category = :category, c.price = :price, c.givesCertificate = :givesCertificate, c.coverPhoto = :coverPhoto WHERE c.id = :id")
 })
-public class Course {
+public class Course implements Serializable{
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	//@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY) 
 	@Column(name="ID", nullable = false, updatable = false)
 	private int id;
 	
@@ -74,7 +74,8 @@ public class Course {
 	private byte[] coverPhoto;
 
 	@ManyToOne
-	@PrimaryKeyJoinColumn(name="CORDER_ID")
+	//@PrimaryKeyJoinColumn(name="CORDER_ID")
+	@JoinColumn(name="CORDER_ID")
 	private Order order;
 	
 	@ManyToMany
@@ -159,10 +160,10 @@ public class Course {
 		
 	}
 	
-	public Course(int id, String name, String description, String teacherName, int duration, Level level,
+	public Course(String name, String description, String teacherName, int duration, Level level,
 			Category category, double price, boolean givesCertificate, byte[] coverPhoto) {
 		super();
-		this.id = id;
+		//this.id = id;
 		this.name = name;
 		this.description = description;
 		this.teacherName = teacherName;

@@ -2,6 +2,7 @@ package com.academy.onlineAcademy.model;
 
 
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +13,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.CascadeType;
@@ -22,10 +25,17 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="TORDER")
-public class Order {
+@NamedQueries({
+	@NamedQuery(name = "getAllOrders", query = "SELECT o FROM Order o WHERE o.userId = :userId"),
+	@NamedQuery(name = "findOrderById", query = "SELECT o FROM Order o WHERE o.id = :id"),
+	@NamedQuery(name = "orderByTotalPriceAsc", query = "SELECT o FROM Order o ORDER BY o.price ASC"),
+	@NamedQuery(name = "orderByDateAsc", query = "SELECT o FROM Order o ORDER BY o.purchaseDate ASC")
+})
+public class Order implements Serializable{
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	//@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY) 
     @Column(name="ID", nullable = false, updatable = false)
 	private int id;
 	
@@ -50,7 +60,8 @@ public class Order {
 	private List<Course> purchasedCourses;
 	
 	@ManyToOne
-	@PrimaryKeyJoinColumn(name="PERSON_ID")
+//	@PrimaryKeyJoinColumn(name="PERSON_ID")
+	@JoinColumn(name="PERSON_ID")
 	private Person person;
 	
 	public int getId() {
