@@ -28,63 +28,68 @@ public class CourseController {
         return emFactoryObj.createEntityManager();
     }
 	
-	//EntityManagerFactory emf;
-	EntityManager em;
+	//EntityManager em;
 	EntityManager emUPD;
 	EntityManager emDEL;
 	
 	public CourseController() {
-	  
-	  em = emFactoryObj.createEntityManager();
+	  //em = emFactoryObj.createEntityManager();
 	  emUPD = emFactoryObj.createEntityManager();
 	  emDEL = emFactoryObj.createEntityManager();
-//	  em.getMetamodel().managedType(Course.class);
-//	  emUPD.getMetamodel().managedType(Course.class);
-//	  emDEL.getMetamodel().managedType(Course.class);
 	}
 	
 	public void addCourse(String name, String description, String teacherName, int duration, Level level,
 			Category category, double price, boolean givesCertificate, byte[] coverPhoto) {
+		EntityManager em = null;
 		try {
-
+			em = emFactoryObj.createEntityManager();
+            
 		    em.getTransaction().begin();
-		    // Do something with the EntityManager such as persist(), merge() or remove()
-		    Query query = em.createNativeQuery("INSERT INTO TCourse (name, description, teacher_name, duration, level, category, price, "
-					+ "gives_certificate, cover_photo) VALUES (?,?,?,?,?,?,?,?,?)");
-		        //query.setParameter(1, id);
-		        query.setParameter(1, name);
-		        query.setParameter(2, description);
-		        query.setParameter(3, teacherName);
-		        query.setParameter(4, duration);
-		        query.setParameter(5, level);
-		        query.setParameter(6, category);
-		        query.setParameter(7, price);
-		        query.setParameter(8, givesCertificate);
-		        query.setParameter(9, coverPhoto);
-		        query.executeUpdate();
+//		    Query query = em.createNativeQuery("INSERT INTO TCourse (name, description, teacher_name, duration, level, category, price, "
+//					+ "gives_certificate, cover_photo) VALUES (?,?,?,?,?,?,?,?,?)");
+//		        query.setParameter(1, name);
+//		        query.setParameter(2, description);
+//		        query.setParameter(3, teacherName);
+//		        query.setParameter(4, duration);
+//		        query.setParameter(5, level.name());
+//		        query.setParameter(6, category.name());
+//		        query.setParameter(7, price);
+//		        query.setParameter(8, givesCertificate);
+//		        query.setParameter(9, coverPhoto);
+//		        query.executeUpdate();
+		        
+		        Course course = new Course(name, description, teacherName, duration, level, category, price, givesCertificate, coverPhoto);
+			    em.persist(course);
+		        
 		    em.getTransaction().commit();
-		} catch(PersistenceException e) {
+		    
+		    
+		    
+		} 
+		catch(PersistenceException e) {
 
 		    em.getTransaction().rollback();
 		    
 		    throw e;
 		}
         finally {
-		em.close();
+        	if (em != null) {
+        		em.close();
+        	}
 		}
 	}
 	
-	public List<Course> getAllCourses(EntityManager em) {
+	public List<Course> getAllCourses() {
+		EntityManager em = emFactoryObj.createEntityManager();
 		try {
 
 		    em.getTransaction().begin();
-		    // Do something with the EntityManager such as persist(), merge() or remove()
-			TypedQuery<Course> query = em.createNamedQuery("Course.getAllCourses", Course.class);
-//			allCoursesList = query.getResultList();
-//			return allCoursesList;
+		    
+			TypedQuery<Course> query = em.createNamedQuery("getAllCourses", Course.class);
 		    em.getTransaction().commit();
 		    return query.getResultList();
-		} catch(PersistenceException e) {
+		} 
+		catch(PersistenceException e) {
 
 		    em.getTransaction().rollback();
 		    
@@ -95,16 +100,19 @@ public class CourseController {
 		}
 	}
 	
-	public Course getCourseByName(EntityManager em, String name) {
+	public Course getCourseByName(String name) {
+		EntityManager em = emFactoryObj.createEntityManager();
 		try {
 
 		    em.getTransaction().begin();
-		    // Do something with the EntityManager such as persist(), merge() or remove()
-		    TypedQuery<Course> query = em.createNamedQuery("Course.findCourseByName", Course.class);
+		    
+		    TypedQuery<Course> query = em.createNamedQuery("findCourseByName", Course.class);
 		    em.getTransaction().commit();
 		    return query.setParameter("name", name).getSingleResult();
-		} catch(PersistenceException e) {
+		} 
+		catch(PersistenceException e) {
 
+			e.printStackTrace();
 		    em.getTransaction().rollback();
 		    
 		    throw e;
@@ -114,60 +122,66 @@ public class CourseController {
 		}
 	}
 	
-	public int updateCourseById(EntityManager emUPD, int id) {
+	public int updateCourseById(int id) {
 		try {
 
-		    em.getTransaction().begin();
-		    // Do something with the EntityManager such as persist(), merge() or remove()
+		    emUPD.getTransaction().begin();
+		    
 		    int updateCount = emUPD.createNamedQuery("Course.updateCourseById", Course.class).executeUpdate();
-		    em.getTransaction().commit();
+		    
+		    //emUPD.merge(entity);
+		    
+		    emUPD.getTransaction().commit();
 		    return updateCount;
-		} catch(PersistenceException e) {
+		} 
+		catch(PersistenceException e) {
 
-		    em.getTransaction().rollback();
+		    emUPD.getTransaction().rollback();
 		    
 		    throw e;
 		}
         finally {
-		em.close();
+		emUPD.close();
 		}
 	}
 
-	public int deleteAllCourse(EntityManager emDEL, int id) {
+	public int deleteAllCourse(int id) {
 		try {
 
-		    em.getTransaction().begin();
-		    // Do something with the EntityManager such as persist(), merge() or remove()
+		    emDEL.getTransaction().begin();
+		    
 		    int count = emDEL.createNamedQuery("Course.deleteAllCourses", Course.class).executeUpdate();
-		    em.getTransaction().commit();
+		    emDEL.getTransaction().commit();
 		    return count;
-		} catch(PersistenceException e) {
+		} 
+		catch(PersistenceException e) {
 
-		    em.getTransaction().rollback();
+		    emDEL.getTransaction().rollback();
 		    
 		    throw e;
 		}
         finally {
-		em.close();
+		emDEL.close();
 		}
 	}
 	
-	public int deleteCourseById(EntityManager emDEL, int id) {
+	public int deleteCourseById(int id) {
 		try {
 
-		    em.getTransaction().begin();
-		    // Do something with the EntityManager such as persist(), merge() or remove()
+		    emDEL.getTransaction().begin();
+		    
 		    int count = emDEL.createNamedQuery("Course.deleteByCourseId", Course.class).executeUpdate();
-		    em.getTransaction().commit();
+		    emDEL.getTransaction().commit();
 		    return count;
-		} catch(PersistenceException e) {
+		} 
+		catch(PersistenceException e) {
 
-		    em.getTransaction().rollback();
+		    emDEL.getTransaction().rollback();
 		    
 		    throw e;
 		}
         finally {
-		em.close();
+		emDEL.close();
 		}
 	}
 	

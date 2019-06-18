@@ -1,14 +1,12 @@
 package com.academy.onlineAcademy.view;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 
-import com.academy.onlineAcademy.model.Category;
+import com.academy.onlineAcademy.controller.CourseController;
 import com.academy.onlineAcademy.model.Course;
-import com.academy.onlineAcademy.model.Level;
-import com.academy.onlineAcademy.model.Person;
 import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Alignment;
@@ -22,10 +20,14 @@ import com.vaadin.ui.VerticalLayout;
 
 public class HomeView extends VerticalLayout implements View {
 	
+	CourseController courseObj = new CourseController();
+	Grid<com.academy.onlineAcademy.model.Course> grid = new Grid<>();
+	
 	public HomeView() {
 		
 		VerticalLayout mainVLayout = new VerticalLayout();
 		mainVLayout.setHeight("100%");
+		
 		
 		// 1 - Header bar ?
 		HorizontalLayout layoutH = new HorizontalLayout();
@@ -58,20 +60,33 @@ public class HomeView extends VerticalLayout implements View {
 		coverImage.setWidth("100%");
 		coverImage.setHeight("200px");
 		
+		HorizontalLayout searchHLayout = new HorizontalLayout();
 		TextField searchField = new TextField("");
 		searchField.setPlaceholder("SEARCH");
+		Button searchButton = new Button("Search");
+		searchButton.addClickListener(e -> {
+			courseObj.getCourseByName(searchField.getValue());
+//			List<Course> selectedCourses = courseObj.getAllCourses();
+//			grid.setItems(selectedCourses);
+			Course selectedCourse = courseObj.getCourseByName(searchField.getValue());
+			grid.setItems(selectedCourse);
+		});
+		searchHLayout.addComponents(searchField, searchButton);
+		searchHLayout.setComponentAlignment(searchButton, Alignment.BOTTOM_RIGHT);
 		
 		// 3 - Top course results:
 		Label topCoursesLabel = new Label("Top courses:");
 		
-		List<Course> courses = Arrays.asList(
-				new Course("UX Design", "Some description to be added here", "Sam Johnson", 5, Level.BEGINNER, Category.IT, 50, true, null),
-				new Course("Programming basics", "Some description to be added here", "Dean Green", 25, Level.BEGINNER, Category.IT, 130, true, null),
-				new Course("Music", "Some description to be added here", "Sara Stevenson", 10, Level.INTERMEDIATE, Category.ARTS, 50, true, null)
-				);
+//		List<Course> courses = Arrays.asList(
+//				new Course("UX Design", "Some description to be added here", "Sam Johnson", 5, Level.BEGINNER, Category.IT, 50, true, null),
+//				new Course("Programming basics", "Some description to be added here", "Dean Green", 25, Level.BEGINNER, Category.IT, 130, true, null),
+//				new Course("Music", "Some description to be added here", "Sara Stevenson", 10, Level.INTERMEDIATE, Category.ARTS, 50, true, null)
+//				);
 		
-		Grid<com.academy.onlineAcademy.model.Course> grid = new Grid<>();
+		List<Course> courses = courseObj.getAllCourses();
+		
 		grid.setItems(courses);
+		
 		
 		grid.addColumn(com.academy.onlineAcademy.model.Course::getId).setCaption("Id");
 		grid.addColumn(com.academy.onlineAcademy.model.Course::getName).setCaption("Course name");
@@ -85,9 +100,18 @@ public class HomeView extends VerticalLayout implements View {
 		
 		grid.setWidth("100%");
 		
-		mainVLayout.addComponents(layoutH, coverImage, searchField, topCoursesLabel, grid);
-		mainVLayout.setComponentAlignment(searchField, Alignment.TOP_CENTER);
+		mainVLayout.addComponents(layoutH, coverImage, searchHLayout, topCoursesLabel, grid);
+		mainVLayout.setComponentAlignment(searchHLayout, Alignment.MIDDLE_CENTER);
 		addComponent(mainVLayout);
+	}
+	
+	
+	@Override
+	public void enter(ViewChangeEvent event) {
+		View.super.enter(event);
+        List<Course> courses = courseObj.getAllCourses();
+		
+		grid.setItems(courses);
 	}
 
 }

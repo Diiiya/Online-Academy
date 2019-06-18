@@ -158,10 +158,9 @@ $                 # end-of-string
 	
 	
 	// Constructor
-	public Person(int id, String fullName, String username, String email, String password, byte[] photo, Type type,
+	public Person(String fullName, String username, String email, String password, byte[] photo, Type type,
 			List<Course> listOfCourses, List<Order> listOfOrders) {
 		super();
-		this.id = id;
 		this.fullName = fullName;
 		this.username = username;
 		this.email = email;

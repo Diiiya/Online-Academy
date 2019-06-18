@@ -100,7 +100,6 @@ public class Order implements Serializable{
 	public void setPrice(double price) {
 		this.price = price;
 	}
-	//@OneToMany(target.Entity = Course.class, mappedBy = "order");
 	public List<Course> getPurchasedCourses() {
 		return purchasedCourses;
 	}
@@ -118,9 +117,8 @@ public class Order implements Serializable{
 		
 	}
 	
-	public Order(/*int id, */int userId, int courseId, Date purchaseDate, boolean isPaid, double price) {
+	public Order(int userId, int courseId, Date purchaseDate, boolean isPaid, double price) {
 		super();
-		//this.id = id;
 		this.userId = userId;
 		this.courseId = courseId;
 		this.purchaseDate = purchaseDate;

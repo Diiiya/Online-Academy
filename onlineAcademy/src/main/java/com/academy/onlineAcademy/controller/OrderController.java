@@ -25,32 +25,33 @@ public class OrderController {
         return emFactoryObj.createEntityManager();
     }
 	
-	EntityManagerFactory emf;
 	EntityManager em;
 	EntityManager emUPD;
 	EntityManager emDEL;
 	
 	public OrderController() {
 		
-		 em = emf.createEntityManager();
-		 emUPD = emf.createEntityManager();
-		 emDEL = emf.createEntityManager();
+		 em = emFactoryObj.createEntityManager();
+		 emUPD = emFactoryObj.createEntityManager();
+		 emDEL = emFactoryObj.createEntityManager();
 		
 	}
 
-	public void addOrder(EntityManager em, int id, int userId, int courseId, Date purchaseDate, boolean isPaid, double price) {
+	public void addOrder(int userId, int courseId, Date purchaseDate, boolean isPaid, double price) {
 		try {
 
 		    em.getTransaction().begin();
-		    // Do something with the EntityManager such as persist(), merge() or remove()
-		    Query query = em.createNativeQuery("INSERT INTO Order (id, user_id, course_id, is_paid, price) VALUES (?,?,?,?,?)");
-		        query.setParameter(1, id);
-		        query.setParameter(2, userId);
-		        query.setParameter(3, courseId);
-		        query.setParameter(4, purchaseDate);
-		        query.setParameter(5, isPaid);
-		        query.setParameter(6, price);
-		        query.executeUpdate();
+//		    Query query = em.createNativeQuery("INSERT INTO Order (user_id, course_id, is_paid, price) VALUES (?,?,?,?,?)");
+//		        query.setParameter(1, userId);
+//		        query.setParameter(2, courseId);
+//		        query.setParameter(3, purchaseDate);
+//		        query.setParameter(4, isPaid);
+//		        query.setParameter(5, price);
+//		        query.executeUpdate();
+		    
+		    Order order = new Order(userId, courseId, purchaseDate, isPaid, price);
+		    em.persist(order);
+		    
 		    em.getTransaction().commit();
 		} catch(PersistenceException e) {
 
@@ -63,11 +64,11 @@ public class OrderController {
 		}
 	}
 	
-	public List<Order> getAllOrdersByUser(EntityManager em, int userId) {
+	public List<Order> getAllOrdersByUser(int userId) {
 		try {
 
 		    em.getTransaction().begin();
-		    // Do something with the EntityManager such as persist(), merge() or remove()
+		    
 			TypedQuery<Order> query = em.createNamedQuery("SELECT o FROM Order o WHERE o.userId = :userId", Order.class);
 		    em.getTransaction().commit();
 		    return query.setParameter("user_id", userId).getResultList();
@@ -82,11 +83,11 @@ public class OrderController {
 		}
 	}
 	
-	public Order getOrderById(EntityManager em, int id) {
+	public Order getOrderById(int id) {
 		try {
 
 		    em.getTransaction().begin();
-		    // Do something with the EntityManager such as persist(), merge() or remove()
+		    
 		    TypedQuery<Order> query = em.createNamedQuery("SELECT o FROM Order o WHERE o.id = :id", Order.class);
 		    em.getTransaction().commit();
 		    return query.setParameter("id", id).getSingleResult();

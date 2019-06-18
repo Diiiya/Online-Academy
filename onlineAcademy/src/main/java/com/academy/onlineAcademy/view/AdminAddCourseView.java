@@ -14,11 +14,15 @@ import com.academy.onlineAcademy.model.Category;
 import com.academy.onlineAcademy.model.Course;
 import com.academy.onlineAcademy.model.Level;
 import com.vaadin.data.Binder;
+import com.vaadin.data.converter.StringToDoubleConverter;
+import com.vaadin.data.converter.StringToIntegerConverter;
+import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.navigator.View;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -83,19 +87,27 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		selectLevelComboBox.setValue("BEGINNER");
 		selectLevelComboBox.setEmptySelectionAllowed(false);
 		
-		List<String> givesCertificate = new ArrayList<>();
-		givesCertificate.add("true");
-		givesCertificate.add("false");
-		ComboBox<String> selectCertComboBox = new ComboBox<>("Gives certificate:", givesCertificate);
-		selectCertComboBox.setValue("true");
-		selectCertComboBox.setEmptySelectionAllowed(false);
-		
+
 		TextField durationField = new TextField("Duration:");
 		TextField priceField = new TextField("Price:");
 		
+		CheckBox certCheckbox = new CheckBox("Gives certificate:");
+		certCheckbox.setValue(true);
+		
+		///////// BINDER Part + validations
+		Binder<Course> binder = new Binder<>();
+		binder.forField(nameField).asRequired("Cannot be empty").withValidator(new StringLengthValidator("Name must be between 3 and 30 characters long",3, 30))
+	    .bind(Course::getName, Course::setName);
+		binder.forField(teacherNameField).withValidator(new StringLengthValidator("Teacher's name must be between 3 and 30 characters long",3, 30))
+	    .bind(Course::getTeacherName, Course::setTeacherName);
+		binder.forField(durationField).withConverter(new StringToIntegerConverter("Must enter a number"))
+		.bind(Course::getDuration, Course::setDuration);
+		binder.forField(priceField).withConverter(new StringToDoubleConverter("Must enter a decimal number"))
+		.bind(Course::getPrice, Course::setPrice);
+		
 		FormLayout content = new FormLayout();
 		content.addComponents(nameField, descriptionField, teacherNameField, photoField, durationField, priceField,
-				selectCertComboBox, selectCategoryComboBox, selectLevelComboBox);
+				selectCategoryComboBox, selectLevelComboBox, certCheckbox);
 		content.setSizeUndefined(); 
 		content.setMargin(true);
 		panel.setContent(content);
@@ -107,6 +119,7 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		Button addButton = new Button("ADD");
 		addButton.setWidth("100");
 		addButton.addClickListener(e -> {
+			if (nameField.getValue() != null && descriptionField.getValue() != null && teacherNameField.getValue() != null) {
 			CourseController obj = new CourseController();
 			//getClass().getResourceAsStream("")
 			FileInputStream fileStream = null;
@@ -121,9 +134,10 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 				Level level = Level.valueOf(selectLevelComboBox.getValue());
 				Category category = Category.valueOf(selectCategoryComboBox.getValue());
 				double price = Double.parseDouble(priceField.getValue());
-				Boolean cert = Boolean.parseBoolean(selectCertComboBox.getValue());
+				Boolean cert = certCheckbox.getValue();
 				obj.addCourse(name, descriptionField.getValue(), teacherNameField.getValue(), duration, level, category, price, cert, coverPhotoBytes);
 				System.out.println(name);
+				System.out.println(category);
 				}
 				catch (Exception ex) {
 					ex.printStackTrace();
@@ -137,6 +151,11 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 						e1.printStackTrace();
 					}
 				}
+			}
+			}
+			else {
+				// Add pop-up message saying all fields are required
+				System.out.println("All required fields should be filled in!");
 			}
 		});
 		

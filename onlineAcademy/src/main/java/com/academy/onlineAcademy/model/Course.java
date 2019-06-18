@@ -74,7 +74,6 @@ public class Course implements Serializable{
 	private byte[] coverPhoto;
 
 	@ManyToOne
-	//@PrimaryKeyJoinColumn(name="CORDER_ID")
 	@JoinColumn(name="CORDER_ID")
 	private Order order;
 	
@@ -163,7 +162,6 @@ public class Course implements Serializable{
 	public Course(String name, String description, String teacherName, int duration, Level level,
 			Category category, double price, boolean givesCertificate, byte[] coverPhoto) {
 		super();
-		//this.id = id;
 		this.name = name;
 		this.description = description;
 		this.teacherName = teacherName;
