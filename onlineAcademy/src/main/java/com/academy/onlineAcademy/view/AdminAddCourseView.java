@@ -14,11 +14,15 @@ import com.academy.onlineAcademy.model.Category;
 import com.academy.onlineAcademy.model.Course;
 import com.academy.onlineAcademy.model.Level;
 import com.vaadin.data.Binder;
+import com.vaadin.data.ValidationException;
 import com.vaadin.data.converter.StringToDoubleConverter;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.validator.StringLengthValidator;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.server.FileResource;
+import com.vaadin.server.Page;
+import com.vaadin.server.UserError;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -27,6 +31,8 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -46,19 +52,15 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 		FileResource logoResource = new FileResource(new File(basepath +
 	            "/logo.jpg"));
-		FileResource resource = new FileResource(new File(basepath +
-	            "/user1.png"));
 			
 		Image logoImage = new Image("", logoResource);
 		logoImage.setWidth("130px");
 		logoImage.setHeight("60px");
-		Image image = new Image("", resource);
-		image.setWidth("50px");
-		image.setHeight("50px");
+		Button myProfileButton = new Button("My profile", VaadinIcons.MENU);
 		
-		layoutH.addComponents(logoImage, image);
+		layoutH.addComponents(logoImage, myProfileButton);
 		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
-		layoutH.setComponentAlignment(image, Alignment.TOP_RIGHT);
+		layoutH.setComponentAlignment(myProfileButton, Alignment.BOTTOM_RIGHT);
 		
 		// 2 - Add course panel
 		VerticalLayout layoutVBody = new VerticalLayout();
@@ -96,14 +98,17 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		
 		///////// BINDER Part + validations
 		Binder<Course> binder = new Binder<>();
-		binder.forField(nameField).asRequired("Cannot be empty").withValidator(new StringLengthValidator("Name must be between 3 and 30 characters long",3, 30))
+		binder.forField(nameField).withValidator(new StringLengthValidator("Name must be between 3 and 30 characters long!",3, 30)).asRequired("Cannot be empty")
 	    .bind(Course::getName, Course::setName);
-		binder.forField(teacherNameField).withValidator(new StringLengthValidator("Teacher's name must be between 3 and 30 characters long",3, 30))
+		binder.forField(descriptionField).withValidator(description -> description.length() <= 200, "Description max 200 characters long!").asRequired("Cannot be empty")
+	    .bind(Course::getDescription, Course::setDescription);
+		binder.forField(teacherNameField).withValidator(new StringLengthValidator("Teacher's name must be between 3 and 30 characters long!",3, 30)).asRequired("Cannot be empty")
 	    .bind(Course::getTeacherName, Course::setTeacherName);
-		binder.forField(durationField).withConverter(new StringToIntegerConverter("Must enter a number"))
+		binder.forField(durationField).withConverter(new StringToIntegerConverter("Must enter a number!")).asRequired("Cannot be empty")
 		.bind(Course::getDuration, Course::setDuration);
-		binder.forField(priceField).withConverter(new StringToDoubleConverter("Must enter a decimal number"))
+		binder.forField(priceField).withConverter(new StringToDoubleConverter("Must enter a decimal number!")).asRequired("Cannot be empty")
 		.bind(Course::getPrice, Course::setPrice);
+		binder.forField(selectCategoryComboBox).asRequired("Cannot be empty");
 		
 		FormLayout content = new FormLayout();
 		content.addComponents(nameField, descriptionField, teacherNameField, photoField, durationField, priceField,
@@ -112,17 +117,18 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		content.setMargin(true);
 		panel.setContent(content);
 		
-		//String basepath2 = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 		FileResource coverResource = new FileResource(new File(basepath +
 	            "/1online-courses_0.jpg"));
 		
 		Button addButton = new Button("ADD");
 		addButton.setWidth("100");
 		addButton.addClickListener(e -> {
-			if (nameField.getValue() != null && descriptionField.getValue() != null && teacherNameField.getValue() != null) {
+			if (nameField.getValue() != "" && descriptionField.getValue() != "" && teacherNameField.getValue() != "") {
 			CourseController obj = new CourseController();
-			//getClass().getResourceAsStream("")
 			FileInputStream fileStream = null;
+			
+			//binder.validate();
+			
 			
 			try {
 				fileStream = new FileInputStream(new File(basepath + "/1online-courses_0.jpg"));
@@ -136,8 +142,11 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 				double price = Double.parseDouble(priceField.getValue());
 				Boolean cert = certCheckbox.getValue();
 				obj.addCourse(name, descriptionField.getValue(), teacherNameField.getValue(), duration, level, category, price, cert, coverPhotoBytes);
-				System.out.println(name);
-				System.out.println(category);
+				Notification notif = new Notification(
+					    "Confirmation",
+					    "The course has been added!",
+					    Notification.TYPE_WARNING_MESSAGE);
+				notif.show(Page.getCurrent());
 				}
 				catch (Exception ex) {
 					ex.printStackTrace();
@@ -154,9 +163,13 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 			}
 			}
 			else {
-				// Add pop-up message saying all fields are required
-				System.out.println("All required fields should be filled in!");
-			}
+				Notification notif = new Notification(
+					    "Warning",
+					    "All required fields should be filled in!",
+					    Notification.TYPE_WARNING_MESSAGE);
+				notif.show(Page.getCurrent());
+			} 
+				
 		});
 		
 		layoutVBody.addComponents(panel, addButton);

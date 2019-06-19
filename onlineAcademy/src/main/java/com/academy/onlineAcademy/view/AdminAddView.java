@@ -7,6 +7,7 @@ import java.util.List;
 import com.academy.onlineAcademy.model.Person;
 import com.academy.onlineAcademy.model.Type;
 import com.vaadin.data.Binder;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.VaadinService;
@@ -36,19 +37,16 @@ public class AdminAddView extends VerticalLayout implements View {
 		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 		FileResource logoResource = new FileResource(new File(basepath +
 	            "/logo.jpg"));
-		FileResource resource = new FileResource(new File(basepath +
-	            "/user1.png"));
 			
 		Image logoImage = new Image("", logoResource);
 		logoImage.setWidth("130px");
 		logoImage.setHeight("60px");
-		Image image = new Image("", resource);
-		image.setWidth("50px");
-		image.setHeight("50px");
+		Button myProfileButton = new Button("My profile", VaadinIcons.MENU);
 		
-		layoutH.addComponents(logoImage, image);
+		
+		layoutH.addComponents(logoImage, myProfileButton);
 		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
-		layoutH.setComponentAlignment(image, Alignment.TOP_RIGHT);
+		layoutH.setComponentAlignment(myProfileButton, Alignment.BOTTOM_RIGHT);
 		
 		// 2 - Add panel
 		VerticalLayout layoutVBody = new VerticalLayout();

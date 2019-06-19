@@ -4,6 +4,7 @@ import javax.servlet.annotation.WebServlet;
 
 import com.academy.onlineAcademy.view.AdminAddCourseView;
 import com.academy.onlineAcademy.view.AdminAddView;
+import com.academy.onlineAcademy.view.AdminAllCoursesView;
 import com.academy.onlineAcademy.view.CourseView;
 import com.academy.onlineAcademy.view.HomeView;
 import com.academy.onlineAcademy.view.LoginView;
@@ -50,6 +51,7 @@ public class MyUI extends UI {
         UserSettingsView userSettingsViewObj = new UserSettingsView();
         AdminAddView adminAddViewObj = new AdminAddView();
         AdminAddCourseView adminAddCourseViewObj = new AdminAddCourseView();
+        AdminAllCoursesView adminAllCourseViewObj = new AdminAllCoursesView();
         
         navigator.addView("Login", loginViewObj);
         navigator.addView("Home", homeViewObj);
@@ -59,6 +61,7 @@ public class MyUI extends UI {
         navigator.addView("Settings", userSettingsViewObj);
         navigator.addView("AdminAdd", adminAddViewObj);
         navigator.addView("AdminAddCourse", adminAddCourseViewObj);
+        navigator.addView("AdminAllCourses", adminAllCourseViewObj);
         
         navigator.navigateTo("Home");
         

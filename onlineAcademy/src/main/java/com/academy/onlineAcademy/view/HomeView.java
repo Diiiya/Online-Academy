@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.academy.onlineAcademy.controller.CourseController;
 import com.academy.onlineAcademy.model.Course;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileResource;
@@ -22,12 +23,13 @@ public class HomeView extends VerticalLayout implements View {
 	
 	CourseController courseObj = new CourseController();
 	Grid<com.academy.onlineAcademy.model.Course> grid = new Grid<>();
+	Course selectedCourse;
+	int selectedCourseId;
 	
 	public HomeView() {
 		
 		VerticalLayout mainVLayout = new VerticalLayout();
 		mainVLayout.setHeight("100%");
-		
 		
 		// 1 - Header bar ?
 		HorizontalLayout layoutH = new HorizontalLayout();
@@ -38,19 +40,16 @@ public class HomeView extends VerticalLayout implements View {
 		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 		FileResource logoResource = new FileResource(new File(basepath +
 	            "/logo.jpg"));
-		FileResource resource = new FileResource(new File(basepath +
-	            "/user1.png"));
 			
 		Image logoImage = new Image("", logoResource);
 		logoImage.setWidth("130px");
 		logoImage.setHeight("60px");
-		Image image = new Image("", resource);
-		image.setWidth("50px");
-		image.setHeight("50px");
+		Button loginButton = new Button("LOGIN", VaadinIcons.SIGN_IN);
 		
-		layoutH.addComponents(logoImage, image);
+		
+		layoutH.addComponents(logoImage, loginButton);
 		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
-		layoutH.setComponentAlignment(image, Alignment.TOP_RIGHT);
+		layoutH.setComponentAlignment(loginButton, Alignment.BOTTOM_RIGHT);
 		
 		// 2 - Cover IMAGE and Search
 		FileResource coverResource = new FileResource(new File(basepath +
@@ -63,7 +62,7 @@ public class HomeView extends VerticalLayout implements View {
 		HorizontalLayout searchHLayout = new HorizontalLayout();
 		TextField searchField = new TextField("");
 		searchField.setPlaceholder("SEARCH");
-		Button searchButton = new Button("Search");
+		Button searchButton = new Button("Search", VaadinIcons.SEARCH);
 		searchButton.addClickListener(e -> {
 			courseObj.getCourseByName(searchField.getValue());
 //			List<Course> selectedCourses = courseObj.getAllCourses();
@@ -75,14 +74,7 @@ public class HomeView extends VerticalLayout implements View {
 		searchHLayout.setComponentAlignment(searchButton, Alignment.BOTTOM_RIGHT);
 		
 		// 3 - Top course results:
-		Label topCoursesLabel = new Label("Top courses:");
-		
-//		List<Course> courses = Arrays.asList(
-//				new Course("UX Design", "Some description to be added here", "Sam Johnson", 5, Level.BEGINNER, Category.IT, 50, true, null),
-//				new Course("Programming basics", "Some description to be added here", "Dean Green", 25, Level.BEGINNER, Category.IT, 130, true, null),
-//				new Course("Music", "Some description to be added here", "Sara Stevenson", 10, Level.INTERMEDIATE, Category.ARTS, 50, true, null)
-//				);
-		
+		Label topCoursesLabel = new Label("Top courses:");		
 		List<Course> courses = courseObj.getAllCourses();
 		
 		grid.setItems(courses);
@@ -99,6 +91,31 @@ public class HomeView extends VerticalLayout implements View {
 		grid.addColumn(com.academy.onlineAcademy.model.Course::getGivesCertificate).setCaption("Gives certificate");
 		
 		grid.setWidth("100%");
+		
+//		HorizontalLayout buttonsHLayout = new HorizontalLayout();
+//		buttonsHLayout.setVisible(false);
+//		Button deleteCourseButton = new Button("Delete", VaadinIcons.DEL);
+//		deleteCourseButton.setWidth("200px");
+//		//deleteCourseButton.setVisible(false);
+//		Button updateCourseButton = new Button("Update", VaadinIcons.REFRESH);
+//		updateCourseButton.setWidth("200px");
+//		//updateCourseButton.setVisible(false);
+//		buttonsHLayout.addComponents(updateCourseButton, deleteCourseButton);
+		
+		grid.addItemClickListener(e -> {
+			Course selectedCourse = e.getItem();
+			selectedCourseId = selectedCourse.getId();
+			System.out.println(selectedCourseId);
+		});
+
+//		deleteCourseButton.addClickListener(e -> {
+//			try {
+//			courseObj.deleteCourseById(selectedCourseId);
+//			}
+//			catch(Exception ex) {
+//				ex.printStackTrace();
+//			}
+//		});
 		
 		mainVLayout.addComponents(layoutH, coverImage, searchHLayout, topCoursesLabel, grid);
 		mainVLayout.setComponentAlignment(searchHLayout, Alignment.MIDDLE_CENTER);

@@ -3,9 +3,11 @@ package com.academy.onlineAcademy.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
@@ -127,7 +129,7 @@ public class CourseController {
 
 		    emUPD.getTransaction().begin();
 		    
-		    int updateCount = emUPD.createNamedQuery("Course.updateCourseById", Course.class).executeUpdate();
+		    int updateCount = emUPD.createNamedQuery("updateCourseById", Course.class).executeUpdate();
 		    
 		    //emUPD.merge(entity);
 		    
@@ -150,7 +152,7 @@ public class CourseController {
 
 		    emDEL.getTransaction().begin();
 		    
-		    int count = emDEL.createNamedQuery("Course.deleteAllCourses", Course.class).executeUpdate();
+		    int count = emDEL.createNamedQuery("deleteAllCourses", Course.class).executeUpdate();
 		    emDEL.getTransaction().commit();
 		    return count;
 		} 
@@ -165,23 +167,24 @@ public class CourseController {
 		}
 	}
 	
-	public int deleteCourseById(int id) {
+	public void deleteCourseById(int id) {
+		
+		EntityManager emDEL = emFactoryObj.createEntityManager();
 		try {
 
 		    emDEL.getTransaction().begin();
-		    
-		    int count = emDEL.createNamedQuery("Course.deleteByCourseId", Course.class).executeUpdate();
+		    emDEL.createNamedQuery("deleteByCourseId", Course.class).setParameter("id", id).executeUpdate();
 		    emDEL.getTransaction().commit();
-		    return count;
 		} 
 		catch(PersistenceException e) {
 
+			e.printStackTrace();
 		    emDEL.getTransaction().rollback();
 		    
 		    throw e;
 		}
-        finally {
-		emDEL.close();
+		finally {
+        		emDEL.close();
 		}
 	}
 	
