@@ -34,8 +34,7 @@ import javax.validation.constraints.Size;
 	@NamedQuery(name = "findUserByName", query = "SELECT p FROM Person p WHERE p.fullName = :fullName"),
 	@NamedQuery(name = "findUserByEmail", query = "SELECT p FROM Person p WHERE p.email = :email"),
 	@NamedQuery(name = "deleteAllUsers", query = "DELETE FROM Person p"),
-	@NamedQuery(name = "deleteByPersonId", query = "DELETE FROM Person p WHERE p.id = :id"),
-	@NamedQuery(name = "updatePersonById", query = "UPDATE Person p SET p.fullName = :fullname, p.username = :username, p.email = :email, p.password = :password, p.photo = :photo, p.type = :type WHERE p.id = :id")
+	@NamedQuery(name = "deleteByPersonId", query = "DELETE FROM Person p WHERE p.id = :id")
 })
 public class Person implements Serializable{
 	
@@ -73,9 +72,9 @@ $                 # end-of-string
 	 */
 	//@Pattern(regexp="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8, 25}$")
 	
-	@Pattern(regexp = ".*\\.jpg|.*\\.jpeg|.*\\.gif",
-	        message="Only images of type JPEG or GIF are supported.")
-	@Lob
+//	@Pattern(regexp = ".*\\.jpg|.*\\.jpeg|.*\\.gif",
+//	        message="Only images of type JPEG or GIF are supported.")
+//	@Lob
 	@Column(length=100000)
 	private byte[] photo = null;
 	
@@ -93,7 +92,7 @@ $                 # end-of-string
 	
 	@JoinColumn(name="CORDERS", updatable=false)
 	@OneToMany(targetEntity = Order.class, mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval=true)
-	private List<Order> listOfOrders;
+	private List<Order> listOfOrders = null;
 	
 	
 	// Properties

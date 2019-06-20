@@ -30,8 +30,7 @@ import javax.validation.constraints.Size;
 	@NamedQuery(name = "orderByPriceAsc", query = "SELECT c FROM Course c ORDER BY c.price ASC"),
 	@NamedQuery(name = "orderByPriceDesc", query = "SELECT c FROM Course c ORDER BY c.price DESC"),
 	@NamedQuery(name = "deleteAllCourses", query = "DELETE FROM Course c"),
-	@NamedQuery(name = "deleteByCourseId", query = "DELETE FROM Course c WHERE c.id = :id"),
-	@NamedQuery(name = "updateCourseById", query = "UPDATE Course c SET c.name = :name, c.description = :description, c.teacherName = :teacherName, c.duration = :duration, c.level = :level, c.category = :category, c.price = :price, c.givesCertificate = :givesCertificate, c.coverPhoto = :coverPhoto WHERE c.id = :id")
+	@NamedQuery(name = "deleteByCourseId", query = "DELETE FROM Course c WHERE c.id = :id")
 })
 public class Course implements Serializable{
 	

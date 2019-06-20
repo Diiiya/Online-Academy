@@ -29,22 +29,19 @@ public class PersonController {
         return emFactoryObj.createEntityManager();
     }
 	
-	EntityManagerFactory emf;
-	EntityManager em;
 	EntityManager emUPD;
 	EntityManager emDEL;
 	
 	public PersonController() {
-		
-		  em = emf.createEntityManager();
-		  emUPD = emf.createEntityManager();
-		  emDEL = emf.createEntityManager();
-		  
+		  emUPD = emFactoryObj.createEntityManager();
+		  emDEL = emFactoryObj.createEntityManager();
 		}
 
 	public void addPerson(String fullName, String username, String email, String password, byte[] photo, Type type,
 			List<Course> listOfCourses, List<Order> listOfOrders) {
+		    EntityManager em = null;
 		try {
+			em = emFactoryObj.createEntityManager();
 
 		    em.getTransaction().begin();
 		    
@@ -59,7 +56,7 @@ public class PersonController {
 //		        query.setParameter(8, listOfOrders);
 //		        query.executeUpdate();
 		    
-		    Person person = new Person(fullName, username, email,password, photo, type, listOfCourses, listOfOrders);
+		    Person person = new Person(fullName, username, email, password, photo, type, listOfCourses, listOfOrders);
 		    em.persist(person);
 		    
 		    em.getTransaction().commit();
@@ -75,11 +72,12 @@ public class PersonController {
 	}
 	
 	public List<Person> getAllUsers() {
+		EntityManager em = null;
 		try {
-
+			em = emFactoryObj.createEntityManager();
 		    em.getTransaction().begin();
 		    
-			TypedQuery<Person> query = em.createNamedQuery("Person.getAllUsers", Person.class);
+			TypedQuery<Person> query = em.createNamedQuery("getAllUsers", Person.class);
 		    em.getTransaction().commit();
 		    return query.getResultList();
 		} catch(PersistenceException e) {
@@ -94,11 +92,12 @@ public class PersonController {
 	}
 	
 	public Person getPersonById(int id) {
+		EntityManager em = null;
 		try {
-
+			em = emFactoryObj.createEntityManager();
 		    em.getTransaction().begin();
 		    
-		    TypedQuery<Person> query = em.createNamedQuery("Person.findUserById", Person.class);
+		    TypedQuery<Person> query = em.createNamedQuery("findUserById", Person.class);
 		    em.getTransaction().commit();
 		    return query.setParameter("id", id).getSingleResult();
 		} catch(PersistenceException e) {
@@ -113,11 +112,12 @@ public class PersonController {
 	}
 	
 	public Person getPersonByName(String name) {
+		EntityManager em = null;
 		try {
-
+			em = emFactoryObj.createEntityManager();
 		    em.getTransaction().begin();
 		    
-		    TypedQuery<Person> query = em.createNamedQuery("Person.findUserByName", Person.class);
+		    TypedQuery<Person> query = em.createNamedQuery("findUserByName", Person.class);
 		    em.getTransaction().commit();
 		    return query.setParameter("name", name).getSingleResult();
 		} catch(PersistenceException e) {
@@ -131,14 +131,22 @@ public class PersonController {
 		}
 	}
 	
-	public int updatePersonById(int id) {
+	public void updatePersonById(Person person, int id, String fullName, String username, String email, String password, Type type) {
 		try {
 
 		    emUPD.getTransaction().begin();
 		    
-		    int updateCount = emUPD.createNamedQuery("Person.updatePersonById", Person.class).executeUpdate();
+		    Person updatedPerson = emUPD.merge(person);
+		    
+		    updatedPerson.setFullName(fullName);
+		    updatedPerson.setUsername(username);
+		    updatedPerson.setEmail(email);
+		    updatedPerson.setPassword(password);
+		    updatedPerson.setType(type);
+		    
+		    emUPD.persist(updatedPerson);
 		    emUPD.getTransaction().commit();
-		    return updateCount;
+		    
 		} catch(PersistenceException e) {
 
 		    emUPD.getTransaction().rollback();
@@ -155,7 +163,7 @@ public class PersonController {
 
 		    emDEL.getTransaction().begin();
 		    
-		    int count = emDEL.createNamedQuery("Person.deleteAllUsers", Person.class).executeUpdate();
+		    int count = emDEL.createNamedQuery("deleteAllUsers", Person.class).executeUpdate();
 		    emDEL.getTransaction().commit();
 		    return count;
 		} catch(PersistenceException e) {
@@ -174,7 +182,7 @@ public class PersonController {
 
 		    emDEL.getTransaction().begin();
 		    
-		    int count = emDEL.createNamedQuery("Person.deleteByPersonId", Person.class).executeUpdate();
+		    int count = emDEL.createNamedQuery("deleteByPersonId", Person.class).executeUpdate();
 		    emDEL.getTransaction().commit();
 		    return count;
 		} catch(PersistenceException e) {

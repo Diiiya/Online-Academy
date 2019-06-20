@@ -30,12 +30,10 @@ public class CourseController {
         return emFactoryObj.createEntityManager();
     }
 	
-	//EntityManager em;
 	EntityManager emUPD;
 	EntityManager emDEL;
 	
 	public CourseController() {
-	  //em = emFactoryObj.createEntityManager();
 	  emUPD = emFactoryObj.createEntityManager();
 	  emDEL = emFactoryObj.createEntityManager();
 	}
@@ -124,17 +122,25 @@ public class CourseController {
 		}
 	}
 	
-	public int updateCourseById(int id) {
+	public void updateCourseById(Course course, int id, String name, String description, String teacherName, int duration, Level level,
+			Category category, double price, boolean givesCertificate, byte[] coverPhoto) {
 		try {
 
 		    emUPD.getTransaction().begin();
 		    
-		    int updateCount = emUPD.createNamedQuery("updateCourseById", Course.class).executeUpdate();
+		    Course newCourse = emUPD.merge(course);
+		    newCourse.setName(name);
+		    newCourse.setDescription(description);
+		    newCourse.setTeacherName(teacherName);
+		    newCourse.setDuration(duration);
+		    newCourse.setLevel(level);
+		    newCourse.setCategoty(category);
+		    newCourse.setPrice(price);
+		    newCourse.setGivesCertificate(givesCertificate);
+		    newCourse.setCoverPhoto(coverPhoto);
 		    
-		    //emUPD.merge(entity);
-		    
+		    emUPD.persist(newCourse);
 		    emUPD.getTransaction().commit();
-		    return updateCount;
 		} 
 		catch(PersistenceException e) {
 

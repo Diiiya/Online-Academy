@@ -92,30 +92,12 @@ public class HomeView extends VerticalLayout implements View {
 		
 		grid.setWidth("100%");
 		
-//		HorizontalLayout buttonsHLayout = new HorizontalLayout();
-//		buttonsHLayout.setVisible(false);
-//		Button deleteCourseButton = new Button("Delete", VaadinIcons.DEL);
-//		deleteCourseButton.setWidth("200px");
-//		//deleteCourseButton.setVisible(false);
-//		Button updateCourseButton = new Button("Update", VaadinIcons.REFRESH);
-//		updateCourseButton.setWidth("200px");
-//		//updateCourseButton.setVisible(false);
-//		buttonsHLayout.addComponents(updateCourseButton, deleteCourseButton);
-		
 		grid.addItemClickListener(e -> {
 			Course selectedCourse = e.getItem();
 			selectedCourseId = selectedCourse.getId();
 			System.out.println(selectedCourseId);
 		});
 
-//		deleteCourseButton.addClickListener(e -> {
-//			try {
-//			courseObj.deleteCourseById(selectedCourseId);
-//			}
-//			catch(Exception ex) {
-//				ex.printStackTrace();
-//			}
-//		});
 		
 		mainVLayout.addComponents(layoutH, coverImage, searchHLayout, topCoursesLabel, grid);
 		mainVLayout.setComponentAlignment(searchHLayout, Alignment.MIDDLE_CENTER);

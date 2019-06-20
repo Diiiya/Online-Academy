@@ -1,6 +1,8 @@
 package com.academy.onlineAcademy.view;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -17,6 +19,7 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileResource;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -27,10 +30,13 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupView;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 
 public class AdminAllCoursesView extends VerticalLayout implements View {
 	
@@ -82,7 +88,7 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 				searchHLayout.setComponentAlignment(searchButton, Alignment.BOTTOM_RIGHT);
 				
 				// 3 - Top course results:
-				Label topCoursesLabel = new Label("Top courses:");		
+				Label allCoursesLabel = new Label("All courses:");		
 				courses = courseObj.getAllCourses();
 				
 				grid.setItems(courses);
@@ -129,11 +135,8 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 				});
 				
 				//
-				//// - Update button and popup content
+				//// - Update button and subwindow content
 				//
-				
-				Panel popupContent = new Panel("Add new course: ");
-				popupContent.setSizeUndefined();
 				
 				TextField nameField = new TextField("Course name:");
 				TextField descriptionField = new TextField("Course description:");
@@ -152,7 +155,6 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		                .collect(Collectors.toList());
 				
 				ComboBox<String> selectLevelComboBox = new ComboBox<>("Select level:", levels);
-				selectLevelComboBox.setValue("BEGINNER");
 				selectLevelComboBox.setEmptySelectionAllowed(false);
 				
 
@@ -161,6 +163,8 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 				
 				CheckBox certCheckbox = new CheckBox("Gives certificate:");
 				certCheckbox.setValue(true);
+				
+				Button updateFormButton = new Button("Update", VaadinIcons.REFRESH);
 				
 				Binder<Course> binder = new Binder<>();
 				binder.forField(nameField).withValidator(new StringLengthValidator("Name must be between 3 and 30 characters long!",3, 30)).asRequired("Cannot be empty")
@@ -177,31 +181,86 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 				
 				FormLayout content = new FormLayout();
 				content.addComponents(nameField, descriptionField, teacherNameField, photoField, durationField, priceField,
-						selectCategoryComboBox, selectLevelComboBox, certCheckbox);
+						selectCategoryComboBox, selectLevelComboBox, certCheckbox, updateFormButton);
 				content.setSizeUndefined(); 
 				content.setMargin(true);
-				popupContent.setContent(content);
 				
-				PopupView popup = new PopupView(null, popupContent);
-				
+				Window updateWindow = new Window("UPDATE COURSE");
+				updateWindow.setVisible(false);
 				updateCourseButton.addClickListener(e -> {
-					popup.setPopupVisible(true);
+					updateWindow.setVisible(true);
+					updateWindow.center();
+					updateWindow.setContent(content);
 					if (selectedCourse != null) {
 					nameField.setValue(selectedCourse.getName());
 					descriptionField.setValue(selectedCourse.getDescription());
 					teacherNameField.setValue(selectedCourse.getTeacherName());
 					selectCategoryComboBox.setValue(selectedCourse.getCategory().toString());
 					selectLevelComboBox.setValue(selectedCourse.getLevel().toString());
-					//durationField.setValue(selectedCourse.getDuration());
-					System.out.println("NOT NULL");
+					durationField.setValue(String.valueOf(selectedCourse.getDuration()));
+					priceField.setValue(String.valueOf(selectedCourse.getPrice()));
+					certCheckbox.setValue(selectedCourse.getGivesCertificate());
+					UI.getCurrent().addWindow(updateWindow);
 					}
 				});
 				
+				updateFormButton.addClickListener(e -> {
+					if (nameField.getValue() != "" && descriptionField.getValue() != "" && teacherNameField.getValue() != "") {
+						CourseController obj = new CourseController();
+						FileInputStream fileStream = null;
+						
+						try {
+							fileStream = new FileInputStream(new File(basepath + "/1online-courses_0.jpg"));
+							byte[] coverPhotoBytes = fileStream.readAllBytes();
+							
+							// Getting and converting String values from the UI to the required values for the Course constructor
+							int duration = Integer.parseInt(durationField.getValue());
+							Level level = Level.valueOf(selectLevelComboBox.getValue());
+							Category category = Category.valueOf(selectCategoryComboBox.getValue());
+							double price = Double.parseDouble(priceField.getValue());
+							obj.updateCourseById(selectedCourse, selectedCourse.getId(), nameField.getValue(), 
+									descriptionField.getValue(), teacherNameField.getValue(), duration, level, 
+									category, price, certCheckbox.getValue(), coverPhotoBytes);
+							
+							Notification notif = new Notification(
+								    "Confirmation",
+								    "The course has been updated!",
+								    Notification.TYPE_WARNING_MESSAGE);
+							notif.show(Page.getCurrent());
+							
+					        courses = courseObj.getAllCourses();
+					        grid.setItems(courses);
+					        
+					        updateWindow.setVisible(false);
+					        buttonsHLayout.setVisible(false);
+							}
+							catch (Exception ex) {
+								ex.printStackTrace();
+							}
+						finally {
+							if (fileStream != null) {
+								try {
+									fileStream.close();
+								} catch (IOException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+							}
+						}
+						}
+						else {
+							Notification notif = new Notification(
+								    "Warning",
+								    "All required fields should be filled in!",
+								    Notification.TYPE_WARNING_MESSAGE);
+							notif.show(Page.getCurrent());
+						}
+				});
+
 				
-				mainVLayout.addComponents(layoutH, searchHLayout, topCoursesLabel, grid, buttonsHLayout, popup);
+				mainVLayout.addComponents(layoutH, searchHLayout, allCoursesLabel, grid, buttonsHLayout);
 				mainVLayout.setComponentAlignment(searchHLayout, Alignment.MIDDLE_CENTER);
 				mainVLayout.setComponentAlignment(buttonsHLayout, Alignment.BOTTOM_CENTER);
-				mainVLayout.setComponentAlignment(popup, Alignment.MIDDLE_CENTER);
 				addComponent(mainVLayout);
 		
 	}
@@ -209,8 +268,7 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 	@Override
 	public void enter(ViewChangeEvent event) {
 		View.super.enter(event);
-        courses = courseObj.getAllCourses();
-		
+        courses = courseObj.getAllCourses();		
 		grid.setItems(courses);
 	}
 

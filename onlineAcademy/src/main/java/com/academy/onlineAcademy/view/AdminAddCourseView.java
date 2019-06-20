@@ -96,6 +96,17 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		CheckBox certCheckbox = new CheckBox("Gives certificate:");
 		certCheckbox.setValue(true);
 		
+		FormLayout content = new FormLayout();
+		content.addComponents(nameField, descriptionField, teacherNameField, photoField, durationField, priceField,
+				selectCategoryComboBox, selectLevelComboBox, certCheckbox);
+		content.setSizeUndefined(); 
+		content.setMargin(true);
+		panel.setContent(content);
+		
+		FileResource coverResource = new FileResource(new File(basepath +
+	            "/1online-courses_0.jpg"));
+		
+		
 		///////// BINDER Part + validations
 		Binder<Course> binder = new Binder<>();
 		binder.forField(nameField).withValidator(new StringLengthValidator("Name must be between 3 and 30 characters long!",3, 30)).asRequired("Cannot be empty")
@@ -110,15 +121,6 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		.bind(Course::getPrice, Course::setPrice);
 		binder.forField(selectCategoryComboBox).asRequired("Cannot be empty");
 		
-		FormLayout content = new FormLayout();
-		content.addComponents(nameField, descriptionField, teacherNameField, photoField, durationField, priceField,
-				selectCategoryComboBox, selectLevelComboBox, certCheckbox);
-		content.setSizeUndefined(); 
-		content.setMargin(true);
-		panel.setContent(content);
-		
-		FileResource coverResource = new FileResource(new File(basepath +
-	            "/1online-courses_0.jpg"));
 		
 		Button addButton = new Button("ADD");
 		addButton.setWidth("100");
@@ -135,13 +137,12 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 				byte[] coverPhotoBytes = fileStream.readAllBytes();
 				
 				// Getting and converting String values from the UI to the required values for the Course constructor
-				String name = nameField.getValue();
 				int duration = Integer.parseInt(durationField.getValue());
 				Level level = Level.valueOf(selectLevelComboBox.getValue());
 				Category category = Category.valueOf(selectCategoryComboBox.getValue());
 				double price = Double.parseDouble(priceField.getValue());
-				Boolean cert = certCheckbox.getValue();
-				obj.addCourse(name, descriptionField.getValue(), teacherNameField.getValue(), duration, level, category, price, cert, coverPhotoBytes);
+				obj.addCourse(nameField.getValue(), descriptionField.getValue(), teacherNameField.getValue(), duration, level, 
+						category, price, certCheckbox.getValue(), coverPhotoBytes);
 				Notification notif = new Notification(
 					    "Confirmation",
 					    "The course has been added!",
