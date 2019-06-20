@@ -42,6 +42,8 @@ public class UserCoursesView extends VerticalLayout implements View {
 	logoImage.setHeight("60px");
 	Button myProfileButton = new Button("My profile", VaadinIcons.MENU);
 	
+	ContextMenu contextMenu = new ContextMenu();
+	
 	layoutH.addComponents(logoImage,myProfileButton);
 	layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
 	layoutH.setComponentAlignment(myProfileButton, Alignment.BOTTOM_RIGHT);

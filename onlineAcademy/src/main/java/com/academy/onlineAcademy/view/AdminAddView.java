@@ -128,7 +128,7 @@ public class AdminAddView extends VerticalLayout implements View {
 				System.out.println("1: " + passwordField.getValue());
 				System.out.println("2: " + confirmPasswordField.getValue());
 				
-				if (passwordField.getValue() == confirmPasswordField.getValue() ) {
+				if (passwordField.getValue() == confirmPasswordField.getValue()) {
 					try {
 						Type type = Type.valueOf(selectTypeComboBox.getValue());
 						obj.addPerson(fullNameField.getValue(), usernameField.getValue(), emailField.getValue(), passwordField.getValue(), null, type, null, null);
