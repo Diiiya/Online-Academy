@@ -6,6 +6,7 @@ import java.util.List;
 import com.academy.onlineAcademy.controller.CourseController;
 import com.academy.onlineAcademy.model.Course;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileResource;
@@ -17,6 +18,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 public class HomeView extends VerticalLayout implements View {
@@ -30,6 +32,7 @@ public class HomeView extends VerticalLayout implements View {
 		
 		VerticalLayout mainVLayout = new VerticalLayout();
 		mainVLayout.setHeight("100%");
+		Navigator navigator = UI.getCurrent().getNavigator();
 		
 		// 1 - Header bar ?
 		HorizontalLayout layoutH = new HorizontalLayout();
@@ -44,7 +47,11 @@ public class HomeView extends VerticalLayout implements View {
 		Image logoImage = new Image("", logoResource);
 		logoImage.setWidth("130px");
 		logoImage.setHeight("60px");
+		
 		Button loginButton = new Button("LOGIN", VaadinIcons.SIGN_IN);
+		loginButton.addClickListener(event -> {
+			navigator.navigateTo("Login");
+		});
 		
 		
 		layoutH.addComponents(logoImage, loginButton);

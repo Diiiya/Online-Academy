@@ -12,7 +12,9 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.MenuBar.MenuItem;
 
 public class CourseView extends VerticalLayout implements View {
 	
@@ -33,11 +35,17 @@ public class CourseView extends VerticalLayout implements View {
 		Image logoImage = new Image("", logoResource);
 		logoImage.setWidth("130px");
 		logoImage.setHeight("60px");
-		Button myProfileButton = new Button("My profile", VaadinIcons.MENU);
 		
-		layoutH.addComponents(logoImage, myProfileButton);
+		MenuBar profileMenu = new MenuBar();
+		MenuItem myProfileMainItem = profileMenu.addItem("My profile", VaadinIcons.MENU, null);
+		MenuItem myCoursesItem = myProfileMainItem.addItem("My courses", VaadinIcons.ACADEMY_CAP, null);
+		MenuItem myOrdersItem = myProfileMainItem.addItem("My orders", VaadinIcons.NEWSPAPER, null);
+		MenuItem mySettingsItem = myProfileMainItem.addItem("Settings", VaadinIcons.USER, null);
+		MenuItem myLogoutItem = myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, null);
+		
+		layoutH.addComponents(logoImage, profileMenu);
 		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
-		layoutH.setComponentAlignment(myProfileButton, Alignment.BOTTOM_RIGHT);
+		layoutH.setComponentAlignment(profileMenu, Alignment.BOTTOM_RIGHT);
 		
 		// 2 - Body
 		HorizontalLayout layoutBody = new HorizontalLayout();

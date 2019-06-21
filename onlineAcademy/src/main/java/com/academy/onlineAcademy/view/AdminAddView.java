@@ -19,6 +19,7 @@ import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
@@ -29,13 +30,18 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
+import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.MenuBar.MenuItem;
 
 public class AdminAddView extends VerticalLayout implements View {
+	
+	Navigator navigator = UI.getCurrent().getNavigator();
 	
 	public AdminAddView() {
 		
@@ -54,12 +60,63 @@ public class AdminAddView extends VerticalLayout implements View {
 		Image logoImage = new Image("", logoResource);
 		logoImage.setWidth("130px");
 		logoImage.setHeight("60px");
-		Button myProfileButton = new Button("My profile", VaadinIcons.MENU);
+	
+		// MENU bar and methods to navigate to different pages
+		MenuBar.Command goToAllCourses = new MenuBar.Command() {
+		    public void menuSelected(MenuItem selectedItem) {
+		    	navigator.navigateTo("AdminAllCourses");
+		    }
+		};
 		
+		MenuBar.Command goToAddCourse = new MenuBar.Command() {
+		    public void menuSelected(MenuItem selectedItem) {
+		    	navigator.navigateTo("AdminAddCourse");
+		    }
+		};
 		
-		layoutH.addComponents(logoImage, myProfileButton);
+		MenuBar.Command goToAllOrders = new MenuBar.Command() {
+		    public void menuSelected(MenuItem selectedItem) {
+		    	//navigator.navigateTo("UserOrders");
+		    }
+		};
+		
+		MenuBar.Command goToAllUsers = new MenuBar.Command() {
+		    public void menuSelected(MenuItem selectedItem) {
+		    	navigator.navigateTo("AdminAllUsers");
+		    }
+		};
+		
+		MenuBar.Command goToAddUser = new MenuBar.Command() {
+		    public void menuSelected(MenuItem selectedItem) {
+		    	navigator.navigateTo("AdminAddUser");
+		    }
+		};
+		
+		MenuBar.Command goToUserSettings = new MenuBar.Command() {
+		    public void menuSelected(MenuItem selectedItem) {
+		    	navigator.navigateTo("Settings");
+		    }
+		};
+		
+		MenuBar.Command logout = new MenuBar.Command() {
+		    public void menuSelected(MenuItem selectedItem) {
+		    	navigator.navigateTo("Home");
+		    }
+		};
+		
+		MenuBar profileMenu = new MenuBar();
+		MenuItem myProfileMainItem = profileMenu.addItem("My profile", VaadinIcons.MENU, null);
+		MenuItem allCoursesItem = myProfileMainItem.addItem("All courses", VaadinIcons.ACADEMY_CAP, goToAllCourses);
+		MenuItem addCoursesItem = myProfileMainItem.addItem("Add course", VaadinIcons.FILE_ADD, goToAddCourse);
+		MenuItem allOrdersItem = myProfileMainItem.addItem("All orders", VaadinIcons.NEWSPAPER, goToAllOrders);
+		MenuItem allUsersItem = myProfileMainItem.addItem("All users", VaadinIcons.USERS, goToAllUsers);
+		MenuItem addUserItem = myProfileMainItem.addItem("Add user", VaadinIcons.PLUS, goToAddUser);
+		MenuItem mySettingsItem = myProfileMainItem.addItem("Settings", VaadinIcons.USER, goToUserSettings);
+		MenuItem myLogoutItem = myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, logout);
+		
+		layoutH.addComponents(logoImage, profileMenu);
 		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
-		layoutH.setComponentAlignment(myProfileButton, Alignment.BOTTOM_RIGHT);
+		layoutH.setComponentAlignment(profileMenu, Alignment.BOTTOM_RIGHT);
 		
 		// 2 - Add panel
 		VerticalLayout layoutVBody = new VerticalLayout();

@@ -41,6 +41,7 @@
 				<scope>import</scope>
 			</dependency>
 		</dependencies>
+		
 	</dependencyManagement>
 
 	<dependencies>
@@ -94,6 +95,11 @@
 		<artifactId>validation-api</artifactId>
 		<version>2.0.1.Final</version>
 	</dependency>
+        <!-- For different types for fields - numberField, emailField etc. -->
+     <!--   <dependency>
+            <groupId>com.vaadin</groupId>
+             <artifactId>vaadin-text-field-flow</artifactId>
+       </dependency> -->
 	</dependencies>
 
 	<build>

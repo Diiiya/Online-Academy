@@ -2,6 +2,7 @@ package com.academy.onlineAcademy.view;
 
 import java.io.File;
 
+import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.VaadinService;
@@ -10,6 +11,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 public class LoginView extends VerticalLayout implements View {
@@ -19,6 +21,7 @@ public class LoginView extends VerticalLayout implements View {
 	final TextField usernameField = new TextField();
 	final TextField passwordField = new TextField();
 	Button loginButton = new Button("Login");
+	Navigator navigator = UI.getCurrent().getNavigator();
 	
 	public LoginView() {
 		
@@ -33,8 +36,10 @@ public class LoginView extends VerticalLayout implements View {
 	    usernameField.setCaption("Type your username:");    
 	    passwordField.setCaption("Type your password:");
 	    loginButton.addClickListener(e -> {
-	        addComponent(new Label("Thanks " + usernameField.getValue() 
-	                + ", it works!"));
+	        // 1. Checks user name and password combination
+	    	// 2. If true -> navigates to the user's (with id) courses page
+	    	navigator.navigateTo("UserCourses");
+	    	// 3. If false -> displays a wrong input combination message
 	    });
 	    
 	    layout.addComponents(image, usernameField, passwordField, loginButton);

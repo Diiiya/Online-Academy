@@ -3,6 +3,7 @@ package com.academy.onlineAcademy.view;
 import java.io.File;
 
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.VaadinService;
@@ -11,13 +12,17 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
+import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.MenuBar.MenuItem;
 
 public class UserSettingsView extends VerticalLayout implements View {
+	
+	Navigator navigator = UI.getCurrent().getNavigator();
 	
 	public UserSettingsView() {
 		
@@ -36,11 +41,42 @@ public class UserSettingsView extends VerticalLayout implements View {
 		Image logoImage = new Image("", logoResource);
 		logoImage.setWidth("130px");
 		logoImage.setHeight("60px");
-		Button myProfileButton = new Button("My profile", VaadinIcons.MENU);
 		
-		layoutH.addComponents(logoImage, myProfileButton);
+		// MENU bar and methods to navigate to different pages
+		MenuBar.Command goToUsersCourses = new MenuBar.Command() {
+		    public void menuSelected(MenuItem selectedItem) {
+		    	navigator.navigateTo("UserCourses");
+		    }
+		};
+		
+		MenuBar.Command goToUserOrders = new MenuBar.Command() {
+		    public void menuSelected(MenuItem selectedItem) {
+		    	navigator.navigateTo("UserOrders");
+		    }
+		};
+		
+		MenuBar.Command goToUserSettings = new MenuBar.Command() {
+		    public void menuSelected(MenuItem selectedItem) {
+		    	navigator.navigateTo("Settings");
+		    }
+		};
+		
+		MenuBar.Command logout = new MenuBar.Command() {
+		    public void menuSelected(MenuItem selectedItem) {
+		    	navigator.navigateTo("Home");
+		    }
+		};
+		
+		MenuBar profileMenu = new MenuBar();
+		MenuItem myProfileMainItem = profileMenu.addItem("My profile", VaadinIcons.MENU, null);
+		MenuItem myCoursesItem = myProfileMainItem.addItem("My courses", VaadinIcons.ACADEMY_CAP, goToUsersCourses);
+		MenuItem myOrdersItem = myProfileMainItem.addItem("My orders", VaadinIcons.NEWSPAPER, goToUserOrders);
+		MenuItem mySettingsItem = myProfileMainItem.addItem("Settings", VaadinIcons.USER, goToUserSettings);
+		MenuItem myLogoutItem = myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, logout);
+		
+		layoutH.addComponents(logoImage, profileMenu);
 		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
-		layoutH.setComponentAlignment(myProfileButton, Alignment.BOTTOM_RIGHT);
+		layoutH.setComponentAlignment(profileMenu, Alignment.BOTTOM_RIGHT);
 
 		// 2 - Photo panel
 		VerticalLayout layoutVBody = new VerticalLayout();

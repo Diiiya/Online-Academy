@@ -61,7 +61,7 @@ public class MyUI extends UI {
         navigator.addView("Course", courseViewObj);
         navigator.addView("UserOrders", userOrdersViewObj);
         navigator.addView("Settings", userSettingsViewObj);
-        navigator.addView("AdminAdd", adminAddViewObj);
+        navigator.addView("AdminAddUser", adminAddViewObj);
         navigator.addView("AdminAllUsers", adminAllUsersObj);
         navigator.addView("AdminAddCourse", adminAddCourseViewObj);
         navigator.addView("AdminAllCourses", adminAllCourseViewObj);
