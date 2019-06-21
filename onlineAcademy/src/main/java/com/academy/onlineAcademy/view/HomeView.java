@@ -10,6 +10,7 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileResource;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -17,6 +18,7 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -71,11 +73,21 @@ public class HomeView extends VerticalLayout implements View {
 		searchField.setPlaceholder("SEARCH");
 		Button searchButton = new Button("Search", VaadinIcons.SEARCH);
 		searchButton.addClickListener(e -> {
-			courseObj.getCourseByName(searchField.getValue());
-//			List<Course> selectedCourses = courseObj.getAllCourses();
-//			grid.setItems(selectedCourses);
-			Course selectedCourse = courseObj.getCourseByName(searchField.getValue());
-			grid.setItems(selectedCourse);
+			try {
+				courseObj.getCourseByName(searchField.getValue());
+//				List<Course> selectedCourses = courseObj.getAllCourses();
+//				grid.setItems(selectedCourses);
+				Course selectedCourse = courseObj.getCourseByName(searchField.getValue());
+				grid.setItems(selectedCourse);
+			}
+			catch(Exception ex) {
+				Notification notif = new Notification(
+					    "Warning",
+					    "No course with such name have been found!",
+					    Notification.TYPE_WARNING_MESSAGE);
+				notif.show(Page.getCurrent());
+			}
+
 		});
 		searchHLayout.addComponents(searchField, searchButton);
 		searchHLayout.setComponentAlignment(searchButton, Alignment.BOTTOM_RIGHT);

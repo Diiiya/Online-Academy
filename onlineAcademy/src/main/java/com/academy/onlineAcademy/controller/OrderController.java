@@ -11,6 +11,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import com.academy.onlineAcademy.model.Order;
+import com.academy.onlineAcademy.model.Person;
 
 public class OrderController {
 	
@@ -64,6 +65,26 @@ public class OrderController {
 		}
 	}
 	
+	public List<Order> getAllOrders() {
+		EntityManager em = null;
+		try {
+			em = emFactoryObj.createEntityManager();
+		    em.getTransaction().begin();
+		    
+			TypedQuery<Order> query = em.createNamedQuery("getAllOrders", Order.class);
+		    em.getTransaction().commit();
+		    return query.getResultList();
+		} catch(PersistenceException e) {
+
+		    em.getTransaction().rollback();
+		    
+		    throw e;
+		}
+        finally {
+		em.close();
+		}
+	}
+	
 	public List<Order> getAllOrdersByUser(int userId) {
 		try {
 
@@ -99,6 +120,25 @@ public class OrderController {
 		}
         finally {
 		em.close();
+		}
+	}
+	
+	public int deleteOrderById(int id) {
+		try {
+
+		    emDEL.getTransaction().begin();
+		    
+		    int count = emDEL.createNamedQuery("deleteByOrderId", Person.class).executeUpdate();
+		    emDEL.getTransaction().commit();
+		    return count;
+		} catch(PersistenceException e) {
+
+		    emDEL.getTransaction().rollback();
+		    
+		    throw e;
+		}
+        finally {
+		emDEL.close();
 		}
 	}
 	

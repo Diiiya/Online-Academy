@@ -21,6 +21,7 @@ public class LoginView extends VerticalLayout implements View {
 	final TextField usernameField = new TextField();
 	final TextField passwordField = new TextField();
 	Button loginButton = new Button("Login");
+	Button signUpButton = new Button("Sign up");
 	Navigator navigator = UI.getCurrent().getNavigator();
 	
 	public LoginView() {
@@ -34,20 +35,26 @@ public class LoginView extends VerticalLayout implements View {
 		image.setHeight("100px");
 	    
 	    usernameField.setCaption("Type your username:");    
+	    usernameField.setWidth("200px");
 	    passwordField.setCaption("Type your password:");
+	    passwordField.setWidth("200px");
+	    loginButton.setWidth("200px");
 	    loginButton.addClickListener(e -> {
 	        // 1. Checks user name and password combination
 	    	// 2. If true -> navigates to the user's (with id) courses page
 	    	navigator.navigateTo("UserCourses");
 	    	// 3. If false -> displays a wrong input combination message
 	    });
+	    signUpButton.setWidth("200px");
+	    signUpButton.addClickListener(e -> navigator.navigateTo("SignUp"));
 	    
-	    layout.addComponents(image, usernameField, passwordField, loginButton);
+	    layout.addComponents(image, usernameField, passwordField, loginButton, signUpButton);
 	    
 	    layout.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
 	    layout.setComponentAlignment(usernameField, Alignment.MIDDLE_CENTER);
 	    layout.setComponentAlignment(passwordField, Alignment.MIDDLE_CENTER);
 	    layout.setComponentAlignment(loginButton, Alignment.MIDDLE_CENTER);
+	    layout.setComponentAlignment(signUpButton, Alignment.MIDDLE_CENTER);
 	    
 	    addComponent(layout);
 		

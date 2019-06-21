@@ -131,6 +131,26 @@ public class PersonController {
 		}
 	}
 	
+	public Person getPersonByUsername(String username) {
+		EntityManager em = null;
+		try {
+			em = emFactoryObj.createEntityManager();
+		    em.getTransaction().begin();
+		    
+		    TypedQuery<Person> query = em.createNamedQuery("findUserByUsername", Person.class);
+		    em.getTransaction().commit();
+		    return query.setParameter("username", username).getSingleResult();
+		} catch(PersistenceException e) {
+
+		    em.getTransaction().rollback();
+		    
+		    throw e;
+		}
+        finally {
+		em.close();
+		}
+	}
+	
 	public void updatePersonById(Person person, int id, String fullName, String username, String email, String password, Type type) {
 		try {
 

@@ -26,10 +26,12 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name="TORDER")
 @NamedQueries({
-	@NamedQuery(name = "getAllOrders", query = "SELECT o FROM Order o WHERE o.userId = :userId"),
+	@NamedQuery(name = "getAllOrders", query = "SELECT o FROM Order o"),
+	@NamedQuery(name = "getAllOrdersByUser", query = "SELECT o FROM Order o WHERE o.userId = :userId"),
 	@NamedQuery(name = "findOrderById", query = "SELECT o FROM Order o WHERE o.id = :id"),
 	@NamedQuery(name = "orderByTotalPriceAsc", query = "SELECT o FROM Order o ORDER BY o.price ASC"),
-	@NamedQuery(name = "orderByDateAsc", query = "SELECT o FROM Order o ORDER BY o.purchaseDate ASC")
+	@NamedQuery(name = "orderByDateAsc", query = "SELECT o FROM Order o ORDER BY o.purchaseDate ASC"),
+	@NamedQuery(name = "deleteByOrderId", query = "DELETE FROM Order o WHERE o.id = :id")
 })
 public class Order implements Serializable{
 	

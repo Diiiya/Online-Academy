@@ -5,10 +5,12 @@ import javax.servlet.annotation.WebServlet;
 import com.academy.onlineAcademy.view.AdminAddCourseView;
 import com.academy.onlineAcademy.view.AdminAddView;
 import com.academy.onlineAcademy.view.AdminAllCoursesView;
+import com.academy.onlineAcademy.view.AdminAllOrdersView;
 import com.academy.onlineAcademy.view.AdminAllUsersView;
 import com.academy.onlineAcademy.view.CourseView;
 import com.academy.onlineAcademy.view.HomeView;
 import com.academy.onlineAcademy.view.LoginView;
+import com.academy.onlineAcademy.view.SignUpView;
 import com.academy.onlineAcademy.view.UserCoursesView;
 import com.academy.onlineAcademy.view.UserOrdersView;
 import com.academy.onlineAcademy.view.UserSettingsView;
@@ -45,6 +47,7 @@ public class MyUI extends UI {
         setNavigator(navigator);
         
         LoginView loginViewObj = new LoginView();
+        SignUpView signUpViewObj = new SignUpView();
         HomeView homeViewObj = new HomeView();
         UserCoursesView userCoursesViewObj = new UserCoursesView();
         CourseView courseViewObj = new CourseView();
@@ -54,8 +57,10 @@ public class MyUI extends UI {
         AdminAllUsersView adminAllUsersObj = new AdminAllUsersView();
         AdminAddCourseView adminAddCourseViewObj = new AdminAddCourseView();
         AdminAllCoursesView adminAllCourseViewObj = new AdminAllCoursesView();
+        AdminAllOrdersView adminAllOrdersViewObj = new AdminAllOrdersView();
         
         navigator.addView("Login", loginViewObj);
+        navigator.addView("SignUp", signUpViewObj);
         navigator.addView("Home", homeViewObj);
         navigator.addView("UserCourses", userCoursesViewObj);
         navigator.addView("Course", courseViewObj);
@@ -65,6 +70,7 @@ public class MyUI extends UI {
         navigator.addView("AdminAllUsers", adminAllUsersObj);
         navigator.addView("AdminAddCourse", adminAddCourseViewObj);
         navigator.addView("AdminAllCourses", adminAllCourseViewObj);
+        navigator.addView("AdminAllOrders", adminAllOrdersViewObj);
         
         navigator.navigateTo("Home");
         

@@ -29,63 +29,40 @@ public class UserOrdersView extends VerticalLayout implements View {
 	
 	Navigator navigator = UI.getCurrent().getNavigator();
 	
+	VerticalLayout mainVLayout = new VerticalLayout();
+			HorizontalLayout layoutH = new HorizontalLayout();	
+					String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+					FileResource logoResource = new FileResource(new File(basepath +
+				            "/logo.jpg"));
+					Image logoImage = new Image("", logoResource);
+					MenuBar profileMenu = new MenuBar();
+			Label myOrdersLabel = new Label("My orders:");
+			Grid<com.academy.onlineAcademy.model.Order> grid = new Grid<>();
+	
+	
 	public UserOrdersView() {
 		
-		VerticalLayout mainVLayout = new VerticalLayout();
-		
-		// 1 - Header bar ?
-		HorizontalLayout layoutH = new HorizontalLayout();
+		// 1 - Header bar and UI settings
 		layoutH.setSpacing(true);
 		layoutH.setWidth("100%");
 		layoutH.setHeight("70px");
 		
-		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-		FileResource logoResource = new FileResource(new File(basepath +
-	            "/logo.jpg"));
-			
-		Image logoImage = new Image("", logoResource);
 		logoImage.setWidth("130px");
 		logoImage.setHeight("60px");
 		
-		// MENU bar and methods to navigate to different pages
-		MenuBar.Command goToUsersCourses = new MenuBar.Command() {
-		    public void menuSelected(MenuItem selectedItem) {
-		    	navigator.navigateTo("UserCourses");
-		    }
-		};
-		
-		MenuBar.Command goToUserOrders = new MenuBar.Command() {
-		    public void menuSelected(MenuItem selectedItem) {
-		    	navigator.navigateTo("UserOrders");
-		    }
-		};
-		
-		MenuBar.Command goToUserSettings = new MenuBar.Command() {
-		    public void menuSelected(MenuItem selectedItem) {
-		    	navigator.navigateTo("Settings");
-		    }
-		};
-		
-		MenuBar.Command logout = new MenuBar.Command() {
-		    public void menuSelected(MenuItem selectedItem) {
-		    	navigator.navigateTo("Home");
-		    }
-		};
-		
-		MenuBar profileMenu = new MenuBar();
+		// MENU bar and methods to navigate to different pages		
 		MenuItem myProfileMainItem = profileMenu.addItem("My profile", VaadinIcons.MENU, null);
-		MenuItem myCoursesItem = myProfileMainItem.addItem("My courses", VaadinIcons.ACADEMY_CAP, goToUsersCourses);
-		MenuItem myOrdersItem = myProfileMainItem.addItem("My orders", VaadinIcons.NEWSPAPER, goToUserOrders);
-		MenuItem mySettingsItem = myProfileMainItem.addItem("Settings", VaadinIcons.USER, goToUserSettings);
-		MenuItem myLogoutItem = myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, logout);
+		MenuItem myCoursesItem = myProfileMainItem.addItem("My courses", VaadinIcons.ACADEMY_CAP, createNavigationCommand("UserCourses"));
+		MenuItem myOrdersItem = myProfileMainItem.addItem("My orders", VaadinIcons.NEWSPAPER, createNavigationCommand("UserOrders"));
+		MenuItem mySettingsItem = myProfileMainItem.addItem("Settings", VaadinIcons.USER, createNavigationCommand("Settings"));
+		MenuItem myLogoutItem = myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, createNavigationCommand("Home"));
 		
 		layoutH.addComponents(logoImage, profileMenu);
 		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
 		layoutH.setComponentAlignment(profileMenu, Alignment.BOTTOM_RIGHT);
 		
 		// 2 - Orders
-		Label myOrdersLabel = new Label("My orders:");
-		
+		// Static - to be replaced
 		Date date = new Date();
 		
 		List<Order> orders = Arrays.asList(
@@ -94,18 +71,26 @@ public class UserOrdersView extends VerticalLayout implements View {
 				new Order( 1, 3, date, true, 300)
 				);
 		
-		Grid<com.academy.onlineAcademy.model.Order> grid = new Grid<>();
 		grid.setItems(orders);
+		grid.setWidth("100%");
 		
+		grid.addColumn(com.academy.onlineAcademy.model.Order::getUserId).setCaption("User id");
 		grid.addColumn(com.academy.onlineAcademy.model.Order::getCourseId).setCaption("Course id");
 		grid.addColumn(com.academy.onlineAcademy.model.Order::getPurchaseDate).setCaption("Purchase date");
-		grid.addColumn(com.academy.onlineAcademy.model.Order::isPaid).setCaption("Course description");
+		grid.addColumn(com.academy.onlineAcademy.model.Order::isPaid).setCaption("Paid ?");
 		grid.addColumn(com.academy.onlineAcademy.model.Order::getPrice).setCaption("Price");
-		
-		grid.setWidth("100%");
 		
 		mainVLayout.addComponents(layoutH, myOrdersLabel, grid);
 		addComponent(mainVLayout);
 	}
-
+	
+	
+	MenuBar.Command createNavigationCommand(String navigationView) {
+		return new MenuBar.Command() {
+		    public void menuSelected(MenuItem selectedItem) {
+		    	navigator.navigateTo(navigationView);
+		    }
+		};
+	}
+	
 }

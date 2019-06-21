@@ -69,58 +69,15 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		logoImage.setWidth("130px");
 		logoImage.setHeight("60px");
 		
-		// MENU bar and methods to navigate to different pages
-		MenuBar.Command goToAllCourses = new MenuBar.Command() {
-		    public void menuSelected(MenuItem selectedItem) {
-		    	navigator.navigateTo("AdminAllCourses");
-		    }
-		};
-		
-		MenuBar.Command goToAddCourse = new MenuBar.Command() {
-		    public void menuSelected(MenuItem selectedItem) {
-		    	navigator.navigateTo("AdminAddCourse");
-		    }
-		};
-		
-		MenuBar.Command goToAllOrders = new MenuBar.Command() {
-		    public void menuSelected(MenuItem selectedItem) {
-		    	//navigator.navigateTo("UserOrders");
-		    }
-		};
-		
-		MenuBar.Command goToAllUsers = new MenuBar.Command() {
-		    public void menuSelected(MenuItem selectedItem) {
-		    	navigator.navigateTo("AdminAllUsers");
-		    }
-		};
-		
-		MenuBar.Command goToAddUser = new MenuBar.Command() {
-		    public void menuSelected(MenuItem selectedItem) {
-		    	navigator.navigateTo("AdminAddUser");
-		    }
-		};
-		
-		MenuBar.Command goToUserSettings = new MenuBar.Command() {
-		    public void menuSelected(MenuItem selectedItem) {
-		    	navigator.navigateTo("Settings");
-		    }
-		};
-		
-		MenuBar.Command logout = new MenuBar.Command() {
-		    public void menuSelected(MenuItem selectedItem) {
-		    	navigator.navigateTo("Home");
-		    }
-		};
-		
 		MenuBar profileMenu = new MenuBar();
 		MenuItem myProfileMainItem = profileMenu.addItem("My profile", VaadinIcons.MENU, null);
-		MenuItem allCoursesItem = myProfileMainItem.addItem("All courses", VaadinIcons.ACADEMY_CAP, goToAllCourses);
-		MenuItem addCoursesItem = myProfileMainItem.addItem("Add course", VaadinIcons.FILE_ADD, goToAddCourse);
-		MenuItem allOrdersItem = myProfileMainItem.addItem("All orders", VaadinIcons.NEWSPAPER, goToAllOrders);
-		MenuItem allUsersItem = myProfileMainItem.addItem("All users", VaadinIcons.USERS, goToAllUsers);
-		MenuItem addUserItem = myProfileMainItem.addItem("Add user", VaadinIcons.PLUS, goToAddUser);
-		MenuItem mySettingsItem = myProfileMainItem.addItem("Settings", VaadinIcons.USER, goToUserSettings);
-		MenuItem myLogoutItem = myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, logout);
+		MenuItem allCoursesItem = myProfileMainItem.addItem("All courses", VaadinIcons.ACADEMY_CAP, createNavigationCommand("AdminAllCourses"));
+		MenuItem addCoursesItem = myProfileMainItem.addItem("Add course", VaadinIcons.FILE_ADD, createNavigationCommand("AdminAddCourse"));
+		MenuItem allOrdersItem = myProfileMainItem.addItem("All orders", VaadinIcons.NEWSPAPER, createNavigationCommand("AdminAllOrders"));
+		MenuItem allUsersItem = myProfileMainItem.addItem("All users", VaadinIcons.USERS, createNavigationCommand("AdminAllUsers"));
+		MenuItem addUserItem = myProfileMainItem.addItem("Add user", VaadinIcons.PLUS, createNavigationCommand("AdminAddUser"));
+		MenuItem mySettingsItem = myProfileMainItem.addItem("Settings", VaadinIcons.USER, createNavigationCommand("Settings"));
+		MenuItem myLogoutItem = myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, createNavigationCommand("Home"));
 		
 		layoutH.addComponents(logoImage, profileMenu);
 		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
@@ -318,6 +275,14 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 				mainVLayout.setComponentAlignment(buttonsHLayout, Alignment.BOTTOM_CENTER);
 				addComponent(mainVLayout);
 		
+	}
+	
+	MenuBar.Command createNavigationCommand(String navigationView) {
+		return new MenuBar.Command() {
+		    public void menuSelected(MenuItem selectedItem) {
+		    	navigator.navigateTo(navigationView);
+		    }
+		};
 	}
 	
 	@Override
