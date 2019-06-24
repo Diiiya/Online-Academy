@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.academy.onlineAcademy.controller.PersonController;
+import com.academy.onlineAcademy.helper.NewUserMethods;
 import com.academy.onlineAcademy.model.Person;
 import com.academy.onlineAcademy.model.Type;
 import com.vaadin.data.Binder;
@@ -33,10 +34,7 @@ import com.vaadin.ui.VerticalLayout;
 public class SignUpView extends VerticalLayout implements View {
 	
 	Navigator navigator = UI.getCurrent().getNavigator();
-	Binder<Person> binder = new Binder<>();
-	PersonController obj = new PersonController();
-	String enteredUsername;
-	String databaseUsername;
+	public static Binder<Person> binder = new Binder<>();
 	
 	VerticalLayout mainVLayout = new VerticalLayout();
 	HorizontalLayout layoutH = new HorizontalLayout();
@@ -98,21 +96,8 @@ public class SignUpView extends VerticalLayout implements View {
 
 				addButton.setWidth("100");
 				addButton.addClickListener(e -> {
-					if (emptyFields() == true) {
-						
-						enteredUsername = usernameField.getValue();
-						
-						existingUsername();
-			         }
-				
-					    
-					else {
-						Notification notif = new Notification(
-							    "Warning",
-							    "All required fields (*) should be filled in!",
-							    Notification.TYPE_WARNING_MESSAGE);
-						notif.show(Page.getCurrent());
-					} 
+					NewUserMethods.checkEmptyFields(2, fullNameField.getValue(), usernameField.getValue(), emailField.getValue(),
+							passwordField.getValue(), confirmPasswordField.getValue()); 
 				});
 				
 				
@@ -123,61 +108,6 @@ public class SignUpView extends VerticalLayout implements View {
 		        mainVLayout.addComponents(layoutH, layoutVBody);
 		        addComponent(mainVLayout);
 		
-	}
-
-	public boolean emptyFields() {
-		if (fullNameField.getValue() != "" && usernameField.getValue() != "" && emailField.getValue() != "" && 
-				passwordField.getValue() != "" && confirmPasswordField.getValue() != "") {
-			return true;
-		}
-		return false;
-	}
-	
-	public void existingUsername() {
-		try {
-	    	databaseUsername = obj.getPersonByUsername(enteredUsername).getUsername();
-	    	
-	    	Notification notif = new Notification(
-				    "Warning",
-				    "The username already exists! Please user another one or log in!",
-				    Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-	     }
-		 catch (Exception ex) {
-						System.out.println("MESSAGE FROM THE CATHC");
-						if (matchingPasswords() == true) {
-							addUserToDatabase();
-						}
-						else {
-							Notification notif = new Notification(
-								    "Warning",
-								    "The fields for password and confrim password do not match!",
-								    Notification.TYPE_WARNING_MESSAGE);
-							notif.show(Page.getCurrent());
-						}	
-			}
-	}
-	
-	public boolean matchingPasswords() {
-		if (passwordField.getValue().equals(confirmPasswordField.getValue())) {
-			return true;
-		}
-		return false;
-	}
-	
-	public void addUserToDatabase() {
-		try {
-			obj.addPerson(fullNameField.getValue(), usernameField.getValue(), emailField.getValue(), passwordField.getValue(), null, Type.USER, null, null);
-			
-			Notification notif = new Notification(
-				    "Confirmation",
-				    "The user has been created!",
-				    Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-		}
-		catch(Exception ex2) {
-			ex2.printStackTrace();
-		}
 	}
 	
 }

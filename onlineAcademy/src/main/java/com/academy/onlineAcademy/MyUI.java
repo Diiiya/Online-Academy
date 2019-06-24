@@ -3,7 +3,7 @@ package com.academy.onlineAcademy;
 import javax.servlet.annotation.WebServlet;
 
 import com.academy.onlineAcademy.view.AdminAddCourseView;
-import com.academy.onlineAcademy.view.AdminAddView;
+import com.academy.onlineAcademy.view.AdminAddUserView;
 import com.academy.onlineAcademy.view.AdminAllCoursesView;
 import com.academy.onlineAcademy.view.AdminAllOrdersView;
 import com.academy.onlineAcademy.view.AdminAllUsersView;
@@ -53,7 +53,7 @@ public class MyUI extends UI {
         CourseView courseViewObj = new CourseView();
         UserOrdersView userOrdersViewObj = new UserOrdersView();
         UserSettingsView userSettingsViewObj = new UserSettingsView();
-        AdminAddView adminAddViewObj = new AdminAddView();
+        AdminAddUserView adminAddUserViewObj = new AdminAddUserView();
         AdminAllUsersView adminAllUsersObj = new AdminAllUsersView();
         AdminAddCourseView adminAddCourseViewObj = new AdminAddCourseView();
         AdminAllCoursesView adminAllCourseViewObj = new AdminAllCoursesView();
@@ -66,7 +66,7 @@ public class MyUI extends UI {
         navigator.addView("Course", courseViewObj);
         navigator.addView("UserOrders", userOrdersViewObj);
         navigator.addView("Settings", userSettingsViewObj);
-        navigator.addView("AdminAddUser", adminAddViewObj);
+        navigator.addView("AdminAddUser", adminAddUserViewObj);
         navigator.addView("AdminAllUsers", adminAllUsersObj);
         navigator.addView("AdminAddCourse", adminAddCourseViewObj);
         navigator.addView("AdminAllCourses", adminAllCourseViewObj);

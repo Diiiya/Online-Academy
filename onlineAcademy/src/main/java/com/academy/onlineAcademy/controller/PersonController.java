@@ -30,11 +30,11 @@ public class PersonController {
     }
 	
 	EntityManager emUPD;
-	EntityManager emDEL;
+//	EntityManager emDEL;
 	
 	public PersonController() {
 		  emUPD = emFactoryObj.createEntityManager();
-		  emDEL = emFactoryObj.createEntityManager();
+//		  emDEL = emFactoryObj.createEntityManager();
 		}
 
 	public void addPerson(String fullName, String username, String email, String password, byte[] photo, Type type,
@@ -151,6 +151,26 @@ public class PersonController {
 		}
 	}
 	
+	public Person getPersonByEmail(String email) {
+		EntityManager em = null;
+		try {
+			em = emFactoryObj.createEntityManager();
+		    em.getTransaction().begin();
+		    
+		    TypedQuery<Person> query = em.createNamedQuery("findUserByEmail", Person.class);
+		    em.getTransaction().commit();
+		    return query.setParameter("email", email).getSingleResult();
+		} catch(PersistenceException e) {
+
+		    em.getTransaction().rollback();
+		    
+		    throw e;
+		}
+        finally {
+		em.close();
+		}
+	}
+	
 	public void updatePersonById(Person person, int id, String fullName, String username, String email, String password, Type type) {
 		try {
 
@@ -178,9 +198,10 @@ public class PersonController {
 		}
 	}
 	
-	public int deleteAllCourse(int id) {
+	public int deleteAllUsers() {
+		EntityManager emDEL = null;
 		try {
-
+			emDEL = emFactoryObj.createEntityManager();
 		    emDEL.getTransaction().begin();
 		    
 		    int count = emDEL.createNamedQuery("deleteAllUsers", Person.class).executeUpdate();
@@ -197,12 +218,13 @@ public class PersonController {
 		}
 	}
 	
-	public int deleteCourseById(int id) {
+	public int deletePersonById(int id) {
+		EntityManager emDEL = null;
 		try {
-
+			emDEL = emFactoryObj.createEntityManager();
 		    emDEL.getTransaction().begin();
 		    
-		    int count = emDEL.createNamedQuery("deleteByPersonId", Person.class).executeUpdate();
+		    int count = emDEL.createNamedQuery("deleteByPersonId", Person.class).setParameter("id", id).executeUpdate();
 		    emDEL.getTransaction().commit();
 		    return count;
 		} catch(PersistenceException e) {

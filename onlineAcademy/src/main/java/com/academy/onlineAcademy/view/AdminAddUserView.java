@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.academy.onlineAcademy.controller.PersonController;
+import com.academy.onlineAcademy.helper.NewUserMethods;
 import com.academy.onlineAcademy.model.Person;
 import com.academy.onlineAcademy.model.Type;
 import com.vaadin.data.Binder;
@@ -35,30 +36,43 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.MenuBar.MenuItem;
 
-public class AdminAddView extends VerticalLayout implements View {
+public class AdminAddUserView extends VerticalLayout implements View {
 	
 	Navigator navigator = UI.getCurrent().getNavigator();
+	public static Binder<Person> binder = new Binder<>();
 	
-	public AdminAddView() {
+	VerticalLayout mainVLayout = new VerticalLayout();	
+			HorizontalLayout layoutH = new HorizontalLayout();
+					String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+					FileResource logoResource = new FileResource(new File(basepath +
+				            "/logo.jpg"));
+					Image logoImage = new Image("", logoResource);
+					MenuBar profileMenu = new MenuBar();
+			VerticalLayout layoutVBody = new VerticalLayout();
+					Panel panel = new Panel("Add a new user ... ");
+							FormLayout content = new FormLayout();
+									TextField fullNameField = new TextField("Full name:");
+									TextField usernameField = new TextField("Username:");
+									TextField emailField = new TextField("Email:");
+									PasswordField passwordField = new PasswordField("Password: ");
+									PasswordField confirmPasswordField = new PasswordField("Repeat password: ");
+									List<String> types = Stream.of(Type.values())
+								            .map(Enum::name)
+								            .collect(Collectors.toList());
+									ComboBox<String> selectTypeComboBox = new ComboBox<>("Select type:", types);
+							Button addButton = new Button("ADD");
+	
+	public AdminAddUserView() {
 		
-        VerticalLayout mainVLayout = new VerticalLayout();
-		
-		// 1 - Header bar ?
-		HorizontalLayout layoutH = new HorizontalLayout();
+		// 1 - Header bar and UI settings
 		layoutH.setSpacing(true);
 		layoutH.setWidth("100%");
 		layoutH.setHeight("90px");
 		
-		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-		FileResource logoResource = new FileResource(new File(basepath +
-	            "/logo.jpg"));
-			
-		Image logoImage = new Image("", logoResource);
 		logoImage.setWidth("130px");
 		logoImage.setHeight("60px");
 	
 		// MENU bar and methods to navigate to different pages
-		MenuBar profileMenu = new MenuBar();
 		MenuItem myProfileMainItem = profileMenu.addItem("My profile", VaadinIcons.MENU, null);
 		MenuItem allCoursesItem = myProfileMainItem.addItem("All courses", VaadinIcons.ACADEMY_CAP, createNavigationCommand("AdminAllCourses"));
 		MenuItem addCoursesItem = myProfileMainItem.addItem("Add course", VaadinIcons.FILE_ADD, createNavigationCommand("AdminAddCourse"));
@@ -73,104 +87,40 @@ public class AdminAddView extends VerticalLayout implements View {
 		layoutH.setComponentAlignment(profileMenu, Alignment.BOTTOM_RIGHT);
 		
 		// 2 - Add panel
-		VerticalLayout layoutVBody = new VerticalLayout();
 		layoutVBody.setWidth("100%");
-		
-		Panel panel = new Panel("Add a new user ... ");
 		panel.setSizeUndefined();
-		
-		TextField fullNameField = new TextField("Full name:");
-		TextField usernameField = new TextField("Username:");
-		TextField emailField = new TextField("Email:");
-		PasswordField passwordField = new PasswordField("Password: ");
-		PasswordField confirmPasswordField = new PasswordField("Repeat password: ");
-		
-		List<String> types = Stream.of(Type.values())
-                .map(Enum::name)
-                .collect(Collectors.toList());
-		
-		ComboBox<String> selectTypeComboBox = new ComboBox<>("Select type:", types);
-		// types -> index 2 is a USER type of Person
 		selectTypeComboBox.setValue(types.get(2));
 		selectTypeComboBox.setEmptySelectionAllowed(false);
 		
-		FormLayout content = new FormLayout();
 		content.addComponents(fullNameField, usernameField, emailField, passwordField, confirmPasswordField, selectTypeComboBox);
 		content.setSizeUndefined(); 
 		content.setMargin(true);
 		panel.setContent(content);
 		
 		///////// BINDER Part + validations
-		Binder<Person> binder = new Binder<>();
 		binder.forField(fullNameField).withValidator(new StringLengthValidator(
 				"Name must be between 5 and 30 characters long!",3, 50))
 		.asRequired("Cannot be empty")
 	    .bind(Person::getFullName, Person::setFullName);
-		
 		binder.forField(usernameField).withValidator(new StringLengthValidator(
 				"Username must be between 6 and 30 characters long!",3, 30))
 		.asRequired("Cannot be empty")
 	    .bind(Person::getUsername, Person::setUsername);
-		
 		binder.forField(emailField).withValidator(new EmailValidator(
 			    "This doesn't seem to be a valid email address"))
 		.withValidator(email -> email.length() <= 50, "Email address should be max 50 characters long!")
 		.asRequired("Cannot be empty")
 	    .bind(Person::getEmail, Person::setEmail);
-		
 		binder.forField(passwordField).asRequired("Cannot be empty")
 		.withValidator(new RegexpValidator("Password should contain at least one digit, one lower, one upper case letter and special symbol (# $ ^ + = ! * () @ % &) "
 				+ "and be at least 8 characters long!", "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[#$^+=!*()@%&]).{8,30}$"))
-		.withValidator(new StringLengthValidator(
-				"Password must be between 8 and 30 characters long!",8, 30))
 		.bind(Person::getPassword, Person::setPassword);
-		
-		binder.forField(selectTypeComboBox)
-		.asRequired("Cannot be empty");
+		binder.forField(confirmPasswordField).asRequired("Cannot be empty");
 		
 		
-		Button addButton = new Button("ADD");
 		addButton.setWidth("100");
-		addButton.addClickListener(e -> {
-			if (fullNameField.getValue() != "" && usernameField.getValue() != "" && emailField.getValue() != "" && 
-					passwordField.getValue() != "" && confirmPasswordField.getValue() != "") {
-				PersonController obj = new PersonController();
-				
-				System.out.println("1: " + passwordField.getValue());
-				System.out.println("2: " + confirmPasswordField.getValue());
-				
-				if (passwordField.getValue().equals(confirmPasswordField.getValue())) {
-					try {
-						Type type = Type.valueOf(selectTypeComboBox.getValue());
-						obj.addPerson(fullNameField.getValue(), usernameField.getValue(), emailField.getValue(), passwordField.getValue(), null, type, null, null);
-						
-						Notification notif = new Notification(
-							    "Confirmation",
-							    "The user has been created!",
-							    Notification.TYPE_WARNING_MESSAGE);
-						notif.show(Page.getCurrent());
-					}
-					catch(Exception ex) {
-						ex.printStackTrace();
-					}
-				}
-				else {
-					Notification notif = new Notification(
-						    "Warning",
-						    "The fields for password and confrim password do not match!",
-						    Notification.TYPE_WARNING_MESSAGE);
-					notif.show(Page.getCurrent());
-				}
-
-			}
-			else {
-				Notification notif = new Notification(
-					    "Warning",
-					    "All required fields (*) should be filled in!",
-					    Notification.TYPE_WARNING_MESSAGE);
-				notif.show(Page.getCurrent());
-			} 
-		});
+		addButton.addClickListener(e -> NewUserMethods.checkEmptyFields(1, fullNameField.getValue(), usernameField.getValue(), emailField.getValue(),
+				passwordField.getValue(), confirmPasswordField.getValue()));
 		
 		layoutVBody.addComponents(panel, addButton);
 		layoutVBody.setComponentAlignment(panel, Alignment.MIDDLE_CENTER);

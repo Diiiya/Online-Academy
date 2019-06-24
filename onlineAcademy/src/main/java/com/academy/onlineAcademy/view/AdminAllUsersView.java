@@ -130,7 +130,7 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 
 		deleteCourseButton.addClickListener(e -> {
 			try {
-			personObj.deleteCourseById(selectedPersonId);
+			personObj.deletePersonById(selectedPersonId);
 	        personas = personObj.getAllUsers();
 	        grid.setItems(personas);
 	        buttonsHLayout.setVisible(false);

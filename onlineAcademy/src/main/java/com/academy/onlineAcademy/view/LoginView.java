@@ -17,20 +17,18 @@ import com.vaadin.ui.VerticalLayout;
 public class LoginView extends VerticalLayout implements View {
 	
 	final VerticalLayout layout = new VerticalLayout();
-	
-	final TextField usernameField = new TextField();
-	final TextField passwordField = new TextField();
-	Button loginButton = new Button("Login");
-	Button signUpButton = new Button("Sign up");
-	Navigator navigator = UI.getCurrent().getNavigator();
+			String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+			FileResource resource = new FileResource(new File(basepath +
+		            "/1024px-Circle-icons-profile.svg.png"));
+			Image image = new Image("", resource);
+			final TextField usernameField = new TextField();
+			final TextField passwordField = new TextField();
+			Button loginButton = new Button("Login");
+			Button signUpButton = new Button("Sign up");
+			Navigator navigator = UI.getCurrent().getNavigator();
 	
 	public LoginView() {
 		
-		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-		FileResource resource = new FileResource(new File(basepath +
-	            "/1024px-Circle-icons-profile.svg.png"));
-			
-		Image image = new Image("", resource);
 		image.setWidth("100px");
 		image.setHeight("100px");
 	    
