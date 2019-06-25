@@ -2,8 +2,10 @@ package com.academy.onlineAcademy.helper;
 
 import com.academy.onlineAcademy.controller.PersonController;
 import com.academy.onlineAcademy.model.Type;
+import com.academy.onlineAcademy.model.Person;
 import com.academy.onlineAcademy.view.AdminAddUserView;
 import com.academy.onlineAcademy.view.SignUpView;
+import com.vaadin.data.Binder;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Notification;
 
@@ -18,14 +20,14 @@ public class NewUserMethods {
 	static String enteredPassword;
 	static String enteredConfirmPassword;
 
-	public static void checkEmptyFields(int userTypeId, String fullName, String username, String email, String password, String confirmPassword) {
+	public static void checkEmptyFields(Binder<Person> binder, Type userType, String fullName, String username, String email, String password, String confirmPassword) {
 		if (fullName != "" && username != "" && email != "" && password != "" && confirmPassword != "") {
 			enteredFullName = fullName;
 			enteredUsername = username;
 			enteredEmail = email;
 			enteredPassword = password;
 			enteredConfirmPassword = confirmPassword;
-			checkValidation(userTypeId);
+			checkValidation(userType, binder);
 		}
 		else {
 			Notification notif = new Notification("Warning", "All required fields (*) should be filled in!",
@@ -34,9 +36,9 @@ public class NewUserMethods {
 		} 
 	}
 	
-	public static void checkValidation(int userTypeId) {
-		if(userTypeId == 1) {
-			if (AdminAddUserView.binder.validate().isOk() == true) {
+	public static void checkValidation(Type userType, Binder<Person> binder) {
+		if(userType == Type.ADMIN) {
+			if (binder.validate().isOk() == true) {
 	            existingUsername();
 			}
 			else { 
@@ -45,8 +47,8 @@ public class NewUserMethods {
 			notif.show(Page.getCurrent());
 			}
 		}
-		else if (userTypeId == 2) {
-			if (SignUpView.binder.validate().isOk() == true) {
+		else if (userType == Type.USER) {
+			if (binder.validate().isOk() == true) {
 	            existingUsername();
 			}
 			else { 

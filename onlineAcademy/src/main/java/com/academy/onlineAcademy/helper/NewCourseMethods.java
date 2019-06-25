@@ -8,7 +8,6 @@ import com.academy.onlineAcademy.controller.CourseController;
 import com.academy.onlineAcademy.model.Category;
 import com.academy.onlineAcademy.model.Course;
 import com.academy.onlineAcademy.model.Level;
-import com.academy.onlineAcademy.view.AdminAddCourseView;
 import com.vaadin.data.Binder;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;

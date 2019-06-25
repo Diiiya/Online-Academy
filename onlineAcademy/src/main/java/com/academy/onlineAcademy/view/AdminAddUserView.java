@@ -39,7 +39,7 @@ import com.vaadin.ui.MenuBar.MenuItem;
 public class AdminAddUserView extends VerticalLayout implements View {
 	
 	Navigator navigator = UI.getCurrent().getNavigator();
-	public static Binder<Person> binder = new Binder<>();
+	Binder<Person> binder = new Binder<>();
 	
 	VerticalLayout mainVLayout = new VerticalLayout();	
 			HorizontalLayout layoutH = new HorizontalLayout();
@@ -119,7 +119,7 @@ public class AdminAddUserView extends VerticalLayout implements View {
 		
 		
 		addButton.setWidth("100");
-		addButton.addClickListener(e -> NewUserMethods.checkEmptyFields(1, fullNameField.getValue(), usernameField.getValue(), emailField.getValue(),
+		addButton.addClickListener(e -> NewUserMethods.checkEmptyFields(binder, Type.ADMIN, fullNameField.getValue(), usernameField.getValue(), emailField.getValue(),
 				passwordField.getValue(), confirmPasswordField.getValue()));
 		
 		layoutVBody.addComponents(panel, addButton);
