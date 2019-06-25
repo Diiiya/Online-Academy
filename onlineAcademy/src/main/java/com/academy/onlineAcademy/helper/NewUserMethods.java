@@ -19,8 +19,7 @@ public class NewUserMethods {
 	static String enteredConfirmPassword;
 
 	public static void checkEmptyFields(int userTypeId, String fullName, String username, String email, String password, String confirmPassword) {
-		if (fullName != "" && username != "" && email != "" && 
-				enteredPassword != "" && enteredConfirmPassword != "") {
+		if (fullName != "" && username != "" && email != "" && password != "" && confirmPassword != "") {
 			enteredFullName = fullName;
 			enteredUsername = username;
 			enteredEmail = email;

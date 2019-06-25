@@ -73,16 +73,16 @@ public class CourseController {
 		    throw e;
 		}
         finally {
-        	if (em != null) {
+//        	if (em != null) {
         		em.close();
-        	}
+//        	}
 		}
 	}
 	
 	public List<Course> getAllCourses() {
-		EntityManager em = emFactoryObj.createEntityManager();
+		EntityManager em = null;
 		try {
-
+            em = emFactoryObj.createEntityManager();
 		    em.getTransaction().begin();
 		    
 			TypedQuery<Course> query = em.createNamedQuery("getAllCourses", Course.class);
@@ -101,9 +101,9 @@ public class CourseController {
 	}
 	
 	public Course getCourseByName(String name) {
-		EntityManager em = emFactoryObj.createEntityManager();
+		EntityManager em = null;
 		try {
-
+			em = emFactoryObj.createEntityManager();
 		    em.getTransaction().begin();
 		    
 		    TypedQuery<Course> query = em.createNamedQuery("findCourseByName", Course.class);

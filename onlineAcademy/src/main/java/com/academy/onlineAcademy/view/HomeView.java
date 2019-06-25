@@ -25,32 +25,39 @@ import com.vaadin.ui.VerticalLayout;
 
 public class HomeView extends VerticalLayout implements View {
 	
+	String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+	FileResource logoResource = new FileResource(new File(basepath + "/logo.jpg"));
+	FileResource coverResource = new FileResource(new File(basepath + "/1online-courses_0.jpg"));	
+	
+	Navigator navigator = UI.getCurrent().getNavigator();
 	CourseController courseObj = new CourseController();
-	Grid<com.academy.onlineAcademy.model.Course> grid = new Grid<>();
+	List<Course> courses;
 	Course selectedCourse;
 	int selectedCourseId;
 	
+	VerticalLayout mainVLayout = new VerticalLayout();
+			HorizontalLayout layoutH = new HorizontalLayout();
+					Button loginButton = new Button("LOGIN", VaadinIcons.SIGN_IN);
+					Image logoImage = new Image("", logoResource);				
+			Image coverImage = new Image("", coverResource);
+			HorizontalLayout searchHLayout = new HorizontalLayout();
+					TextField searchField = new TextField("");
+					Button searchButton = new Button("Search", VaadinIcons.SEARCH);
+			Label topCoursesLabel = new Label("Top courses:");	
+			Grid<com.academy.onlineAcademy.model.Course> grid = new Grid<>();
+	
 	public HomeView() {
 		
-		VerticalLayout mainVLayout = new VerticalLayout();
 		mainVLayout.setHeight("100%");
-		Navigator navigator = UI.getCurrent().getNavigator();
 		
-		// 1 - Header bar ?
-		HorizontalLayout layoutH = new HorizontalLayout();
+		// 1 - Header bar & UI settings
 		layoutH.setSpacing(true);
 		layoutH.setWidth("100%");
 		layoutH.setHeight("70px");
 		
-		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-		FileResource logoResource = new FileResource(new File(basepath +
-	            "/logo.jpg"));
-			
-		Image logoImage = new Image("", logoResource);
 		logoImage.setWidth("130px");
 		logoImage.setHeight("60px");
 		
-		Button loginButton = new Button("LOGIN", VaadinIcons.SIGN_IN);
 		loginButton.addClickListener(event -> {
 			navigator.navigateTo("Login");
 		});
@@ -61,17 +68,10 @@ public class HomeView extends VerticalLayout implements View {
 		layoutH.setComponentAlignment(loginButton, Alignment.BOTTOM_RIGHT);
 		
 		// 2 - Cover IMAGE and Search
-		FileResource coverResource = new FileResource(new File(basepath +
-	            "/1online-courses_0.jpg"));
-			
-		Image coverImage = new Image("", coverResource);
 		coverImage.setWidth("100%");
 		coverImage.setHeight("200px");
 		
-		HorizontalLayout searchHLayout = new HorizontalLayout();
-		TextField searchField = new TextField("");
 		searchField.setPlaceholder("SEARCH");
-		Button searchButton = new Button("Search", VaadinIcons.SEARCH);
 		searchButton.addClickListener(e -> {
 			try {
 				courseObj.getCourseByName(searchField.getValue());
@@ -92,12 +92,9 @@ public class HomeView extends VerticalLayout implements View {
 		searchHLayout.addComponents(searchField, searchButton);
 		searchHLayout.setComponentAlignment(searchButton, Alignment.BOTTOM_RIGHT);
 		
-		// 3 - Top course results:
-		Label topCoursesLabel = new Label("Top courses:");		
-		List<Course> courses = courseObj.getAllCourses();
-		
-		grid.setItems(courses);
-		
+		// 3 - Top course results:		
+		courses = courseObj.getAllCourses();
+		grid.setItems(courses);		
 		
 		grid.addColumn(com.academy.onlineAcademy.model.Course::getId).setCaption("Id");
 		grid.addColumn(com.academy.onlineAcademy.model.Course::getName).setCaption("Course name");
