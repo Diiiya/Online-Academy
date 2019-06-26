@@ -16,6 +16,7 @@ import javax.persistence.TypedQuery;
 import com.academy.onlineAcademy.model.Category;
 import com.academy.onlineAcademy.model.Course;
 import com.academy.onlineAcademy.model.Level;
+import com.academy.onlineAcademy.model.Order;
 
 public class CourseController {
 	
@@ -113,6 +114,26 @@ public class CourseController {
 		catch(PersistenceException e) {
 
 			e.printStackTrace();
+		    em.getTransaction().rollback();
+		    
+		    throw e;
+		}
+        finally {
+		em.close();
+		}
+	}
+	
+	public List<Order> getAllCoursesByUser(int userId) {
+		EntityManager em = null;
+		try {
+			em = emFactoryObj.createEntityManager();
+		    em.getTransaction().begin();
+		    
+			TypedQuery<Order> query = em.createNamedQuery("", Order.class);
+		    em.getTransaction().commit();
+		    return query.setParameter("user_id", userId).getResultList();
+		} catch(PersistenceException e) {
+
 		    em.getTransaction().rollback();
 		    
 		    throw e;

@@ -23,6 +23,7 @@ import javax.validation.constraints.Size;
 @Table(name="TCOURSE")
 @NamedQueries({
 	@NamedQuery(name = "getAllCourses", query = "SELECT c FROM Course c"),
+	//@NamedQuery(name = "getAllCoursesByUser", query = "SELECT c FROM Course c WHERE c.userId = :userId"),
 	@NamedQuery(name = "findCourseByName", query = "SELECT c FROM Course c WHERE c.name = :name"),
 	@NamedQuery(name = "findCourseByCategory", query = "SELECT c FROM Course c WHERE c.category = :category"),
 	@NamedQuery(name = "findCourseByLevel", query = "SELECT c FROM Course c WHERE c.level = :level"),

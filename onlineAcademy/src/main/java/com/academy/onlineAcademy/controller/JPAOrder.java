@@ -33,8 +33,14 @@ public class JPAOrder {
 // 
 ////        
 //        Date date = new Date();
-//        Order order = new Order(1, 1, date, true, 50);
-//        entityMgr.persist(order);
+////        Order order = new Order(1, 8, date, true, 110);
+//        Order order1 = new Order(122, 8, date, true, 50);
+//        Order order2 = new Order(122, 7, date, true, 150);
+//        Order order3 = new Order(122, 19, date, true, 50);
+////        entityMgr.persist(order);
+//        entityMgr.persist(order1);
+//        entityMgr.persist(order2);
+//        entityMgr.persist(order3);
 //// 
 //        
 //        entityMgr.getTransaction().commit();
@@ -42,6 +48,19 @@ public class JPAOrder {
 //        entityMgr.clear();
 //        System.out.println("Record Successfully Inserted In The Database");
 		
+		OrderController orderObj = new OrderController();
+		
+		try {
+			Order order = orderObj.getOrderById(2);
+			System.out.println(order.getUserId());
+//			List<Order> orders = orderObj.getAllOrdersByUser(122);
+//			System.out.println(orders.get(0));
+//			List<Order> orders = orderObj.getAllOrders();
+//			System.out.println(orders.get(0));
+		}
+		catch (Exception e) {
+			System.out.println("Error in the query");
+		}
 
 		
 

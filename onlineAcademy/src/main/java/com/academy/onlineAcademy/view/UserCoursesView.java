@@ -4,15 +4,21 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import com.academy.onlineAcademy.controller.CourseController;
+import com.academy.onlineAcademy.controller.OrderController;
 import com.academy.onlineAcademy.model.Category;
 import com.academy.onlineAcademy.model.Course;
 import com.academy.onlineAcademy.model.Level;
+import com.academy.onlineAcademy.model.Order;
 import com.vaadin.data.Binder;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileResource;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
@@ -20,6 +26,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -28,6 +35,7 @@ import com.vaadin.ui.VerticalLayout;
 public class UserCoursesView extends VerticalLayout implements View {
 	
 	Navigator navigator = UI.getCurrent().getNavigator();
+	CourseController courseObj = new CourseController();
 	
 	VerticalLayout mainVLayout = new VerticalLayout();
 			HorizontalLayout layoutH = new HorizontalLayout();
@@ -70,6 +78,7 @@ public class UserCoursesView extends VerticalLayout implements View {
 	layoutV.setSpacing(true);
 	layoutV.setWidth("100%");
 	
+	
 	// Static - to be replaced with data from the db
 	List<Course> courses = Arrays.asList(
 			new Course("UX Design", "Some description to be added here", "Sam Johnson", 5, Level.BEGINNER, Category.IT, 50, true, null),
@@ -78,7 +87,6 @@ public class UserCoursesView extends VerticalLayout implements View {
 			);
 	
 
-	grid.setItems(courses);
 	grid.setWidth("100%");
 	
 	grid.addColumn(com.academy.onlineAcademy.model.Course::getId).setCaption("Id");
@@ -100,7 +108,33 @@ public class UserCoursesView extends VerticalLayout implements View {
 	
 	}
 
+	@Override
+	public void enter(ViewChangeEvent event) {
+		View.super.enter(event);
+		UI ui = UI.getCurrent();
+		VaadinSession session = ui.getSession();
+		if (session.getAttribute("user-id") != null) {
+			int userId = Integer.valueOf(String.valueOf(session.getAttribute("user-id")));
+			getAllTheCoursesOfTheUser(userId);
+		}
+		else {
+			System.out.println("USER ID VAL:" + session.getAttribute("user-id"));
+		}
+	}
 	
+	public void getAllTheCoursesOfTheUser(int userId) {
+		try {
+			//List<Course> courses = courseObj.getAllCoursesByUser(userId);
+			//grid.setItems(courses);
+		}
+		catch(Exception ex) {
+			Notification notif = new Notification(
+				    "Warning",
+				    "No course(s) for this user have been found!",
+				    Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
+		}
+	}
 	
 	MenuBar.Command createNavigationCommand(String navigationView) {
 		return new MenuBar.Command() {

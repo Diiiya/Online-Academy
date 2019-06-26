@@ -26,21 +26,22 @@ public class OrderController {
         return emFactoryObj.createEntityManager();
     }
 	
-	EntityManager em;
+	//EntityManager em;
 	EntityManager emUPD;
 	EntityManager emDEL;
 	
 	public OrderController() {
 		
-		 em = emFactoryObj.createEntityManager();
+		// em = emFactoryObj.createEntityManager();
 		 emUPD = emFactoryObj.createEntityManager();
 		 emDEL = emFactoryObj.createEntityManager();
 		
 	}
 
 	public void addOrder(int userId, int courseId, Date purchaseDate, boolean isPaid, double price) {
+		EntityManager em = null;
 		try {
-
+			em = emFactoryObj.createEntityManager();
 		    em.getTransaction().begin();
 //		    Query query = em.createNativeQuery("INSERT INTO Order (user_id, course_id, is_paid, price) VALUES (?,?,?,?,?)");
 //		        query.setParameter(1, userId);
@@ -86,13 +87,14 @@ public class OrderController {
 	}
 	
 	public List<Order> getAllOrdersByUser(int userId) {
+		EntityManager em = null;
 		try {
-
+			em = emFactoryObj.createEntityManager();
 		    em.getTransaction().begin();
 		    
-			TypedQuery<Order> query = em.createNamedQuery("SELECT o FROM Order o WHERE o.userId = :userId", Order.class);
+			TypedQuery<Order> query = em.createNamedQuery("getAllOrdersByUser", Order.class);
 		    em.getTransaction().commit();
-		    return query.setParameter("user_id", userId).getResultList();
+		    return query.setParameter("userId", userId).getResultList();
 		} catch(PersistenceException e) {
 
 		    em.getTransaction().rollback();
@@ -105,11 +107,12 @@ public class OrderController {
 	}
 	
 	public Order getOrderById(int id) {
+		EntityManager em = null;
 		try {
-
+			em = emFactoryObj.createEntityManager();
 		    em.getTransaction().begin();
 		    
-		    TypedQuery<Order> query = em.createNamedQuery("SELECT o FROM Order o WHERE o.id = :id", Order.class);
+		    TypedQuery<Order> query = em.createNamedQuery("findOrderById", Order.class);
 		    em.getTransaction().commit();
 		    return query.setParameter("id", id).getSingleResult();
 		} catch(PersistenceException e) {

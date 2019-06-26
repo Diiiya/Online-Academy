@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import com.academy.onlineAcademy.controller.OrderController;
 import com.academy.onlineAcademy.model.Category;
 import com.academy.onlineAcademy.model.Course;
 import com.academy.onlineAcademy.model.Level;
@@ -12,8 +13,11 @@ import com.academy.onlineAcademy.model.Order;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileResource;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
@@ -21,6 +25,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.MenuBar.MenuItem;
@@ -28,6 +33,7 @@ import com.vaadin.ui.MenuBar.MenuItem;
 public class UserOrdersView extends VerticalLayout implements View {
 	
 	Navigator navigator = UI.getCurrent().getNavigator();
+	OrderController orderObj = new OrderController();
 	
 	VerticalLayout mainVLayout = new VerticalLayout();
 			HorizontalLayout layoutH = new HorizontalLayout();	
@@ -38,6 +44,7 @@ public class UserOrdersView extends VerticalLayout implements View {
 					MenuBar profileMenu = new MenuBar();
 			Label myOrdersLabel = new Label("My orders:");
 			Grid<com.academy.onlineAcademy.model.Order> grid = new Grid<>();
+			Button showButton = new Button("SHOW");
 	
 	
 	public UserOrdersView() {
@@ -61,17 +68,6 @@ public class UserOrdersView extends VerticalLayout implements View {
 		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
 		layoutH.setComponentAlignment(profileMenu, Alignment.BOTTOM_RIGHT);
 		
-		// 2 - Orders
-		// Static - to be replaced
-		Date date = new Date();
-		
-		List<Order> orders = Arrays.asList(
-				new Order( 1, 1, date, true, 50),
-				new Order( 1, 2, date, true, 100),
-				new Order( 1, 3, date, true, 300)
-				);
-		
-		grid.setItems(orders);
 		grid.setWidth("100%");
 		
 		grid.addColumn(com.academy.onlineAcademy.model.Order::getUserId).setCaption("User id");
@@ -80,10 +76,9 @@ public class UserOrdersView extends VerticalLayout implements View {
 		grid.addColumn(com.academy.onlineAcademy.model.Order::isPaid).setCaption("Paid ?");
 		grid.addColumn(com.academy.onlineAcademy.model.Order::getPrice).setCaption("Price");
 		
-		mainVLayout.addComponents(layoutH, myOrdersLabel, grid);
+		mainVLayout.addComponents(layoutH, myOrdersLabel, grid, showButton);
 		addComponent(mainVLayout);
 	}
-	
 	
 	MenuBar.Command createNavigationCommand(String navigationView) {
 		return new MenuBar.Command() {
@@ -91,6 +86,34 @@ public class UserOrdersView extends VerticalLayout implements View {
 		    	navigator.navigateTo(navigationView);
 		    }
 		};
+	}
+	
+	@Override
+	public void enter(ViewChangeEvent event) {
+		View.super.enter(event);
+		UI ui = UI.getCurrent();
+		VaadinSession session = ui.getSession();
+		if (session.getAttribute("user-id") != null) {
+			int userId = Integer.valueOf(String.valueOf(session.getAttribute("user-id")));
+			getAllTheOrdersOfTheUser(userId);
+		}
+		else {
+			System.out.println("USER ID VAL:" + session.getAttribute("user-id"));
+		}
+	}
+	
+	public void getAllTheOrdersOfTheUser(int userId) {
+		try {
+			List<Order> orders = orderObj.getAllOrdersByUser(userId);
+			grid.setItems(orders);
+		}
+		catch(Exception ex) {
+			Notification notif = new Notification(
+				    "Warning",
+				    "No order(s) for this user have been found!",
+				    Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
+		}
 	}
 	
 }

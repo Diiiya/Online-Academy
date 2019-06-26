@@ -9,6 +9,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Image;
@@ -21,6 +22,7 @@ import com.vaadin.ui.VerticalLayout;
 
 public class LoginView extends VerticalLayout implements View {
 	
+	private String value;
 	String databaseUsername;
 	String enteredUsername;
 	String databasePassword;
@@ -91,6 +93,17 @@ public class LoginView extends VerticalLayout implements View {
 	public void checkUsernamePasswordCombination() {
 		if (currentUser.getPassword().equals(enteredPassword)) {
     		navigator.navigateTo("UserCourses" + "/" + currentUser.getId());
+    		
+    		UI ui = UI.getCurrent();
+    		VaadinSession session = ui.getSession();
+    		session.setAttribute("user-id", currentUser.getId());
+    		System.out.println("The value in the first method: " + value);
+    		
+//    		UI ui = UI.getCurrent();
+//    		String value = String.valueOf(currentUser.getId());
+//    		saveValue(this, value);
+//    		System.out.println("The value in the first method: " + value);
+
     	}
     	else {
     		Notification notif = new Notification("Warning", "The combination of username and password is not correct!",
@@ -98,5 +111,18 @@ public class LoginView extends VerticalLayout implements View {
 			notif.show(Page.getCurrent());
     	}
 	}
+	
+//    private static void saveValue(LoginView ui,
+//            String value) {
+//        // Save to UI instance
+//       // ui.value = value;
+//        System.out.println("The value in the second method: " + value);
+//        // Save to VaadinServiceSession
+//        ui.getSession().setAttribute("user-id", value);
+//        // Save to HttpSession
+//       // VaadinService.getCurrentRequest().getWrappedSession()
+//               // .setAttribute("user-id", value);
+//
+//    }
 	
 }
