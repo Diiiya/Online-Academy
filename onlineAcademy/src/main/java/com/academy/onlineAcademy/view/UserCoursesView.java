@@ -35,76 +35,81 @@ import com.vaadin.ui.VerticalLayout;
 public class UserCoursesView extends VerticalLayout implements View {
 	
 	Navigator navigator = UI.getCurrent().getNavigator();
-	CourseController courseObj = new CourseController();
+	private CourseController courseObj = new CourseController();
+	private Grid<com.academy.onlineAcademy.model.Course> grid = new Grid<>();
+					
+	public VerticalLayout initMainLayout() {
+		VerticalLayout mainVLayout = new VerticalLayout();
+		
+		HorizontalLayout layoutH = getTopBar();
+		VerticalLayout layoutV = getBodyLayout();
+		
+		mainVLayout.addComponents(layoutH, layoutV);
+		mainVLayout.setComponentAlignment(layoutH, Alignment.TOP_CENTER);
+		mainVLayout.setComponentAlignment(layoutV, Alignment.MIDDLE_CENTER);
+		addComponent(mainVLayout);
+		
+		return mainVLayout;
+	}
 	
-	VerticalLayout mainVLayout = new VerticalLayout();
-			HorizontalLayout layoutH = new HorizontalLayout();
-					String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-					FileResource logoResource = new FileResource(new File(basepath +
-				            "/logo.jpg"));
-					Image logoImage = new Image("", logoResource);
-					MenuBar profileMenu = new MenuBar();
-			VerticalLayout layoutV = new VerticalLayout();
-					Label myCoursesLabel = new Label("My courses:");
-					Grid<com.academy.onlineAcademy.model.Course> grid = new Grid<>();
+	public HorizontalLayout getTopBar() {
+		HorizontalLayout layoutH = new HorizontalLayout();	
+		layoutH.setSpacing(true);
+		layoutH.setWidth("100%");
+		layoutH.setHeight("70px");
+		
+		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+		FileResource logoResource = new FileResource(new File(basepath +
+	            "/logo.jpg"));
+		Image logoImage = new Image("", logoResource);
+		logoImage.setWidth("130px");
+		logoImage.setHeight("60px");
+		
+		// MENU bar and methods to navigate to different pages	
+		MenuBar profileMenu = new MenuBar();	
+		MenuItem myProfileMainItem = profileMenu.addItem("My profile", VaadinIcons.MENU, null);
+		MenuItem myCoursesItem = myProfileMainItem.addItem("My courses", VaadinIcons.ACADEMY_CAP, createNavigationCommand("UserCourses"));
+		MenuItem myOrdersItem = myProfileMainItem.addItem("My orders", VaadinIcons.NEWSPAPER, createNavigationCommand("UserOrders"));
+		MenuItem mySettingsItem = myProfileMainItem.addItem("Settings", VaadinIcons.USER, createNavigationCommand("Settings"));
+		MenuItem myLogoutItem = myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, createNavigationCommand("Home"));
+		
+		layoutH.addComponents(logoImage, profileMenu);
+		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
+		layoutH.setComponentAlignment(profileMenu, Alignment.BOTTOM_RIGHT);
+		
+		return layoutH;
+	}
 	
+	public VerticalLayout getBodyLayout() {
+		VerticalLayout layoutV = new VerticalLayout();
+		Label myCoursesLabel = new Label("My courses:");
+		layoutV.setSpacing(true);
+		layoutV.setWidth("100%");
+		
+		grid = getGrid();
+		layoutV.addComponents(myCoursesLabel, grid);
+		return layoutV;
+	}
 	
+	public Grid<Course> getGrid() {
+		grid.setWidth("100%");
+		
+		grid.addColumn(com.academy.onlineAcademy.model.Course::getId).setCaption("Id");
+		grid.addColumn(com.academy.onlineAcademy.model.Course::getName).setCaption("Course name");
+		grid.addColumn(com.academy.onlineAcademy.model.Course::getDescription).setCaption("Course description");
+		grid.addColumn(com.academy.onlineAcademy.model.Course::getTeacherName).setCaption("Teacher");
+		grid.addColumn(com.academy.onlineAcademy.model.Course::getCategory).setCaption("Category");
+		grid.addColumn(com.academy.onlineAcademy.model.Course::getDuration).setCaption("Duration");
+		grid.addColumn(com.academy.onlineAcademy.model.Course::getLevel).setCaption("Level");
+		grid.addColumn(com.academy.onlineAcademy.model.Course::getPrice).setCaption("Price in euros");
+		grid.addColumn(com.academy.onlineAcademy.model.Course::getGivesCertificate).setCaption("Gives certificate");
+		
+		return grid;
+	}
 	
 	public UserCoursesView() {
-	
-	// 1 - Header bar and UI settings
-	layoutH.setSpacing(true);
-	layoutH.setWidth("100%");
-	layoutH.setHeight("70px");
-	
-	logoImage.setWidth("130px");
-	logoImage.setHeight("60px");
-	
-	
-	// MENU bar and methods to navigate to different pages	
-	MenuItem myProfileMainItem = profileMenu.addItem("My profile", VaadinIcons.MENU, null);
-	MenuItem myCoursesItem = myProfileMainItem.addItem("My courses", VaadinIcons.ACADEMY_CAP, createNavigationCommand("UserCourses"));
-	MenuItem myOrdersItem = myProfileMainItem.addItem("My orders", VaadinIcons.NEWSPAPER, createNavigationCommand("UserOrders"));
-	MenuItem mySettingsItem = myProfileMainItem.addItem("Settings", VaadinIcons.USER, createNavigationCommand("Settings"));
-	MenuItem myLogoutItem = myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, createNavigationCommand("Home"));
-
-	// Adding the components to layoutH 
-	layoutH.addComponents(logoImage, profileMenu);
-	layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
-	layoutH.setComponentAlignment(profileMenu, Alignment.BOTTOM_RIGHT);
-	
-	
-	// 2 - List with user's courses:
-	layoutV.setSpacing(true);
-	layoutV.setWidth("100%");
-	
-	
-	// Static - to be replaced with data from the db
-	List<Course> courses = Arrays.asList(
-			new Course("UX Design", "Some description to be added here", "Sam Johnson", 5, Level.BEGINNER, Category.IT, 50, true, null),
-			new Course("Programming basics", "Some description to be added here", "Dean Green", 25, Level.BEGINNER, Category.IT, 130, true, null),
-			new Course("Music", "Some description to be added here", "Sara Stevenson", 10, Level.INTERMEDIATE, Category.ARTS, 50, true, null)
-			);
-	
-
-	grid.setWidth("100%");
-	
-	grid.addColumn(com.academy.onlineAcademy.model.Course::getId).setCaption("Id");
-	grid.addColumn(com.academy.onlineAcademy.model.Course::getName).setCaption("Course name");
-	grid.addColumn(com.academy.onlineAcademy.model.Course::getDescription).setCaption("Course description");
-	grid.addColumn(com.academy.onlineAcademy.model.Course::getTeacherName).setCaption("Teacher");
-	grid.addColumn(com.academy.onlineAcademy.model.Course::getCategory).setCaption("Category");
-	grid.addColumn(com.academy.onlineAcademy.model.Course::getDuration).setCaption("Duration");
-	grid.addColumn(com.academy.onlineAcademy.model.Course::getLevel).setCaption("Level");
-	grid.addColumn(com.academy.onlineAcademy.model.Course::getPrice).setCaption("Price in euros");
-	grid.addColumn(com.academy.onlineAcademy.model.Course::getGivesCertificate).setCaption("Gives certificate");
-	
-	layoutV.addComponents(myCoursesLabel, grid);
-	
-	mainVLayout.addComponents(layoutH, layoutV);
-	mainVLayout.setComponentAlignment(layoutH, Alignment.TOP_CENTER);
-	mainVLayout.setComponentAlignment(layoutV, Alignment.MIDDLE_CENTER);
-	addComponent(mainVLayout);
+		
+		initMainLayout();
 	
 	}
 

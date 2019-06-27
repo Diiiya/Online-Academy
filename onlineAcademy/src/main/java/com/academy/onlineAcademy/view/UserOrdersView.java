@@ -33,31 +33,37 @@ import com.vaadin.ui.MenuBar.MenuItem;
 public class UserOrdersView extends VerticalLayout implements View {
 	
 	Navigator navigator = UI.getCurrent().getNavigator();
-	OrderController orderObj = new OrderController();
-	
-	VerticalLayout mainVLayout = new VerticalLayout();
-			HorizontalLayout layoutH = new HorizontalLayout();	
-					String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-					FileResource logoResource = new FileResource(new File(basepath +
-				            "/logo.jpg"));
-					Image logoImage = new Image("", logoResource);
-					MenuBar profileMenu = new MenuBar();
-			Label myOrdersLabel = new Label("My orders:");
-			Grid<com.academy.onlineAcademy.model.Order> grid = new Grid<>();
-			Button showButton = new Button("SHOW");
-	
-	
-	public UserOrdersView() {
+	private OrderController orderObj = new OrderController();
+	private Grid<com.academy.onlineAcademy.model.Order> grid = new Grid<>();
+			
+	public VerticalLayout initMainLayout() {
+		VerticalLayout mainVLayout = new VerticalLayout();
 		
-		// 1 - Header bar and UI settings
+		HorizontalLayout layoutH = getTopBar();
+		Label myOrdersLabel = new Label("My orders:");
+		Grid<com.academy.onlineAcademy.model.Order> grid = getGrid();
+		
+		mainVLayout.addComponents(layoutH, myOrdersLabel, grid);
+		addComponent(mainVLayout);
+		
+		return mainVLayout;
+	}
+	
+	public HorizontalLayout getTopBar() {
+		HorizontalLayout layoutH = new HorizontalLayout();	
 		layoutH.setSpacing(true);
 		layoutH.setWidth("100%");
 		layoutH.setHeight("70px");
 		
+		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+		FileResource logoResource = new FileResource(new File(basepath +
+	            "/logo.jpg"));
+		Image logoImage = new Image("", logoResource);
 		logoImage.setWidth("130px");
 		logoImage.setHeight("60px");
 		
-		// MENU bar and methods to navigate to different pages		
+		// MENU bar and methods to navigate to different pages	
+		MenuBar profileMenu = new MenuBar();	
 		MenuItem myProfileMainItem = profileMenu.addItem("My profile", VaadinIcons.MENU, null);
 		MenuItem myCoursesItem = myProfileMainItem.addItem("My courses", VaadinIcons.ACADEMY_CAP, createNavigationCommand("UserCourses"));
 		MenuItem myOrdersItem = myProfileMainItem.addItem("My orders", VaadinIcons.NEWSPAPER, createNavigationCommand("UserOrders"));
@@ -68,7 +74,11 @@ public class UserOrdersView extends VerticalLayout implements View {
 		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
 		layoutH.setComponentAlignment(profileMenu, Alignment.BOTTOM_RIGHT);
 		
-		grid.setWidth("100%");
+		return layoutH;
+	}
+	
+	public Grid<Order> getGrid() {		
+	    grid.setWidth("100%");
 		
 		grid.addColumn(com.academy.onlineAcademy.model.Order::getUserId).setCaption("User id");
 		grid.addColumn(com.academy.onlineAcademy.model.Order::getCourseId).setCaption("Course id");
@@ -76,8 +86,13 @@ public class UserOrdersView extends VerticalLayout implements View {
 		grid.addColumn(com.academy.onlineAcademy.model.Order::isPaid).setCaption("Paid ?");
 		grid.addColumn(com.academy.onlineAcademy.model.Order::getPrice).setCaption("Price");
 		
-		mainVLayout.addComponents(layoutH, myOrdersLabel, grid, showButton);
-		addComponent(mainVLayout);
+		return grid;
+	}
+	
+	public UserOrdersView() {
+		
+		initMainLayout();
+		
 	}
 	
 	MenuBar.Command createNavigationCommand(String navigationView) {

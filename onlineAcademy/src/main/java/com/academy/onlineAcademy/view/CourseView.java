@@ -21,37 +21,34 @@ import com.vaadin.ui.MenuBar.MenuItem;
 public class CourseView extends VerticalLayout implements View {
 	
 	Navigator navigator = UI.getCurrent().getNavigator();
+	private String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 	
-	VerticalLayout mainVLayout = new VerticalLayout();
-			HorizontalLayout layoutH = new HorizontalLayout();
-					String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-					FileResource logoResource = new FileResource(new File(basepath +
-				            "/logo.jpg"));		
-					Image logoImage = new Image("", logoResource);
-					MenuBar profileMenu = new MenuBar();
-			HorizontalLayout layoutBody = new HorizontalLayout();
-					VerticalLayout layoutVL = new VerticalLayout();
-							Label courseTitleLabel = new Label("COURSE TITLE");
-							FileResource courseImageResource = new FileResource(new File(basepath +
-						            "/1online-courses_0.jpg"));
-							Image courseImage = new Image("", courseImageResource);
-							Label courseContentLabel = new Label("Course Content Here ...........");
-					VerticalLayout layoutVR = new VerticalLayout();
-					        Label similarCoursesLabel = new Label("Similar courses:");
-	
-					        
-					        
-	public CourseView() {
+	public VerticalLayout initMainlayout() {
+		VerticalLayout mainVLayout = new VerticalLayout();
 		
-		// 1 - Header bar and UI settings
+		HorizontalLayout layoutH = getTopBar();
+		HorizontalLayout layoutBody = getLayoutBody();
+		
+		mainVLayout.addComponents(layoutH, layoutBody);
+		addComponent(mainVLayout);
+		
+		return mainVLayout;
+	}
+					        
+	public HorizontalLayout getTopBar() {
+		HorizontalLayout layoutH = new HorizontalLayout();	
 		layoutH.setSpacing(true);
 		layoutH.setWidth("100%");
 		layoutH.setHeight("70px");
-
+		
+		FileResource logoResource = new FileResource(new File(basepath +
+	            "/logo.jpg"));
+		Image logoImage = new Image("", logoResource);
 		logoImage.setWidth("130px");
 		logoImage.setHeight("60px");
 		
-        // MENU bar and methods to navigate to different pages
+		// MENU bar and methods to navigate to different pages	
+		MenuBar profileMenu = new MenuBar();	
 		MenuItem myProfileMainItem = profileMenu.addItem("My profile", VaadinIcons.MENU, null);
 		MenuItem myCoursesItem = myProfileMainItem.addItem("My courses", VaadinIcons.ACADEMY_CAP, createNavigationCommand("UserCourses"));
 		MenuItem myOrdersItem = myProfileMainItem.addItem("My orders", VaadinIcons.NEWSPAPER, createNavigationCommand("UserOrders"));
@@ -62,21 +59,38 @@ public class CourseView extends VerticalLayout implements View {
 		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
 		layoutH.setComponentAlignment(profileMenu, Alignment.BOTTOM_RIGHT);
 		
-		// 2 - Body
-		// 2.1 - Course content - Left part
+		return layoutH;
+	}		
+	
+	public HorizontalLayout getLayoutBody() {
+		HorizontalLayout layoutBody = new HorizontalLayout();
+		VerticalLayout layoutVL = new VerticalLayout();
 		layoutVL.setWidth("1200px");
+		
+		Label courseTitleLabel = new Label("COURSE TITLE");
+		FileResource courseImageResource = new FileResource(new File(basepath +
+	            "/1online-courses_0.jpg"));
+		Image courseImage = new Image("", courseImageResource);
 		courseImage.setWidth("600px");
 		courseImage.setHeight("300px");
+		Label courseContentLabel = new Label("Course Content Here ...........");
 		layoutVL.addComponents(courseTitleLabel, courseImage, courseContentLabel);
 		
-		// 2.2 - Similar courses - Right bar
+		
+		VerticalLayout layoutVR = new VerticalLayout();
+		Label similarCoursesLabel = new Label("Similar courses:");
 		layoutVR.setWidth("600px");
 		layoutVR.addComponents(similarCoursesLabel);
 		
 		layoutBody.addComponents(layoutVL, layoutVR);
 		
-		mainVLayout.addComponents(layoutH, layoutBody);
-		addComponent(mainVLayout);
+		return layoutBody;
+	}
+					        
+	public CourseView() {
+		
+		initMainlayout();
+		
 	}
 
 	

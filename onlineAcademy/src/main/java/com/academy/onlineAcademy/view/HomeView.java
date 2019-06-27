@@ -25,53 +25,64 @@ import com.vaadin.ui.VerticalLayout;
 
 public class HomeView extends VerticalLayout implements View {
 	
-	String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-	FileResource logoResource = new FileResource(new File(basepath + "/logo.jpg"));
-	FileResource coverResource = new FileResource(new File(basepath + "/1online-courses_0.jpg"));	
+	private String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 	
 	Navigator navigator = UI.getCurrent().getNavigator();
-	CourseController courseObj = new CourseController();
-	List<Course> courses;
-	Course selectedCourse;
-	int selectedCourseId;
+	private Grid<com.academy.onlineAcademy.model.Course> grid = new Grid<>();
+	private CourseController courseObj = new CourseController();
+			
 	
-	VerticalLayout mainVLayout = new VerticalLayout();
-			HorizontalLayout layoutH = new HorizontalLayout();
-					Button loginButton = new Button("LOGIN", VaadinIcons.SIGN_IN);
-					Image logoImage = new Image("", logoResource);				
-			Image coverImage = new Image("", coverResource);
-			HorizontalLayout searchHLayout = new HorizontalLayout();
-					TextField searchField = new TextField("");
-					Button searchButton = new Button("Search", VaadinIcons.SEARCH);
-			Label topCoursesLabel = new Label("Top courses:");	
-			Grid<com.academy.onlineAcademy.model.Course> grid = new Grid<>();
-	
-	public HomeView() {
-		
+	public VerticalLayout initMainlayout() {
+		VerticalLayout mainVLayout = new VerticalLayout();
 		mainVLayout.setHeight("100%");
 		
-		// 1 - Header bar & UI settings
+		HorizontalLayout layoutH = getTopBar();
+		
+		FileResource coverResource = new FileResource(new File(basepath + "/1online-courses_0.jpg"));
+		Image coverImage = new Image("", coverResource);
+		coverImage.setWidth("100%");
+		coverImage.setHeight("200px");
+		
+		HorizontalLayout searchHLayout = getSearchLayout();
+		Label topCoursesLabel = new Label("Top courses:");	
+		grid = callGrid();
+		
+		mainVLayout.addComponents(layoutH, coverImage, searchHLayout, topCoursesLabel, grid);
+		mainVLayout.setComponentAlignment(searchHLayout, Alignment.MIDDLE_CENTER);
+		addComponent(mainVLayout);
+		
+		return mainVLayout;
+	}
+			
+	public HorizontalLayout getTopBar() {
+		HorizontalLayout layoutH = new HorizontalLayout();
 		layoutH.setSpacing(true);
 		layoutH.setWidth("100%");
 		layoutH.setHeight("70px");
 		
-		logoImage.setWidth("130px");
-		logoImage.setHeight("60px");
-		
+		Button loginButton = new Button("LOGIN", VaadinIcons.SIGN_IN);
 		loginButton.addClickListener(event -> {
 			navigator.navigateTo("Login");
 		});
 		
+		FileResource logoResource = new FileResource(new File(basepath + "/logo.jpg"));
+		Image logoImage = new Image("", logoResource);
+		logoImage.setWidth("130px");
+		logoImage.setHeight("60px");
 		
 		layoutH.addComponents(logoImage, loginButton);
 		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
 		layoutH.setComponentAlignment(loginButton, Alignment.BOTTOM_RIGHT);
 		
-		// 2 - Cover IMAGE and Search
-		coverImage.setWidth("100%");
-		coverImage.setHeight("200px");
+		return layoutH;
+	}
+	
+	public HorizontalLayout getSearchLayout() {
+		HorizontalLayout searchHLayout = new HorizontalLayout();
 		
-		searchField.setPlaceholder("SEARCH");
+		TextField searchField = new TextField("SEARCH");
+		Button searchButton = new Button("Search", VaadinIcons.SEARCH);
+		
 		searchButton.addClickListener(e -> {
 			try {
 				courseObj.getCourseByName(searchField.getValue());
@@ -89,11 +100,16 @@ public class HomeView extends VerticalLayout implements View {
 			}
 
 		});
+		
 		searchHLayout.addComponents(searchField, searchButton);
 		searchHLayout.setComponentAlignment(searchButton, Alignment.BOTTOM_RIGHT);
 		
-		// 3 - Top course results:		
-		courses = courseObj.getAllCourses();
+		return searchHLayout;
+	}
+	
+	public Grid<Course> callGrid() {
+		
+		List<Course> courses = courseObj.getAllCourses();
 		grid.setItems(courses);		
 		
 		grid.addColumn(com.academy.onlineAcademy.model.Course::getId).setCaption("Id");
@@ -110,14 +126,17 @@ public class HomeView extends VerticalLayout implements View {
 		
 		grid.addItemClickListener(e -> {
 			Course selectedCourse = e.getItem();
-			selectedCourseId = selectedCourse.getId();
+			int selectedCourseId = selectedCourse.getId();
 			System.out.println(selectedCourseId);
 		});
-
 		
-		mainVLayout.addComponents(layoutH, coverImage, searchHLayout, topCoursesLabel, grid);
-		mainVLayout.setComponentAlignment(searchHLayout, Alignment.MIDDLE_CENTER);
-		addComponent(mainVLayout);
+		return grid;
+	}
+			
+	public HomeView() {
+		
+		initMainlayout();
+		
 	}
 	
 	

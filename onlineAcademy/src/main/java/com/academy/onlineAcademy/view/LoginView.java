@@ -22,52 +22,34 @@ import com.vaadin.ui.VerticalLayout;
 
 public class LoginView extends VerticalLayout implements View {
 	
-	private String value;
-	String databaseUsername;
-	String enteredUsername;
-	String databasePassword;
-	String enteredPassword;
-	PersonController obj = new PersonController();
+	Navigator navigator = UI.getCurrent().getNavigator();
+	private String enteredUsername;
+	private String enteredPassword;
 	Person currentUser = new Person();
 	
-	final VerticalLayout layout = new VerticalLayout();
-			String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-			FileResource resource = new FileResource(new File(basepath +
-		            "/1024px-Circle-icons-profile.svg.png"));
-			Image image = new Image("", resource);
-			TextField usernameField = new TextField("Type your username:");
-			PasswordField passwordField = new PasswordField("Type your password:");
-			Button loginButton = new Button("Login");
-			Button signUpButton = new Button("Sign up");
-			Navigator navigator = UI.getCurrent().getNavigator();
-	
-	public LoginView() {
-		
+	private final TextField usernameField = new TextField("Type your username:");
+	private final PasswordField passwordField = new PasswordField("Type your password:");
+			
+			
+    public VerticalLayout initMainLayout() {
+    	VerticalLayout layout = new VerticalLayout();
+    	
+		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+		FileResource resource = new FileResource(new File(basepath +
+	            "/1024px-Circle-icons-profile.svg.png"));
+		Image image = new Image("", resource);
 		image.setWidth("100px");
 		image.setHeight("100px");
-	       
-	    usernameField.setWidth("200px");
+		
+		usernameField.setWidth("200px");
 	    passwordField.setWidth("200px");
-	    loginButton.setWidth("200px");
-	    
-	    loginButton.addClickListener(e -> {
-	    	enteredUsername = usernameField.getValue().toUpperCase();
-		    enteredPassword = passwordField.getValue();
-		    if (((enteredUsername.length() != 0) && (enteredUsername != "")) && ((passwordField.getValue().length() != 0) && (passwordField.getValue() != ""))) {
-		          checkIfTheUsernameExists();
-		          checkUsernamePasswordCombination();
-		    }
-		    else {
-		    	Notification notif = new Notification("Warning", "Both fields should be filled in!",
-					    Notification.TYPE_WARNING_MESSAGE);
-		    	notif.show(Page.getCurrent());
-		    }
-	    });
-	    
+	    Button signUpButton = new Button("Sign up");
 	    signUpButton.setWidth("200px");
 	    signUpButton.addClickListener(e -> navigator.navigateTo("SignUp"));
 	    
-	    layout.addComponents(image, usernameField, passwordField, loginButton, signUpButton);
+	    Button loginButton = getLoginButton();
+	    
+        layout.addComponents(image, usernameField, passwordField, loginButton, signUpButton);
 	    
 	    layout.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
 	    layout.setComponentAlignment(usernameField, Alignment.MIDDLE_CENTER);
@@ -76,11 +58,40 @@ public class LoginView extends VerticalLayout implements View {
 	    layout.setComponentAlignment(signUpButton, Alignment.MIDDLE_CENTER);
 	    
 	    addComponent(layout);
+	    
+	    return layout;
+    }
+    
+    public Button getLoginButton() {
+    	Button loginButton = new Button("Login");
+    	loginButton.setWidth("200px");
+ 	    
+ 	    loginButton.addClickListener(e -> {
+ 	    	enteredUsername = usernameField.getValue().toUpperCase();
+ 		    enteredPassword = passwordField.getValue();
+ 		    if (((enteredUsername.length() != 0) && (enteredUsername != "")) && ((passwordField.getValue().length() != 0) && (passwordField.getValue() != ""))) {
+ 		          checkIfTheUsernameExists();
+ 		          checkUsernamePasswordCombination();
+ 		    }
+ 		    else {
+ 		    	Notification notif = new Notification("Warning", "Both fields should be filled in!",
+ 					    Notification.TYPE_WARNING_MESSAGE);
+ 		    	notif.show(Page.getCurrent());
+ 		    }
+ 	    });
+ 	    
+ 	    return loginButton;
+    }
+	
+	public LoginView() {
+		
+		initMainLayout();
 		
 	}
 	
 	public void checkIfTheUsernameExists() {
-		try {		    	
+		try {
+			PersonController obj = new PersonController();
 	    	currentUser = obj.getPersonByUsername(enteredUsername);
 	     }
 		 catch (Exception ex) {
@@ -97,12 +108,6 @@ public class LoginView extends VerticalLayout implements View {
     		UI ui = UI.getCurrent();
     		VaadinSession session = ui.getSession();
     		session.setAttribute("user-id", currentUser.getId());
-    		System.out.println("The value in the first method: " + value);
-    		
-//    		UI ui = UI.getCurrent();
-//    		String value = String.valueOf(currentUser.getId());
-//    		saveValue(this, value);
-//    		System.out.println("The value in the first method: " + value);
 
     	}
     	else {
@@ -111,18 +116,6 @@ public class LoginView extends VerticalLayout implements View {
 			notif.show(Page.getCurrent());
     	}
 	}
-	
-//    private static void saveValue(LoginView ui,
-//            String value) {
-//        // Save to UI instance
-//       // ui.value = value;
-//        System.out.println("The value in the second method: " + value);
-//        // Save to VaadinServiceSession
-//        ui.getSession().setAttribute("user-id", value);
-//        // Save to HttpSession
-//       // VaadinService.getCurrentRequest().getWrappedSession()
-//               // .setAttribute("user-id", value);
-//
-//    }
+
 	
 }
