@@ -10,6 +10,9 @@ import com.academy.onlineAcademy.helper.NewUserMethods;
 import com.academy.onlineAcademy.model.Person;
 import com.academy.onlineAcademy.model.Type;
 import com.vaadin.data.Binder;
+import com.vaadin.data.ValidationResult;
+import com.vaadin.data.Validator;
+import com.vaadin.data.ValueContext;
 import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.data.validator.StringLengthValidator;
@@ -51,7 +54,7 @@ public class SignUpView extends VerticalLayout implements View {
 					PasswordField confirmPasswordField = new PasswordField("Repeat password: ");
 	                FormLayout content = new FormLayout();
 	        Button addButton = new Button("ADD");
-	  
+   
 	                
 	public SignUpView() {
 		
@@ -72,6 +75,7 @@ public class SignUpView extends VerticalLayout implements View {
 				content.setSizeUndefined(); 
 				content.setMargin(true);
 				panel.setContent(content);
+				
 				
 				///////// BINDER Part + validations
 				binder.forField(fullNameField).withValidator(new StringLengthValidator(

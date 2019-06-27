@@ -74,9 +74,9 @@ public class CourseController {
 		    throw e;
 		}
         finally {
-//        	if (em != null) {
+        	if (em != null) {
         		em.close();
-//        	}
+        	}
 		}
 	}
 	
@@ -112,8 +112,7 @@ public class CourseController {
 		    return query.setParameter("name", name).getSingleResult();
 		} 
 		catch(PersistenceException e) {
-
-			e.printStackTrace();
+			
 		    em.getTransaction().rollback();
 		    
 		    throw e;
@@ -175,7 +174,8 @@ public class CourseController {
 	}
 
 	public int deleteAllCourse(int id) {
-		try {
+		try 
+		{
 
 		    emDEL.getTransaction().begin();
 		    
@@ -208,7 +208,6 @@ public class CourseController {
 			e.printStackTrace();
 		    emDEL.getTransaction().rollback();
 		    
-		    throw e;
 		}
 		finally {
         		emDEL.close();

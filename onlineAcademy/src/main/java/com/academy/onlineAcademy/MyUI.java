@@ -46,18 +46,18 @@ public class MyUI extends UI {
         Navigator navigator = new Navigator(this, layout);
         setNavigator(navigator);
         
-        LoginView loginViewObj = new LoginView();
-        SignUpView signUpViewObj = new SignUpView();
-        HomeView homeViewObj = new HomeView();
-        UserCoursesView userCoursesViewObj = new UserCoursesView();
-        CourseView courseViewObj = new CourseView();
-        UserOrdersView userOrdersViewObj = new UserOrdersView();
-        UserSettingsView userSettingsViewObj = new UserSettingsView();
-        AdminAddUserView adminAddUserViewObj = new AdminAddUserView();
-        AdminAllUsersView adminAllUsersObj = new AdminAllUsersView();
-        AdminAddCourseView adminAddCourseViewObj = new AdminAddCourseView();
-        AdminAllCoursesView adminAllCourseViewObj = new AdminAllCoursesView();
-        AdminAllOrdersView adminAllOrdersViewObj = new AdminAllOrdersView();
+        final LoginView loginViewObj = new LoginView();
+        final SignUpView signUpViewObj = new SignUpView();
+        final HomeView homeViewObj = new HomeView();
+        final UserCoursesView userCoursesViewObj = new UserCoursesView();
+        final CourseView courseViewObj = new CourseView();
+        final UserOrdersView userOrdersViewObj = new UserOrdersView();
+        final UserSettingsView userSettingsViewObj = new UserSettingsView();
+        final AdminAddUserView adminAddUserViewObj = new AdminAddUserView();
+        final AdminAllUsersView adminAllUsersObj = new AdminAllUsersView();
+        final AdminAddCourseView adminAddCourseViewObj = new AdminAddCourseView();
+        final AdminAllCoursesView adminAllCourseViewObj = new AdminAllCoursesView();
+        final AdminAllOrdersView adminAllOrdersViewObj = new AdminAllOrdersView();
         
         navigator.addView("Login", loginViewObj);
         navigator.addView("SignUp", signUpViewObj);

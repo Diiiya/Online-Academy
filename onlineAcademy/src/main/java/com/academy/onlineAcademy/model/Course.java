@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
@@ -23,7 +24,7 @@ import javax.validation.constraints.Size;
 @Table(name="TCOURSE")
 @NamedQueries({
 	@NamedQuery(name = "getAllCourses", query = "SELECT c FROM Course c"),
-	//@NamedQuery(name = "getAllCoursesByUser", query = "SELECT c FROM Course c WHERE c.userId = :userId"),
+//	@NamedQuery(name = "getAllCoursesByUser", query = "SELECT c FROM Course c WHERE c.userId = :userId"),
 	@NamedQuery(name = "findCourseByName", query = "SELECT c FROM Course c WHERE c.name = :name"),
 	@NamedQuery(name = "findCourseByCategory", query = "SELECT c FROM Course c WHERE c.category = :category"),
 	@NamedQuery(name = "findCourseByLevel", query = "SELECT c FROM Course c WHERE c.level = :level"),
@@ -36,7 +37,7 @@ import javax.validation.constraints.Size;
 public class Course implements Serializable{
 	
 	@Id
-	//@GeneratedValue(strategy = GenerationType.SEQUENCE)
+//	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	@GeneratedValue(strategy = GenerationType.IDENTITY) 
 	@Column(name="ID", nullable = false, updatable = false)
 	private int id;

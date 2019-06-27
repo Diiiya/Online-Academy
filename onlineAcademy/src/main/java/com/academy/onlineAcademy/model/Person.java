@@ -75,7 +75,7 @@ $                 # end-of-string
 	
 //	@Pattern(regexp = ".*\\.jpg|.*\\.jpeg|.*\\.gif",
 //	        message="Only images of type JPEG or GIF are supported.")
-//	@Lob
+	@Lob
 	@Column(length=100000)
 	private byte[] photo = null;
 	
