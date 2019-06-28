@@ -44,6 +44,12 @@ public class SignUpView extends VerticalLayout implements View {
 	private final PasswordField passwordField = new PasswordField("Password: ");
 	private final PasswordField confirmPasswordField = new PasswordField("Repeat password: ");
 	
+	public SignUpView() {
+		
+		initMainLayout();
+		
+	}
+	
 	public void initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		
@@ -90,7 +96,7 @@ public class SignUpView extends VerticalLayout implements View {
 		
 		addButton.setWidth("100");
 		addButton.addClickListener(e -> {
-			NewUserMethods.checkEmptyFields(binder, Type.USER, fullNameField.getValue(), usernameField.getValue(), emailField.getValue(),
+			NewUserMethods.setFieldsValues(binder, Type.USER, fullNameField.getValue(), usernameField.getValue(), emailField.getValue(),
 					passwordField.getValue(), confirmPasswordField.getValue()); 
 		});
 		
@@ -127,11 +133,5 @@ public class SignUpView extends VerticalLayout implements View {
 		return binder;
 		
     }
-	                
-	public SignUpView() {
-		
-		initMainLayout();
-		
-	}
 	
 }

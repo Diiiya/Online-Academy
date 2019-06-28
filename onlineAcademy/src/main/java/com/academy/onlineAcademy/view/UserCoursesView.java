@@ -37,6 +37,12 @@ public class UserCoursesView extends VerticalLayout implements View {
 	Navigator navigator = UI.getCurrent().getNavigator();
 	private CourseController courseObj = new CourseController();
 	private Grid<com.academy.onlineAcademy.model.Course> grid = new Grid<>();
+	
+	public UserCoursesView() {
+		
+		initMainLayout();
+	
+	}
 					
 	public VerticalLayout initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
@@ -105,12 +111,6 @@ public class UserCoursesView extends VerticalLayout implements View {
 		grid.addColumn(com.academy.onlineAcademy.model.Course::getGivesCertificate).setCaption("Gives certificate");
 		
 		return grid;
-	}
-	
-	public UserCoursesView() {
-		
-		initMainLayout();
-	
 	}
 
 	@Override

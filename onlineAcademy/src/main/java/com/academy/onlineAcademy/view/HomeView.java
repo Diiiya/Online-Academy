@@ -31,6 +31,11 @@ public class HomeView extends VerticalLayout implements View {
 	private Grid<com.academy.onlineAcademy.model.Course> grid = new Grid<>();
 	private CourseController courseObj = new CourseController();
 			
+	public HomeView() {
+		
+		initMainlayout();
+		
+	}
 	
 	public VerticalLayout initMainlayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
@@ -80,7 +85,8 @@ public class HomeView extends VerticalLayout implements View {
 	public HorizontalLayout getSearchLayout() {
 		HorizontalLayout searchHLayout = new HorizontalLayout();
 		
-		TextField searchField = new TextField("SEARCH");
+		TextField searchField = new TextField("");
+		searchField.setPlaceholder("SEARCH");
 		Button searchButton = new Button("Search", VaadinIcons.SEARCH);
 		
 		searchButton.addClickListener(e -> {
@@ -133,12 +139,6 @@ public class HomeView extends VerticalLayout implements View {
 		return grid;
 	}
 			
-	public HomeView() {
-		
-		initMainlayout();
-		
-	}
-	
 	
 	@Override
 	public void enter(ViewChangeEvent event) {

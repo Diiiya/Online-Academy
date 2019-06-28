@@ -2,6 +2,8 @@ package com.academy.onlineAcademy.view;
 
 import java.io.File;
 
+import javax.persistence.PersistenceException;
+
 import com.academy.onlineAcademy.controller.PersonController;
 import com.academy.onlineAcademy.model.Person;
 import com.vaadin.data.Binder;
@@ -49,7 +51,12 @@ public class UserSettingsView extends VerticalLayout implements View {
 	private TextField emailField;
 	private PasswordField passwordField;
 	private PasswordField confirmPasswordField;
-						
+		
+	public UserSettingsView() {
+		
+		getMainLayout();
+				
+	}
     
 	public VerticalLayout getMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
@@ -181,12 +188,6 @@ public class UserSettingsView extends VerticalLayout implements View {
 		
 	}
 	
-	public UserSettingsView() {
-				
-		getMainLayout();
-				
-	}
-	
 	MenuBar.Command createNavigationCommand(String navigationView) {
 		return new MenuBar.Command() {
 		    public void menuSelected(MenuItem selectedItem) {
@@ -223,11 +224,8 @@ public class UserSettingsView extends VerticalLayout implements View {
 	
 	public void updatePersonSettings(int userId) {
 		try {
-			System.out.println("Goes inside the try");
 			binder.writeBean(person);
-			System.out.println("Passes the write bean");
 			existingEmail(userId);	
-			System.out.println("Passes the existingEmail");
 		}
 		catch(Exception ex) {
 			Notification notif = new Notification("Warning", "Please correct the fields in red!", Notification.TYPE_WARNING_MESSAGE);
@@ -239,10 +237,14 @@ public class UserSettingsView extends VerticalLayout implements View {
 		try {
 			String enteredEmail = emailField.getValue();
 	    	personObj.getPersonByEmail(enteredEmail.toUpperCase());
-	    	Notification notif = new Notification("Warning", "The email already exists in our system. Please correct it or log in!",
+	    	if (enteredEmail.equals(person.getEmail())) {
+	    		 updateInDatabase();
+	    	}
+	    	else {
+	    	Notification notif = new Notification("Warning", "The email is already used by another user!",
 				    Notification.TYPE_WARNING_MESSAGE);
 			notif.show(Page.getCurrent());
-	    	
+	    	}
 	     }
 		 catch (Exception ex) {
 			 updateInDatabase();

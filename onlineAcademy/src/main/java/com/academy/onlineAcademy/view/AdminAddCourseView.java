@@ -45,61 +45,69 @@ import com.vaadin.ui.MenuBar.MenuItem;
 public class AdminAddCourseView extends VerticalLayout implements View {
 	
 	String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-	FileResource logoResource = new FileResource(new File(basepath + "/logo.jpg"));
-	FileResource coverResource = new FileResource(new File(basepath + "/1online-courses_0.jpg"));
+	
+	private final TextField nameField = new TextField("Course name:");
+	private final TextField descriptionField = new TextField("Course description:");
+	private final TextField teacherNameField = new TextField("Teacher's  name:");
+	private final TextField photoField = new TextField("Photo:");	
+	private final List<String> categories = Stream.of(Category.values())
+            .map(Enum::name)
+            .collect(Collectors.toList());
+	private final ComboBox<String> selectCategoryComboBox = new ComboBox<>("Select category:", categories);
+	private final List<String> levels = Stream.of(Level.values())
+            .map(Enum::name)
+            .collect(Collectors.toList());
+	private final ComboBox<String> selectLevelComboBox = new ComboBox<>("Select level:", levels);
+	private final TextField durationField = new TextField("Duration:");
+	private final TextField priceField = new TextField("Price:");	
+	private final CheckBox certCheckbox = new CheckBox("Gives certificate:");
+	
+//	FileResource coverResource = new FileResource(new File(basepath + "/1online-courses_0.jpg"));
 	
 	Navigator navigator = UI.getCurrent().getNavigator();
 	Binder<Course> binder = new Binder<>();
-	CourseController obj = new CourseController();
-	// Fields
-	String name;
-	String description;
-	String teacherName;
-	int duration;
-	Level level;
-	Category category;
-	double price;
-	boolean givesCertificate;
-	File coverPhoto;
-	FileInputStream fileStream = null;
-	byte[] convertedCoverPhoto;
 	
-	
-	VerticalLayout mainVLayout = new VerticalLayout();
-			HorizontalLayout layoutH = new HorizontalLayout();
-					Image logoImage = new Image("", logoResource);
-					MenuBar profileMenu = new MenuBar();
-			VerticalLayout layoutVBody = new VerticalLayout();
-					Panel panel = new Panel("Add new course: ");
-							FormLayout content = new FormLayout();
-									TextField nameField = new TextField("Course name:");
-									TextField descriptionField = new TextField("Course description:");
-									TextField teacherNameField = new TextField("Teacher's  name:");
-									TextField photoField = new TextField("Photo:");	
-									List<String> categories = Stream.of(Category.values())
-								            .map(Enum::name)
-								            .collect(Collectors.toList());
-									ComboBox<String> selectCategoryComboBox = new ComboBox<>("Select category:", categories);
-									List<String> levels = Stream.of(Level.values())
-								            .map(Enum::name)
-								            .collect(Collectors.toList());
-									ComboBox<String> selectLevelComboBox = new ComboBox<>("Select level:", levels);
-									TextField durationField = new TextField("Duration:");
-									TextField priceField = new TextField("Price:");	
-									CheckBox certCheckbox = new CheckBox("Gives certificate:");
-					Button addButton = new Button("ADD");
-	
+	private String name;
+	private String description;
+	private String teacherName;
+	private int duration;
+	private Level level;
+	private double price;
+	private boolean givesCertificate;
+//	private File coverPhoto;
+//	private FileInputStream fileStream = null;
+//	private byte[] convertedCoverPhoto;
+					
 	public AdminAddCourseView() {
 		
-		// 1 - Header bar & UI settings
+		initMainLayout();
+        
+	}
+	
+	public void initMainLayout() {
+		VerticalLayout mainVLayout = new VerticalLayout();
+		
+		HorizontalLayout layoutH = getTopBar();
+		VerticalLayout layoutVBody = getBodyLayout();
+		callBinder();
+		
+		mainVLayout.addComponents(layoutH, layoutVBody);
+        addComponent(mainVLayout);
+	}
+	
+	public HorizontalLayout getTopBar() {
+		HorizontalLayout layoutH = new HorizontalLayout();
 		layoutH.setSpacing(true);
 		layoutH.setWidth("100%");
 		layoutH.setHeight("90px");
 		
+		FileResource logoResource = new FileResource(new File(basepath + "/logo.jpg"));
+		Image logoImage = new Image("", logoResource);
 		logoImage.setWidth("130px");
 		logoImage.setHeight("60px");
 		
 		// MENU bar and methods to navigate to different pages
+		MenuBar profileMenu = new MenuBar();
 		MenuItem myProfileMainItem = profileMenu.addItem("My profile", VaadinIcons.MENU, null);
 		MenuItem allCoursesItem = myProfileMainItem.addItem("All courses", VaadinIcons.ACADEMY_CAP, createNavigationCommand("AdminAllCourses"));
 		MenuItem addCoursesItem = myProfileMainItem.addItem("Add course", VaadinIcons.FILE_ADD, createNavigationCommand("AdminAddCourse"));
@@ -113,24 +121,46 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
 		layoutH.setComponentAlignment(profileMenu, Alignment.BOTTOM_RIGHT);
 		
-		// 2 - Add course panel
+		return layoutH;
+	}
+	
+	public VerticalLayout getBodyLayout() {
+		VerticalLayout layoutVBody = new VerticalLayout();
 		layoutVBody.setWidth("100%");
+		
+		Panel panel = new Panel("Add new course: ");
 		panel.setSizeUndefined();
 		
-		selectCategoryComboBox.setEmptySelectionAllowed(false);
-		
+        selectCategoryComboBox.setEmptySelectionAllowed(false);		
 		selectLevelComboBox.setValue("BEGINNER");
 		selectLevelComboBox.setEmptySelectionAllowed(false);
-		
 		certCheckbox.setValue(true);
 		
+		FormLayout content = new FormLayout();
 		content.addComponents(nameField, descriptionField, teacherNameField, photoField, durationField, priceField,
 				selectCategoryComboBox, selectLevelComboBox, certCheckbox);
 		content.setSizeUndefined(); 
 		content.setMargin(true);
-		panel.setContent(content);		
+		panel.setContent(content);	
 		
-		///////// BINDER Part + validations
+		Button addButton = new Button("ADD");
+		addButton.setWidth("100");
+		addButton.addClickListener(e -> {
+				
+			convertInputValues();
+			checkDurationFieldEmpty();
+
+			});
+		
+		layoutVBody.addComponents(panel, addButton);
+		layoutVBody.setComponentAlignment(panel, Alignment.MIDDLE_CENTER);
+		layoutVBody.setComponentAlignment(addButton, Alignment.MIDDLE_CENTER);
+		
+		return layoutVBody;
+	}
+	
+	public void callBinder() {
+		
 		binder.forField(nameField).withValidator(new StringLengthValidator("Name must be between 3 and 30 characters long!",3, 30)).asRequired("Cannot be empty")
 	    .bind(Course::getName, Course::setName);
 		binder.forField(descriptionField).withValidator(description -> description.length() <= 200, "Description max 200 characters long!").asRequired("Cannot be empty")
@@ -143,62 +173,6 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		.bind(Course::getPrice, Course::setPrice);
 		binder.forField(selectCategoryComboBox).asRequired("Cannot be empty");
 		
-		
-		addButton.setWidth("100");
-		addButton.addClickListener(e -> {
-				
-				// Gets and converts the input values
-				name = nameField.getValue();
-				description = descriptionField.getValue();
-				teacherName = teacherNameField.getValue();
-				level = Level.valueOf(selectLevelComboBox.getValue());
-				givesCertificate = certCheckbox.getValue();
-				if (durationField.getValue() != "") {
-					try {
-					duration = Integer.parseInt(durationField.getValue());
-					System.out.println("Gets here");
-						
-							if (priceField.getValue() != "") {
-								try {
-								price = Integer.parseInt(priceField.getValue());
-									if (selectCategoryComboBox.getValue() != null) {
-										category = Category.valueOf(selectCategoryComboBox.getValue());
-										NewCourseMethods.addNewCourse(binder, name, description, teacherName, duration, level, category, price, givesCertificate);
-									}
-									else {
-										Notification notif = new Notification("Warning", "The category field should be filled in!", Notification.TYPE_WARNING_MESSAGE);
-										notif.show(Page.getCurrent());
-									}
-								}
-								catch (Exception ex){
-									Notification notif = new Notification("Warning", "The price should be a numeric value!", Notification.TYPE_WARNING_MESSAGE);
-									notif.show(Page.getCurrent());
-								}
-							}
-							else {
-								Notification notif = new Notification("Warning", "The price should be a filled in!", Notification.TYPE_WARNING_MESSAGE);
-								notif.show(Page.getCurrent());
-							}
-						}
-					catch (Exception ex) {
-						Notification notif = new Notification("Warning", "The duration should be a numeric value!", Notification.TYPE_WARNING_MESSAGE);
-						notif.show(Page.getCurrent());
-					}
-				}
-				else {
-					Notification notif = new Notification("Warning", "The duration field should be filled in!", Notification.TYPE_WARNING_MESSAGE);
-					notif.show(Page.getCurrent());
-				}
-
-			});
-		
-		layoutVBody.addComponents(panel, addButton);
-		layoutVBody.setComponentAlignment(panel, Alignment.MIDDLE_CENTER);
-		layoutVBody.setComponentAlignment(addButton, Alignment.MIDDLE_CENTER);
-		
-        mainVLayout.addComponents(layoutH, layoutVBody);
-        addComponent(mainVLayout);
-        
 	}
 	
 	MenuBar.Command createNavigationCommand(String navigationView) {
@@ -207,6 +181,62 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		    	navigator.navigateTo(navigationView);
 		    }
 		};
+	}
+	
+	public void convertInputValues() {
+		
+		name = nameField.getValue();
+		description = descriptionField.getValue();
+		teacherName = teacherNameField.getValue();
+		level = Level.valueOf(selectLevelComboBox.getValue());
+		givesCertificate = certCheckbox.getValue();
+	
+	}
+	
+	public void checkDurationFieldEmpty() {
+		if (durationField.getValue() != "") {
+			try {
+			duration = Integer.parseInt(durationField.getValue());
+			System.out.println("Gets here");
+			checkPriceFieldEmpty();
+			}
+			catch (Exception ex) {
+				Notification notif = new Notification("Warning", "The duration should be a numeric value!", Notification.TYPE_WARNING_MESSAGE);
+				notif.show(Page.getCurrent());
+			}
+		}
+		else {
+			Notification notif = new Notification("Warning", "The duration field should be filled in!", Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
+		}
+	}
+	
+	public void checkPriceFieldEmpty() {
+		if (priceField.getValue() != "") {
+			try {
+			price = Integer.parseInt(priceField.getValue());
+			checkCategoryFieldEmpty();
+			}
+			catch (Exception ex){
+				Notification notif = new Notification("Warning", "The price should be a numeric value!", Notification.TYPE_WARNING_MESSAGE);
+				notif.show(Page.getCurrent());
+			}
+		}
+		else {
+			Notification notif = new Notification("Warning", "The price should be a filled in!", Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
+		}
+	}
+	
+	public void checkCategoryFieldEmpty() {
+		if (selectCategoryComboBox.getValue() != null) {
+			Category category = Category.valueOf(selectCategoryComboBox.getValue());
+			NewCourseMethods.addNewCourse(binder, name, description, teacherName, duration, level, category, price, givesCertificate);
+		}
+		else {
+			Notification notif = new Notification("Warning", "The category field should be filled in!", Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
+		}
 	}
 
 }

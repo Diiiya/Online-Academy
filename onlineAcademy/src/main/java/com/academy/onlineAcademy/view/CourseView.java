@@ -23,6 +23,12 @@ public class CourseView extends VerticalLayout implements View {
 	Navigator navigator = UI.getCurrent().getNavigator();
 	private String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 	
+	public CourseView() {
+		
+		initMainlayout();
+		
+	}
+	
 	public VerticalLayout initMainlayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		
@@ -87,13 +93,6 @@ public class CourseView extends VerticalLayout implements View {
 		return layoutBody;
 	}
 					        
-	public CourseView() {
-		
-		initMainlayout();
-		
-	}
-
-	
 	
 	MenuBar.Command createNavigationCommand(String navigationView) {
 		return new MenuBar.Command() {

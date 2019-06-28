@@ -29,7 +29,12 @@ public class LoginView extends VerticalLayout implements View {
 	
 	private final TextField usernameField = new TextField("Type your username:");
 	private final PasswordField passwordField = new PasswordField("Type your password:");
-			
+	
+	public LoginView() {
+		
+		initMainLayout();
+		
+	}			
 			
     public VerticalLayout initMainLayout() {
     	VerticalLayout layout = new VerticalLayout();
@@ -82,12 +87,6 @@ public class LoginView extends VerticalLayout implements View {
  	    
  	    return loginButton;
     }
-	
-	public LoginView() {
-		
-		initMainLayout();
-		
-	}
 	
 	public void checkIfTheUsernameExists() {
 		try {

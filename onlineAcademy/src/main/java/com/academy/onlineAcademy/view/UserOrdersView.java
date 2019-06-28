@@ -35,6 +35,12 @@ public class UserOrdersView extends VerticalLayout implements View {
 	Navigator navigator = UI.getCurrent().getNavigator();
 	private OrderController orderObj = new OrderController();
 	private Grid<com.academy.onlineAcademy.model.Order> grid = new Grid<>();
+	
+	public UserOrdersView() {
+		
+		initMainLayout();
+		
+	}
 			
 	public VerticalLayout initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
@@ -87,12 +93,6 @@ public class UserOrdersView extends VerticalLayout implements View {
 		grid.addColumn(com.academy.onlineAcademy.model.Order::getPrice).setCaption("Price");
 		
 		return grid;
-	}
-	
-	public UserOrdersView() {
-		
-		initMainLayout();
-		
 	}
 	
 	MenuBar.Command createNavigationCommand(String navigationView) {

@@ -15,36 +15,43 @@ import com.vaadin.ui.Notification;
 
 public class NewCourseMethods {
 	
-	static CourseController obj = new CourseController();
-	static String enteredName;
-	static String databaseName;
-	static String enteredDescription;
-	static String enteredTeacherName;
-	static int enteredDuration;
-	static Level enteredLevel;
-	static Category enteredCategory;
-	static double enteredPrice;
-	static boolean enteredCertificateVal;
-	static File enteredCoverPhoto;
-	static byte[] convertedCoverPhoto;
-	static String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-	static FileInputStream fileStream = null;
+	private static CourseController obj = new CourseController();
+	private static String enteredName;
+	private static String enteredDescription;
+	private static String enteredTeacherName;
+	private static int enteredDuration;
+	private static Level enteredLevel;
+	private static Category enteredCategory;
+	private static double enteredPrice;
+	private static boolean enteredCertificateVal;
+//	private static File enteredCoverPhoto;
+	private static byte[] convertedCoverPhoto;
+	private static String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+	private static FileInputStream fileStream = null;
+	
+//	public static void addNewCourse(Binder<Course> binder, String name, String description, String teacherName, int duration, Level level,
+//			Category category, double price, boolean givesCertificate /* , File coverPhoto */) {
+//		checkEmptyFields(name, description, teacherName, duration, level, category, price, givesCertificate /*, coverPhoto */);
+//		boolean fieldsAreValid = checkValidation(binder);
+//		if (fieldsAreValid == true) {
+//			//convertInputPhoto();
+//			boolean courseExists = existingCourseCheck();
+//			if (courseExists == true) {
+//				addCourseToDatabase();
+//			}
+//		}
+//		
+//	}
 	
 	public static void addNewCourse(Binder<Course> binder, String name, String description, String teacherName, int duration, Level level,
 			Category category, double price, boolean givesCertificate /* , File coverPhoto */) {
-		checkEmptyFields(name, description, teacherName, duration, level, category, price, givesCertificate /*, coverPhoto */);
-		checkValidation(binder);
-		//convertInputPhoto();
-		existingCourseCheck();
-		addCourseToDatabase();
+		checkEmptyFields(binder, name, description, teacherName, duration, level, category, price, givesCertificate /*, coverPhoto */);
 	}
 	
-	public static void checkEmptyFields(String name, String description, String teacherName, int duration, Level level,
+	public static void checkEmptyFields(Binder<Course> binder, String name, String description, String teacherName, int duration, Level level,
 			Category category, double price, boolean givesCertificate /* , File coverPhoto */) {
 		if (name != "" && description != "" && teacherName != "" && duration != 0 && level != null && category != null &&
 				price != 0 /* && coverPhoto != null */) {
-			
-			System.out.print("Empty fields checked!");
 			
 			enteredName = name;
 			enteredDescription = description;
@@ -56,6 +63,7 @@ public class NewCourseMethods {
 			enteredCertificateVal = givesCertificate;
 			//enteredCoverPhoto = coverPhoto;
 			
+			checkValidation(binder);
 		}
 		else {
 			Notification notif = new Notification("Warning", "All required fields (*) should be filled in! Numeric values (for duration and price) cannot be 0!",
@@ -67,7 +75,7 @@ public class NewCourseMethods {
 	public static void checkValidation(Binder<Course> binder) {
 			if (binder.validate().isOk() == true) {
 				//convertInputPhoto(enteredCoverPhoto);
-				addCourseToDatabase();
+				existingCourseCheck();
 			}
 			else { 
 				Notification notif = new Notification("Warning", "Correct the field(s) in red.",
@@ -100,20 +108,19 @@ public class NewCourseMethods {
 	
 	public static void existingCourseCheck() {
 		try {
-	    	databaseName = obj.getCourseByName(enteredName.toUpperCase()).getName();
+	    	obj.getCourseByName(enteredName.toUpperCase()).getName();
 	    	Notification notif = new Notification("Warning", "A course with the same name already exists! Please review or use a different name!",
 				    Notification.TYPE_WARNING_MESSAGE);
 			notif.show(Page.getCurrent());
-	    	
 	     }
 		 catch (Exception ex) {
-			
+			 addCourseToDatabase();
 		 }
 	}
 	
 	public static void addCourseToDatabase() {
 		try {
-			obj.addCourse(enteredName, enteredDescription, enteredTeacherName, enteredDuration, enteredLevel, enteredCategory, 
+			obj.addCourse(enteredName.toUpperCase(), enteredDescription, enteredTeacherName, enteredDuration, enteredLevel, enteredCategory, 
 					enteredPrice, enteredCertificateVal, convertedCoverPhoto);
 			
 			Notification notif = new Notification("Confirmation", "The course has been created!",

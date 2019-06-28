@@ -20,20 +20,31 @@ public class NewUserMethods {
 	static String enteredPassword;
 	static String enteredConfirmPassword;
 
-	public static void checkEmptyFields(Binder<Person> binder, Type userType, String fullName, String username, String email, String password, String confirmPassword) {
-		if (fullName != "" && username != "" && email != "" && password != "" && confirmPassword != "") {
+//	public static void checkEmptyFields(Binder<Person> binder, Type userType, String fullName, String username, String email, String password, String confirmPassword) {
+//		if (fullName != "" && username != "" && email != "" && password != "" && confirmPassword != "") {
+//			enteredFullName = fullName;
+//			enteredUsername = username;
+//			enteredEmail = email;
+//			enteredPassword = password;
+//			enteredConfirmPassword = confirmPassword;
+//			checkValidation(userType, binder);
+//		}
+//		else {
+//			Notification notif = new Notification("Warning", "All required fields (*) should be filled in!",
+//				    Notification.TYPE_WARNING_MESSAGE);
+//			notif.show(Page.getCurrent());
+//		} 
+//	}
+	
+	public static void setFieldsValues(Binder<Person> binder, Type userType, String fullName, String username, String email, String password, String confirmPassword) {
+		
 			enteredFullName = fullName;
 			enteredUsername = username;
 			enteredEmail = email;
 			enteredPassword = password;
 			enteredConfirmPassword = confirmPassword;
 			checkValidation(userType, binder);
-		}
-		else {
-			Notification notif = new Notification("Warning", "All required fields (*) should be filled in!",
-				    Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-		} 
+		
 	}
 	
 	public static void checkValidation(Type userType, Binder<Person> binder) {

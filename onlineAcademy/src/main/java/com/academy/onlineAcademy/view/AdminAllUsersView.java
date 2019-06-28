@@ -44,26 +44,64 @@ import com.vaadin.ui.MenuBar.MenuItem;
 public class AdminAllUsersView extends VerticalLayout implements View {
 	
 	Navigator navigator = UI.getCurrent().getNavigator();
-	PersonController personObj = new PersonController();
-	List<Person> personas;
-	Grid<com.academy.onlineAcademy.model.Person> grid = new Grid<>();
-	Person selectedPerson;
-	int selectedPersonId;
+	private String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+	Binder<Person> binder = new Binder<>();
+	Person person = new Person();
+	
+	private final TextField fullNameField = new TextField("Full name:");
+	private final TextField usernameField = new TextField("Username:");
+	private final TextField emailField = new TextField("Email:");
+	private final PasswordField passwordField = new PasswordField("Password:");	
+	private final List<String> types = Stream.of(Type.values())
+            .map(Enum::name)
+            .collect(Collectors.toList());	
+	private final ComboBox<String> selectTypeComboBox = new ComboBox<>("Select type:", types);
+	
+	private HorizontalLayout buttonsHLayout;
+	private Window updateWindow;
+	
+	private PersonController personObj = new PersonController();
+	private List<Person> personas;
+	private Grid<com.academy.onlineAcademy.model.Person> grid = new Grid<>();
+	private Person selectedPerson;
+	private int selectedPersonId;
 	
 	public AdminAllUsersView() {
+		
+		initMainLayout();
+		
+	}
+	
+	public VerticalLayout initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		mainVLayout.setHeight("100%");
 		
-		// 1 - Header bar ?
+		HorizontalLayout layoutH = getTopBar();
+		HorizontalLayout searchHLayout = getSearchLayout();
+		selectTypeComboBox.setEmptySelectionAllowed(false);
+		Label topLabel = new Label("Seach for a specific user:");		
+		grid = getGrid();
+		buttonsHLayout = buttonsDELIUPDLayout();
+		callBinder();
+		callUpdateWindow();
+		
+		mainVLayout.addComponents(layoutH, searchHLayout, topLabel, grid, buttonsHLayout);
+		mainVLayout.setComponentAlignment(searchHLayout, Alignment.MIDDLE_CENTER);
+		mainVLayout.setComponentAlignment(buttonsHLayout, Alignment.BOTTOM_CENTER);
+		addComponent(mainVLayout);
+		
+		return mainVLayout;
+	}
+	
+	public HorizontalLayout getTopBar() {
+		
 		HorizontalLayout layoutH = new HorizontalLayout();
 		layoutH.setSpacing(true);
 		layoutH.setWidth("100%");
-		layoutH.setHeight("70px");
+		layoutH.setHeight("90px");
 		
-		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 		FileResource logoResource = new FileResource(new File(basepath +
 	            "/logo.jpg"));
-			
 		Image logoImage = new Image("", logoResource);
 		logoImage.setWidth("130px");
 		logoImage.setHeight("60px");
@@ -71,64 +109,58 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		// MENU bar and methods to navigate to different pages
 		MenuBar profileMenu = new MenuBar();
 		MenuItem myProfileMainItem = profileMenu.addItem("My profile", VaadinIcons.MENU, null);
-		MenuItem allCoursesItem = myProfileMainItem.addItem("All courses", VaadinIcons.ACADEMY_CAP, createNavigationCommand("AdminAllCourses"));
-		MenuItem addCoursesItem = myProfileMainItem.addItem("Add course", VaadinIcons.FILE_ADD, createNavigationCommand("AdminAddCourse"));
-		MenuItem allOrdersItem = myProfileMainItem.addItem("All orders", VaadinIcons.NEWSPAPER, createNavigationCommand("AdminAllOrders"));
-		MenuItem allUsersItem = myProfileMainItem.addItem("All users", VaadinIcons.USERS, createNavigationCommand("AdminAllUsers"));
-		MenuItem addUserItem = myProfileMainItem.addItem("Add user", VaadinIcons.PLUS, createNavigationCommand("AdminAddUser"));
-		MenuItem mySettingsItem = myProfileMainItem.addItem("Settings", VaadinIcons.USER, createNavigationCommand("Settings"));
-		MenuItem myLogoutItem = myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, createNavigationCommand("Home"));
+		myProfileMainItem.addItem("All courses", VaadinIcons.ACADEMY_CAP, createNavigationCommand("AdminAllCourses"));
+		myProfileMainItem.addItem("Add course", VaadinIcons.FILE_ADD, createNavigationCommand("AdminAddCourse"));
+		myProfileMainItem.addItem("All orders", VaadinIcons.NEWSPAPER, createNavigationCommand("AdminAllOrders"));
+		myProfileMainItem.addItem("All users", VaadinIcons.USERS, createNavigationCommand("AdminAllUsers"));
+		myProfileMainItem.addItem("Add user", VaadinIcons.PLUS, createNavigationCommand("AdminAddUser"));
+		myProfileMainItem.addItem("Settings", VaadinIcons.USER, createNavigationCommand("Settings"));
+		myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, createNavigationCommand("Home"));
 		
 		layoutH.addComponents(logoImage, profileMenu);
 		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
 		layoutH.setComponentAlignment(profileMenu, Alignment.BOTTOM_RIGHT);
 		
-		// 2 - Search
-		
+		return layoutH;
+	}
+	
+	public HorizontalLayout getSearchLayout() {
 		HorizontalLayout searchHLayout = new HorizontalLayout();
+		
 		TextField searchField = new TextField("");
 		searchField.setPlaceholder("SEARCH");
 		Button searchButton = new Button("Search", VaadinIcons.SEARCH);
 		searchButton.addClickListener(e -> {
-			Person selectedPerson = personObj.getPersonById(Integer.parseInt(searchField.getValue()));
-			grid.setItems(selectedPerson);
+			try {
+				Person selectedPerson = personObj.getPersonById(Integer.parseInt(searchField.getValue()));
+				grid.setItems(selectedPerson);
+			}
+			catch(Exception ex) {
+				Notification notif = new Notification("Warning", "No user with this id has been found!", Notification.TYPE_WARNING_MESSAGE);
+				notif.show(Page.getCurrent());
+			}			
 		});
 		searchHLayout.addComponents(searchField, searchButton);
 		searchHLayout.setComponentAlignment(searchButton, Alignment.BOTTOM_RIGHT);
 		
-		// 3 - All users:
-		Label topLabel = new Label("Seach for a specific user:");		
-		personas = personObj.getAllUsers();
-		
-		grid.setItems(personas);
-		
-		
-		grid.addColumn(com.academy.onlineAcademy.model.Person::getId).setCaption("Id");
-		grid.addColumn(com.academy.onlineAcademy.model.Person::getFullName).setCaption("Full name");
-		grid.addColumn(com.academy.onlineAcademy.model.Person::getUsername).setCaption("Username");
-		grid.addColumn(com.academy.onlineAcademy.model.Person::getEmail).setCaption("Email");
-		grid.addColumn(com.academy.onlineAcademy.model.Person::getType).setCaption("Type");
-		grid.addColumn(com.academy.onlineAcademy.model.Person::getPassword).setCaption("Password");
-		
-		grid.setWidth("100%");
-		grid.setHeight("100%");
-		
-		HorizontalLayout buttonsHLayout = new HorizontalLayout();
+		return searchHLayout;
+	}
+	
+	public HorizontalLayout buttonsDELIUPDLayout() {
+		buttonsHLayout = new HorizontalLayout();
 		buttonsHLayout.setVisible(false);
-		Button deleteCourseButton = new Button("Delete", VaadinIcons.DEL);
-		deleteCourseButton.setWidth("200px");
-		Button updateCourseButton = new Button("Update", VaadinIcons.REFRESH);
-		updateCourseButton.setWidth("200px");
-		buttonsHLayout.addComponents(updateCourseButton, deleteCourseButton);
 		
-		grid.addItemClickListener(e -> {
-			selectedPerson = e.getItem();
-			selectedPersonId = selectedPerson.getId();
-			System.out.println(selectedPersonId);
-			buttonsHLayout.setVisible(true);
+		Button deleteUserButton = new Button("Delete", VaadinIcons.DEL);
+		deleteUserButton.setWidth("200px");
+		Button updateUserButton = new Button("Update", VaadinIcons.REFRESH);
+		updateUserButton.setWidth("200px");
+		buttonsHLayout.addComponents(updateUserButton, deleteUserButton);
+		
+		updateUserButton.addClickListener(e -> {
+			getUserInfo(selectedPersonId);
 		});
-
-		deleteCourseButton.addClickListener(e -> {
+		
+		deleteUserButton.addClickListener(e -> {
 			try {
 			personObj.deletePersonById(selectedPersonId);
 	        personas = personObj.getAllUsers();
@@ -140,30 +172,44 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 			}
 		});
 		
-		TextField fullNameField = new TextField("Full name:");
-		TextField usernameField = new TextField("Username:");
-		TextField emailField = new TextField("Email:");
-		PasswordField passwordField = new PasswordField("Password:");
+		return buttonsHLayout;
+	}
+	
+	public Grid<Person> getGrid() {
+        personas = personObj.getAllUsers();
 		
-		List<String> types = Stream.of(Type.values())
-                .map(Enum::name)
-                .collect(Collectors.toList());
+		grid.setItems(personas);		
 		
-		ComboBox<String> selectTypeComboBox = new ComboBox<>("Select type:", types);
-		selectTypeComboBox.setEmptySelectionAllowed(false);
+		grid.addColumn(com.academy.onlineAcademy.model.Person::getId).setCaption("Id");
+		grid.addColumn(com.academy.onlineAcademy.model.Person::getFullName).setCaption("Full name");
+		grid.addColumn(com.academy.onlineAcademy.model.Person::getUsername).setCaption("Username");
+		grid.addColumn(com.academy.onlineAcademy.model.Person::getEmail).setCaption("Email");
+		grid.addColumn(com.academy.onlineAcademy.model.Person::getType).setCaption("Type");
+		grid.addColumn(com.academy.onlineAcademy.model.Person::getPassword).setCaption("Password");
 		
-		Button updateFormButton = new Button("Update", VaadinIcons.REFRESH);
+		grid.setWidth("100%");
+		grid.setHeight("100%");
 		
-		Binder<Person> binder = new Binder<>();
+		grid.addItemClickListener(e -> {
+			selectedPerson = e.getItem();
+			selectedPersonId = selectedPerson.getId();
+			buttonsHLayout.setVisible(true);
+		});
+		
+		return grid;
+	}
+	
+	public Binder<Person> callBinder() {
+		
 		binder.forField(fullNameField).withValidator(new StringLengthValidator(
 				"Name must be between 5 and 30 characters long!",3, 50))
 		.asRequired("Cannot be empty")
 	    .bind(Person::getFullName, Person::setFullName);
 		
-		binder.forField(usernameField).withValidator(new StringLengthValidator(
-				"Username must be between 6 and 30 characters long!",3, 30))
-		.asRequired("Cannot be empty")
-	    .bind(Person::getUsername, Person::setUsername);
+//		binder.forField(usernameField).withValidator(new StringLengthValidator(
+//				"Username must be between 6 and 30 characters long!",3, 30))
+//		.asRequired("Cannot be empty")
+//	    .bind(Person::getUsername, Person::setUsername);
 		
 		binder.forField(emailField).withValidator(new EmailValidator(
 			    "This doesn't seem to be a valid email address"))
@@ -173,70 +219,31 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		
 		binder.forField(passwordField).asRequired("Cannot be empty")
 		.bind(Person::getPassword, Person::setPassword);
-		binder.forField(selectTypeComboBox)
-		.asRequired("Cannot be empty");
+//		binder.forField(selectTypeComboBox)
+//		.asRequired("Cannot be empty");
+		
+		return binder;
+	}
+	
+	public Window callUpdateWindow() {
+		updateWindow = new Window("UPDATE USER");
+		updateWindow.setVisible(false);
+		
+		Button updateFormButton = new Button("Update", VaadinIcons.REFRESH);
+		updateFormButton.addClickListener(e -> /* checkFields() */ {
+			updatePersonSettings(selectedPersonId);
+		});
 		
 		FormLayout content = new FormLayout();
 		content.addComponents(fullNameField, usernameField, emailField, passwordField, selectTypeComboBox, updateFormButton);
 		content.setSizeUndefined(); 
 		content.setMargin(true);
 		
-		Window updateWindow = new Window("UPDATE USER");
-		updateWindow.setVisible(false);
-		updateCourseButton.addClickListener(e -> {
-			updateWindow.setVisible(true);
-			updateWindow.center();
-			updateWindow.setContent(content);
-			if (selectedPerson != null) {
-			fullNameField.setValue(selectedPerson.getFullName());
-			usernameField.setValue(selectedPerson.getUsername());
-			emailField.setValue(String.valueOf(selectedPerson.getEmail()));
-			passwordField.setValue(selectedPerson.getPassword());
-			selectTypeComboBox.setValue(selectedPerson.getType().toString());
-			UI.getCurrent().addWindow(updateWindow);
-			}
-		});
+		updateWindow.center();
+		updateWindow.setContent(content);
+		UI.getCurrent().addWindow(updateWindow);
 		
-		updateFormButton.addClickListener(e -> {
-			if (fullNameField.getValue() != "" && usernameField.getValue() != "" && emailField.getValue() != "" && passwordField.getValue() != "") {
-				PersonController obj = new PersonController();
-				
-				try {
-					
-					// Getting and converting String values from the UI to the required values for the Course constructor
-					Type type = Type.valueOf(selectTypeComboBox.getValue());
-					obj.updatePersonById(selectedPerson, selectedPerson.getId(), fullNameField.getValue(), 
-							usernameField.getValue(), emailField.getValue(), passwordField.getValue(), type);
-					
-					Notification notif = new Notification(
-						    "Confirmation",
-						    "The user has been updated!",
-						    Notification.TYPE_WARNING_MESSAGE);
-					notif.show(Page.getCurrent());
-					
-			        personas = personObj.getAllUsers();
-			        grid.setItems(personas);
-			        
-			        updateWindow.setVisible(false);
-			        buttonsHLayout.setVisible(false);
-					}
-					catch (Exception ex) {
-						ex.printStackTrace();
-					}
-				}
-				else {
-					Notification notif = new Notification(
-						    "Warning",
-						    "All required fields should be filled in!",
-						    Notification.TYPE_WARNING_MESSAGE);
-					notif.show(Page.getCurrent());
-				}
-		});
-		
-		mainVLayout.addComponents(layoutH, searchHLayout, topLabel, grid, buttonsHLayout);
-		mainVLayout.setComponentAlignment(searchHLayout, Alignment.MIDDLE_CENTER);
-		mainVLayout.setComponentAlignment(buttonsHLayout, Alignment.BOTTOM_CENTER);
-		addComponent(mainVLayout);
+		return updateWindow;
 	}
 	
 	MenuBar.Command createNavigationCommand(String navigationView) {
@@ -246,5 +253,66 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		    }
 		};
 	}
+	
+	public void getUserInfo(int userId) {
+		try {
+			person = personObj.getPersonById(userId);			
+			binder.readBean(person);
+			updateWindow.setVisible(true);
+			
+		}
+		catch(Exception ex) {
+			Notification notif = new Notification("Warning", "Unexpected error!", Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
+		}
+	}
+	
+	public void updatePersonSettings(int userId) {
+		try {
+			binder.writeBean(person);
+			existingEmail(userId);	
+		}
+		catch(Exception ex) {
+			Notification notif = new Notification("Warning", "Please correct the fields in red!", Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
+		}
+	}
+	
+	public void existingEmail(int userId) {
+		try {
+			String enteredEmail = emailField.getValue();
+	    	person = personObj.getPersonByEmail(enteredEmail.toUpperCase());
+	    	if (enteredEmail.equals(person.getEmail())) {
+	    		 updateInDatabase();
+	    	}
+	    	else {
+	    	Notification notif = new Notification("Warning", "The email is already used by another user!", Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
+	    	}
+	     }
+		 catch (Exception ex) {
+			 updateInDatabase();
+		 }
+	}
+	
+	public void updateInDatabase() {
+		try {
+			personObj.updatePersonById(person, person.getId(), person.getFullName(), person.getUsername(), person.getEmail().toUpperCase(), person.getPassword(), person.getType());
+			Notification notif = new Notification("Confirmation!", "Profile successfully updated!", Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
+		}
+		catch (Exception ex) {
+			Notification notif = new Notification("Warning", "Unexpected error!", Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
+		}
+		finally {
+			personas = personObj.getAllUsers();
+	        grid.setItems(personas);
+	        
+	        updateWindow.setVisible(false);
+	        buttonsHLayout.setVisible(false);
+		}
+	}
+
 
 }
