@@ -65,7 +65,7 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 //	FileResource coverResource = new FileResource(new File(basepath + "/1online-courses_0.jpg"));
 	
 	Navigator navigator = UI.getCurrent().getNavigator();
-	Binder<Course> binder = new Binder<>();
+	Binder<Course> binder;
 	
 	private String name;
 	private String description;
@@ -109,13 +109,13 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		// MENU bar and methods to navigate to different pages
 		MenuBar profileMenu = new MenuBar();
 		MenuItem myProfileMainItem = profileMenu.addItem("My profile", VaadinIcons.MENU, null);
-		MenuItem allCoursesItem = myProfileMainItem.addItem("All courses", VaadinIcons.ACADEMY_CAP, createNavigationCommand("AdminAllCourses"));
-		MenuItem addCoursesItem = myProfileMainItem.addItem("Add course", VaadinIcons.FILE_ADD, createNavigationCommand("AdminAddCourse"));
-		MenuItem allOrdersItem = myProfileMainItem.addItem("All orders", VaadinIcons.NEWSPAPER, createNavigationCommand("AdminAllOrders"));
-		MenuItem allUsersItem = myProfileMainItem.addItem("All users", VaadinIcons.USERS, createNavigationCommand("AdminAllUsers"));
-		MenuItem addUserItem = myProfileMainItem.addItem("Add user", VaadinIcons.PLUS, createNavigationCommand("AdminAddUser"));
-		MenuItem mySettingsItem = myProfileMainItem.addItem("Settings", VaadinIcons.USER, createNavigationCommand("Settings"));
-		MenuItem myLogoutItem = myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, createNavigationCommand("Home"));
+		myProfileMainItem.addItem("All courses", VaadinIcons.ACADEMY_CAP, createNavigationCommand("AdminAllCourses"));
+		myProfileMainItem.addItem("Add course", VaadinIcons.FILE_ADD, createNavigationCommand("AdminAddCourse"));
+		myProfileMainItem.addItem("All orders", VaadinIcons.NEWSPAPER, createNavigationCommand("AdminAllOrders"));
+		myProfileMainItem.addItem("All users", VaadinIcons.USERS, createNavigationCommand("AdminAllUsers"));
+		myProfileMainItem.addItem("Add user", VaadinIcons.PLUS, createNavigationCommand("AdminAddUser"));
+		myProfileMainItem.addItem("Settings", VaadinIcons.USER, createNavigationCommand("Settings"));
+		myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, createNavigationCommand("Home"));
 		
 		layoutH.addComponents(logoImage, profileMenu);
 		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
@@ -160,6 +160,7 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 	}
 	
 	public void callBinder() {
+		binder = new Binder<>();
 		
 		binder.forField(nameField).withValidator(new StringLengthValidator("Name must be between 3 and 30 characters long!",3, 30)).asRequired("Cannot be empty")
 	    .bind(Course::getName, Course::setName);

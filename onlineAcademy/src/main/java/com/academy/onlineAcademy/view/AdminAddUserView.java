@@ -133,28 +133,34 @@ public class AdminAddUserView extends VerticalLayout implements View {
 		return addButton;
 	}
 	
-	public Binder<Person> callBinder() {
+	public void callBinder() {
 		///////// BINDER Part + validations
-		binder.forField(fullNameField).withValidator(new StringLengthValidator(
-				"Name must be between 5 and 30 characters long!",3, 50))
+		binder.forField(fullNameField)
+		.withValidator(new StringLengthValidator("Name must be between 5 and 30 characters long!",3, 50))
+		.withValidator(string -> string != null && !string.isEmpty(), "Input values should not be empty")
 		.asRequired("Cannot be empty")
 	    .bind(Person::getFullName, Person::setFullName);
-		binder.forField(usernameField).withValidator(new StringLengthValidator(
-				"Username must be between 6 and 30 characters long!",3, 30))
+		
+		binder.forField(usernameField)
+		.withValidator(new StringLengthValidator("Username must be between 6 and 30 characters long!",3, 30))
+		.withValidator(string -> string != null && !string.isEmpty(), "Input values should not be empty")
 		.asRequired("Cannot be empty")
 	    .bind(Person::getUsername, Person::setUsername);
-		binder.forField(emailField).withValidator(new EmailValidator(
-			    "This doesn't seem to be a valid email address"))
+		
+		binder.forField(emailField)
+		.withValidator(new EmailValidator("This doesn't seem to be a valid email address"))
 		.withValidator(email -> email.length() <= 50, "Email address should be max 50 characters long!")
+		.withValidator(string -> string != null && !string.isEmpty(), "Input values should not be empty")
 		.asRequired("Cannot be empty")
 	    .bind(Person::getEmail, Person::setEmail);
+		
 		binder.forField(passwordField).asRequired("Cannot be empty")
 		.withValidator(new RegexpValidator("Password should contain at least one digit, one lower, one upper case letter and special symbol (# $ ^ + = ! * () @ % &) "
 				+ "and be at least 8 characters long!", "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[#$^+=!*()@%&]).{8,30}$"))
+		.withValidator(string -> string != null && !string.isEmpty(), "Input values should not be empty")
 		.bind(Person::getPassword, Person::setPassword);
 		binder.forField(confirmPasswordField).asRequired("Cannot be empty");
 		
-		return binder;
 	}
 	
 	MenuBar.Command createNavigationCommand(String navigationView) {

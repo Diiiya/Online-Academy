@@ -171,18 +171,39 @@ public class PersonController {
 		}
 	}
 	
-	public void updatePersonById(Person person, int id, String fullName, String username, String email, String password, Type type) {
+//	public void updatePersonById(Person person, int id, String fullName, String username, String email, String password, Type type) {
+//		try {
+//
+//		    emUPD.getTransaction().begin();
+//		    
+//		    Person updatedPerson = emUPD.merge(person);
+//		    
+//		    updatedPerson.setFullName(fullName);
+//		    updatedPerson.setUsername(username);
+//		    updatedPerson.setEmail(email);
+//		    updatedPerson.setPassword(password);
+//		    updatedPerson.setType(type);
+//		    
+//		    emUPD.persist(updatedPerson);
+//		    emUPD.getTransaction().commit();
+//		    
+//		} catch(PersistenceException e) {
+//
+//		    emUPD.getTransaction().rollback();
+//		    
+//		    throw e;
+//		}
+//        finally {
+//		emUPD.close();
+//		}
+//	}
+	
+	public void updatePersonById(Person person) {
 		try {
 
 		    emUPD.getTransaction().begin();
 		    
 		    Person updatedPerson = emUPD.merge(person);
-		    
-		    updatedPerson.setFullName(fullName);
-		    updatedPerson.setUsername(username);
-		    updatedPerson.setEmail(email);
-		    updatedPerson.setPassword(password);
-		    updatedPerson.setType(type);
 		    
 		    emUPD.persist(updatedPerson);
 		    emUPD.getTransaction().commit();

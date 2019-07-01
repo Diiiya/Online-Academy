@@ -26,6 +26,7 @@ import javax.validation.constraints.Size;
 	@NamedQuery(name = "getAllCourses", query = "SELECT c FROM Course c"),
 //	@NamedQuery(name = "getAllCoursesByUser", query = "SELECT c FROM Course c WHERE c.userId = :userId"),
 	@NamedQuery(name = "findCourseByName", query = "SELECT c FROM Course c WHERE c.name = :name"),
+	@NamedQuery(name = "findCourseById", query = "SELECT c FROM Course c WHERE c.id = :id"),
 	@NamedQuery(name = "findCourseByCategory", query = "SELECT c FROM Course c WHERE c.category = :category"),
 	@NamedQuery(name = "findCourseByLevel", query = "SELECT c FROM Course c WHERE c.level = :level"),
 	@NamedQuery(name = "findCourseByDuration", query = "SELECT c FROM Course c WHERE c.duration = :duration"),
@@ -120,7 +121,7 @@ public class Course implements Serializable{
 	public Category getCategory() {
 		return category;
 	}
-	public void setCategoty(Category category) {
+	public void setCategory(Category category) {
 		this.category = category;
 	}
 	public double getPrice() {

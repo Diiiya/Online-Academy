@@ -3,6 +3,7 @@ package com.academy.onlineAcademy.view;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -19,6 +20,7 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.sass.ArgumentParser.Option;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
@@ -44,237 +46,245 @@ import com.vaadin.ui.MenuBar.MenuItem;
 public class AdminAllCoursesView extends VerticalLayout implements View {
 	
 	Navigator navigator = UI.getCurrent().getNavigator();
-	CourseController courseObj = new CourseController();
-	List<Course> courses;
-	Grid<com.academy.onlineAcademy.model.Course> grid = new Grid<>();
-	Course selectedCourse;
+	private String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+	private Window updateWindow;
+	
+	private Binder<Course> binder;
+	private final TextField nameField = new TextField("Course name:");
+	private final TextField descriptionField = new TextField("Course description:");
+	private final TextField teacherNameField = new TextField("Teacher's  name:");
+	private final TextField photoField = new TextField("Photo:");
+	
+	private final List<String> categories = Stream.of(Category.values())
+            .map(Enum::name)
+            .collect(Collectors.toList());
+	
+	private final ComboBox<String> selectCategoryComboBox = new ComboBox<>("Select category:", categories);
+	
+	private final List<String> levels = Stream.of(Level.values())
+            .map(Enum::name)
+            .collect(Collectors.toList());
+	
+	private final ComboBox<String> selectLevelComboBox = new ComboBox<>("Select level:", levels);
+	
+	private HorizontalLayout buttonsHLayout;
+	private final TextField durationField = new TextField("Duration:");
+	private final TextField priceField = new TextField("Price:");	
+	private final CheckBox certCheckbox = new CheckBox("Gives certificate:");
+	
+	private CourseController courseObj = new CourseController();
+	private List<Course> courses;
+	private Grid<com.academy.onlineAcademy.model.Course> grid;
+	private Course selectedCourse;
 	int selectedCourseId;
 	
 	public AdminAllCoursesView() {
 		
+		initMainLayout();		
+		
+	}
+	
+	public VerticalLayout initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		mainVLayout.setHeight("100%");
 		
-		// 1 - Header bar ?
+		HorizontalLayout layoutH = getTopBar();
+		HorizontalLayout searchHLayout = getSearchLayout();
+		certCheckbox.setValue(true);
+		Label allCoursesLabel = new Label("All courses:");	
+		grid = getGrid();
+		buttonsHLayout = getButtonsDELIUPDLayout();
+		callBinder();
+		callUpdateWindow();
+		
+		mainVLayout.addComponents(layoutH, searchHLayout, allCoursesLabel, grid, buttonsHLayout);
+		mainVLayout.setComponentAlignment(searchHLayout, Alignment.MIDDLE_CENTER);
+		mainVLayout.setComponentAlignment(buttonsHLayout, Alignment.BOTTOM_CENTER);
+		addComponent(mainVLayout);
+		
+		return mainVLayout;
+	}
+	
+	public HorizontalLayout getTopBar() {
+		
 		HorizontalLayout layoutH = new HorizontalLayout();
 		layoutH.setSpacing(true);
 		layoutH.setWidth("100%");
-		layoutH.setHeight("70px");
+		layoutH.setHeight("90px");
 		
-		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 		FileResource logoResource = new FileResource(new File(basepath +
 	            "/logo.jpg"));
-			
 		Image logoImage = new Image("", logoResource);
 		logoImage.setWidth("130px");
 		logoImage.setHeight("60px");
 		
+		// MENU bar and methods to navigate to different pages
 		MenuBar profileMenu = new MenuBar();
 		MenuItem myProfileMainItem = profileMenu.addItem("My profile", VaadinIcons.MENU, null);
-		MenuItem allCoursesItem = myProfileMainItem.addItem("All courses", VaadinIcons.ACADEMY_CAP, createNavigationCommand("AdminAllCourses"));
-		MenuItem addCoursesItem = myProfileMainItem.addItem("Add course", VaadinIcons.FILE_ADD, createNavigationCommand("AdminAddCourse"));
-		MenuItem allOrdersItem = myProfileMainItem.addItem("All orders", VaadinIcons.NEWSPAPER, createNavigationCommand("AdminAllOrders"));
-		MenuItem allUsersItem = myProfileMainItem.addItem("All users", VaadinIcons.USERS, createNavigationCommand("AdminAllUsers"));
-		MenuItem addUserItem = myProfileMainItem.addItem("Add user", VaadinIcons.PLUS, createNavigationCommand("AdminAddUser"));
-		MenuItem mySettingsItem = myProfileMainItem.addItem("Settings", VaadinIcons.USER, createNavigationCommand("Settings"));
-		MenuItem myLogoutItem = myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, createNavigationCommand("Home"));
+		myProfileMainItem.addItem("All courses", VaadinIcons.ACADEMY_CAP, createNavigationCommand("AdminAllCourses"));
+		myProfileMainItem.addItem("Add course", VaadinIcons.FILE_ADD, createNavigationCommand("AdminAddCourse"));
+		myProfileMainItem.addItem("All orders", VaadinIcons.NEWSPAPER, createNavigationCommand("AdminAllOrders"));
+		myProfileMainItem.addItem("All users", VaadinIcons.USERS, createNavigationCommand("AdminAllUsers"));
+		myProfileMainItem.addItem("Add user", VaadinIcons.PLUS, createNavigationCommand("AdminAddUser"));
+		myProfileMainItem.addItem("Settings", VaadinIcons.USER, createNavigationCommand("Settings"));
+		myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, createNavigationCommand("Home"));
 		
 		layoutH.addComponents(logoImage, profileMenu);
 		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
 		layoutH.setComponentAlignment(profileMenu, Alignment.BOTTOM_RIGHT);
 		
-		// 2 - Search
-				
-				HorizontalLayout searchHLayout = new HorizontalLayout();
-				TextField searchField = new TextField("");
-				searchField.setPlaceholder("SEARCH");
-				Button searchButton = new Button("Search", VaadinIcons.SEARCH);
-				searchButton.addClickListener(e -> {
-					courseObj.getCourseByName(searchField.getValue());
-//					List<Course> selectedCourses = courseObj.getAllCourses();
-//					grid.setItems(selectedCourses);
-					Course selectedCourse = courseObj.getCourseByName(searchField.getValue());
-					grid.setItems(selectedCourse);
-				});
-				searchHLayout.addComponents(searchField, searchButton);
-				searchHLayout.setComponentAlignment(searchButton, Alignment.BOTTOM_RIGHT);
-				
-				// 3 - Top course results:
-				Label allCoursesLabel = new Label("All courses:");		
-				courses = courseObj.getAllCourses();
-				
-				grid.setItems(courses);
-				
-				
-				grid.addColumn(com.academy.onlineAcademy.model.Course::getId).setCaption("Id");
-				grid.addColumn(com.academy.onlineAcademy.model.Course::getName).setCaption("Course name");
-				grid.addColumn(com.academy.onlineAcademy.model.Course::getDescription).setCaption("Course description");
-				grid.addColumn(com.academy.onlineAcademy.model.Course::getTeacherName).setCaption("Teacher");
-				grid.addColumn(com.academy.onlineAcademy.model.Course::getCategory).setCaption("Category");
-				grid.addColumn(com.academy.onlineAcademy.model.Course::getDuration).setCaption("Duration");
-				grid.addColumn(com.academy.onlineAcademy.model.Course::getLevel).setCaption("Level");
-				grid.addColumn(com.academy.onlineAcademy.model.Course::getPrice).setCaption("Price in euros");
-				grid.addColumn(com.academy.onlineAcademy.model.Course::getGivesCertificate).setCaption("Gives certificate");
-				
-				grid.setWidth("100%");
-				grid.setHeight("100%");
-				
-				HorizontalLayout buttonsHLayout = new HorizontalLayout();
-				buttonsHLayout.setVisible(false);
-				Button deleteCourseButton = new Button("Delete", VaadinIcons.DEL);
-				deleteCourseButton.setWidth("200px");
-				Button updateCourseButton = new Button("Update", VaadinIcons.REFRESH);
-				updateCourseButton.setWidth("200px");
-				buttonsHLayout.addComponents(updateCourseButton, deleteCourseButton);
-				
-				grid.addItemClickListener(e -> {
-					selectedCourse = e.getItem();
-					selectedCourseId = selectedCourse.getId();
-					System.out.println(selectedCourseId);
-					buttonsHLayout.setVisible(true);
-				});
-
-				deleteCourseButton.addClickListener(e -> {
-					try {
-					courseObj.deleteCourseById(selectedCourseId);
-			        courses = courseObj.getAllCourses();
-			        grid.setItems(courses);
-			        buttonsHLayout.setVisible(false);
-					}
-					catch(Exception ex) {
-						ex.printStackTrace();
-					}
-				});
-				
-				//
-				//// - Update button and subwindow content
-				//
-				
-				TextField nameField = new TextField("Course name:");
-				TextField descriptionField = new TextField("Course description:");
-				TextField teacherNameField = new TextField("Teacher's  name:");
-				TextField photoField = new TextField("Photo:");
-				
-				List<String> categories = Stream.of(Category.values())
-		                .map(Enum::name)
-		                .collect(Collectors.toList());
-				
-				ComboBox<String> selectCategoryComboBox = new ComboBox<>("Select category:", categories);
-				selectCategoryComboBox.setEmptySelectionAllowed(false);
-				
-				List<String> levels = Stream.of(Level.values())
-		                .map(Enum::name)
-		                .collect(Collectors.toList());
-				
-				ComboBox<String> selectLevelComboBox = new ComboBox<>("Select level:", levels);
-				selectLevelComboBox.setEmptySelectionAllowed(false);
-				
-
-				TextField durationField = new TextField("Duration:");
-				TextField priceField = new TextField("Price:");
-				
-				CheckBox certCheckbox = new CheckBox("Gives certificate:");
-				certCheckbox.setValue(true);
-				
-				Button updateFormButton = new Button("Update", VaadinIcons.REFRESH);
-				
-				Binder<Course> binder = new Binder<>();
-				binder.forField(nameField).withValidator(new StringLengthValidator("Name must be between 3 and 30 characters long!",3, 30)).asRequired("Cannot be empty")
-			    .bind(Course::getName, Course::setName);
-				binder.forField(descriptionField).withValidator(description -> description.length() <= 200, "Description max 200 characters long!").asRequired("Cannot be empty")
-			    .bind(Course::getDescription, Course::setDescription);
-				binder.forField(teacherNameField).withValidator(new StringLengthValidator("Teacher's name must be between 3 and 30 characters long!",3, 30)).asRequired("Cannot be empty")
-			    .bind(Course::getTeacherName, Course::setTeacherName);
-				binder.forField(durationField).withConverter(new StringToIntegerConverter("Must enter a number!")).asRequired("Cannot be empty")
-				.bind(Course::getDuration, Course::setDuration);
-				binder.forField(priceField).withConverter(new StringToDoubleConverter("Must enter a decimal number!")).asRequired("Cannot be empty")
-				.bind(Course::getPrice, Course::setPrice);
-				binder.forField(selectCategoryComboBox).asRequired("Cannot be empty");
-				
-				FormLayout content = new FormLayout();
-				content.addComponents(nameField, descriptionField, teacherNameField, photoField, durationField, priceField,
-						selectCategoryComboBox, selectLevelComboBox, certCheckbox, updateFormButton);
-				content.setSizeUndefined(); 
-				content.setMargin(true);
-				
-				Window updateWindow = new Window("UPDATE COURSE");
-				updateWindow.setVisible(false);
-				updateCourseButton.addClickListener(e -> {
-					updateWindow.setVisible(true);
-					updateWindow.center();
-					updateWindow.setContent(content);
-					if (selectedCourse != null) {
-					nameField.setValue(selectedCourse.getName());
-					descriptionField.setValue(selectedCourse.getDescription());
-					teacherNameField.setValue(selectedCourse.getTeacherName());
-					selectCategoryComboBox.setValue(selectedCourse.getCategory().toString());
-					selectLevelComboBox.setValue(selectedCourse.getLevel().toString());
-					durationField.setValue(String.valueOf(selectedCourse.getDuration()));
-					priceField.setValue(String.valueOf(selectedCourse.getPrice()));
-					certCheckbox.setValue(selectedCourse.getGivesCertificate());
-					UI.getCurrent().addWindow(updateWindow);
-					}
-				});
-				
-				updateFormButton.addClickListener(e -> {
-					if (nameField.getValue() != "" && descriptionField.getValue() != "" && teacherNameField.getValue() != "") {
-						CourseController obj = new CourseController();
-						FileInputStream fileStream = null;
-						
-						try {
-							fileStream = new FileInputStream(new File(basepath + "/1online-courses_0.jpg"));
-							byte[] coverPhotoBytes = fileStream.readAllBytes();
-							
-							// Getting and converting String values from the UI to the required values for the Course constructor
-							int duration = Integer.parseInt(durationField.getValue());
-							Level level = Level.valueOf(selectLevelComboBox.getValue());
-							Category category = Category.valueOf(selectCategoryComboBox.getValue());
-							double price = Double.parseDouble(priceField.getValue());
-							obj.updateCourseById(selectedCourse, selectedCourse.getId(), nameField.getValue(), 
-									descriptionField.getValue(), teacherNameField.getValue(), duration, level, 
-									category, price, certCheckbox.getValue(), coverPhotoBytes);
-							
-							Notification notif = new Notification(
-								    "Confirmation",
-								    "The course has been updated!",
-								    Notification.TYPE_WARNING_MESSAGE);
-							notif.show(Page.getCurrent());
-							
-					        courses = courseObj.getAllCourses();
-					        grid.setItems(courses);
-					        
-					        updateWindow.setVisible(false);
-					        buttonsHLayout.setVisible(false);
-							}
-							catch (Exception ex) {
-								ex.printStackTrace();
-							}
-						finally {
-							if (fileStream != null) {
-								try {
-									fileStream.close();
-								} catch (IOException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}
-							}
-						}
-						}
-						else {
-							Notification notif = new Notification(
-								    "Warning",
-								    "All required fields should be filled in!",
-								    Notification.TYPE_WARNING_MESSAGE);
-							notif.show(Page.getCurrent());
-						}
-				});
-
-				
-				mainVLayout.addComponents(layoutH, searchHLayout, allCoursesLabel, grid, buttonsHLayout);
-				mainVLayout.setComponentAlignment(searchHLayout, Alignment.MIDDLE_CENTER);
-				mainVLayout.setComponentAlignment(buttonsHLayout, Alignment.BOTTOM_CENTER);
-				addComponent(mainVLayout);
+		return layoutH;
+	}
+	
+	public HorizontalLayout getSearchLayout() {
+		HorizontalLayout searchHLayout = new HorizontalLayout();
+		TextField searchField = new TextField("");
+		searchField.setPlaceholder("SEARCH");
+		Button searchButton = new Button("Search", VaadinIcons.SEARCH);
+		searchButton.addClickListener(e -> {
+			try { 
+				courseObj.getCourseByName(searchField.getValue());
+//				List<Course> selectedCourses = courseObj.getAllCourses();
+//				grid.setItems(selectedCourses);
+				Course selectedCourse = courseObj.getCourseByName(searchField.getValue());
+				grid.setItems(selectedCourse);
+			}
+			catch (Exception ex) {
+				Notification notif = new Notification("Warning!", "No course with this name has been found!", Notification.TYPE_WARNING_MESSAGE);
+				notif.show(Page.getCurrent());
+			}
+			
+		});
+		searchHLayout.addComponents(searchField, searchButton);
+		searchHLayout.setComponentAlignment(searchButton, Alignment.BOTTOM_RIGHT);
 		
+		return searchHLayout;
+	}
+	
+	public Grid<Course> getGrid() {
+		grid = new Grid<Course>();
+		
+		courses = courseObj.getAllCourses();
+		grid.setItems(courses);		
+		
+		grid.addColumn(com.academy.onlineAcademy.model.Course::getId).setCaption("Id");
+		grid.addColumn(com.academy.onlineAcademy.model.Course::getName).setCaption("Course name");
+		grid.addColumn(com.academy.onlineAcademy.model.Course::getDescription).setCaption("Course description");
+		grid.addColumn(com.academy.onlineAcademy.model.Course::getTeacherName).setCaption("Teacher");
+		grid.addColumn(com.academy.onlineAcademy.model.Course::getCategory).setCaption("Category");
+		grid.addColumn(com.academy.onlineAcademy.model.Course::getDuration).setCaption("Duration");
+		grid.addColumn(com.academy.onlineAcademy.model.Course::getLevel).setCaption("Level");
+		grid.addColumn(com.academy.onlineAcademy.model.Course::getPrice).setCaption("Price in euros");
+		grid.addColumn(com.academy.onlineAcademy.model.Course::getGivesCertificate).setCaption("Gives certificate");
+		
+		grid.setWidth("100%");
+		
+		grid.addItemClickListener(e -> {
+			Course selectedCourse = e.getItem();
+			selectedCourseId = selectedCourse.getId();
+			buttonsHLayout.setVisible(true);
+		});
+		
+		return grid;
+	}
+	
+	public HorizontalLayout getButtonsDELIUPDLayout() {
+		buttonsHLayout = new HorizontalLayout();
+		
+		buttonsHLayout.setVisible(false);
+		Button deleteCourseButton = new Button("Delete", VaadinIcons.DEL);
+		deleteCourseButton.setWidth("200px");
+		Button updateCourseButton = new Button("Update", VaadinIcons.REFRESH);
+		updateCourseButton.setWidth("200px");
+		buttonsHLayout.addComponents(updateCourseButton, deleteCourseButton);
+		
+		deleteCourseButton.addClickListener(e -> {
+			try {
+				courseObj.deleteCourseById(selectedCourseId);
+		        courses = courseObj.getAllCourses();
+		        grid.setItems(courses);
+		        buttonsHLayout.setVisible(false);
+			}
+			catch(Exception ex) {
+				ex.printStackTrace();
+			}
+		});
+		
+		updateCourseButton.addClickListener(e -> getCourseInfo(selectedCourseId));
+		
+		return buttonsHLayout;
+	}
+	
+	public void callBinder() {
+		binder = new Binder<>();
+		
+		binder.forField(nameField).withValidator(new StringLengthValidator("Name must be between 3 and 30 characters long!",3, 30)).asRequired("Cannot be empty")
+	    .bind(Course::getName, Course::setName);
+		binder.forField(descriptionField).withValidator(description -> description.length() <= 200, "Description max 200 characters long!").asRequired("Cannot be empty")
+	    .bind(Course::getDescription, Course::setDescription);
+		binder.forField(teacherNameField).withValidator(new StringLengthValidator("Teacher's name must be between 3 and 30 characters long!",3, 30)).asRequired("Cannot be empty")
+	    .bind(Course::getTeacherName, Course::setTeacherName);
+		
+//		.withConverter(Integer::valueOf, String::valueOf, "Input value should be an integer")
+		binder.forField(selectCategoryComboBox).asRequired("Cannot be empty")
+		.withConverter(Category::valueOf, String::valueOf, "Input value should be one from the list")
+		.bind(Course::getCategory, Course::setCategory);
+		binder.forField(durationField).withConverter(new StringToIntegerConverter("Must enter a number!")).asRequired("Cannot be empty")
+		.bind(Course::getDuration, Course::setDuration);
+		binder.forField(selectLevelComboBox).asRequired("Cannot be empty")
+		.withConverter(Level::valueOf, String::valueOf, "Input value should be one from the list")
+		.bind(Course::getLevel, Course::setLevel);
+		
+		binder.forField(priceField).withConverter(new StringToDoubleConverter("Must enter a decimal number!")).asRequired("Cannot be empty")
+		.bind(Course::getPrice, Course::setPrice);
+		binder.forField(certCheckbox).bind(Course::getGivesCertificate, Course::setGivesCertificate);
+		
+	}
+	
+	public Window callUpdateWindow() { 
+		updateWindow = new Window("UPDATE COURSE");
+		updateWindow.setVisible(false);
+	
+		selectCategoryComboBox.setEmptySelectionAllowed(false);
+		selectLevelComboBox.setEmptySelectionAllowed(false);
+		
+		Button updateFormButton = new Button("Update", VaadinIcons.REFRESH);
+		updateFormButton.addClickListener(e -> {
+//				CourseController obj = new CourseController();
+//				FileInputStream fileStream = null;
+//				
+//				try {
+//					fileStream = new FileInputStream(new File(basepath + "/1online-courses_0.jpg"));
+//					byte[] coverPhotoBytes = fileStream.readAllBytes();
+//					}
+//					catch (Exception ex) {
+//						ex.printStackTrace();
+//					}
+//				finally {
+//					if (fileStream != null) {
+//						try {
+//							fileStream.close();
+//						} catch (IOException e1) {
+//							// TODO Auto-generated catch block
+//							e1.printStackTrace();
+//						}
+//					}
+//				}
+			existingCourse(selectedCourseId);	
+		});
+		
+		FormLayout content = new FormLayout();
+		content.addComponents(nameField, descriptionField, teacherNameField, photoField, durationField, priceField,
+				selectCategoryComboBox, selectLevelComboBox, certCheckbox, updateFormButton);
+		content.setSizeUndefined(); 
+		content.setMargin(true);
+		
+		updateWindow.center();
+		updateWindow.setContent(content);
+		
+		UI.getCurrent().addWindow(updateWindow);
+		
+		return updateWindow;
 	}
 	
 	MenuBar.Command createNavigationCommand(String navigationView) {
@@ -283,6 +293,69 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		    	navigator.navigateTo(navigationView);
 		    }
 		};
+	}
+	
+	public void getCourseInfo(int courseId) {
+		try {
+			selectedCourse = courseObj.getCourseById(selectedCourseId);
+			binder.readBean(selectedCourse);
+			updateWindow.setVisible(true);
+			
+		}
+		catch(Exception ex) {
+			Notification notif = new Notification("Warning", "Unexpected error!", Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
+		}
+	}
+	
+	public void updateCourse(int courseId) {
+		try {
+			binder.writeBean(selectedCourse);
+			System.out.println("Writes bean");
+			updateInDatabase();
+		}
+		catch(Exception ex) {
+			Notification notif = new Notification("Warning", "Please correct the fields in red!", Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
+		}
+	}
+	
+	public void existingCourse(int courseId) {
+		try {
+			String enteredCourseName = nameField.getValue();
+			selectedCourse = courseObj.getCourseById(selectedCourseId);
+			System.out.println("Checks the course name");
+	    	if (enteredCourseName.equals(selectedCourse.getName())) {
+	    		updateCourse(selectedCourseId);
+	    		 System.out.println("Passes the update in db");
+	    	}
+	    	else {
+	    	Notification notif = new Notification("Warning", "Course with the same name already exists. Please choose another name.", Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
+	    	}
+	     }
+		 catch (Exception ex) {
+			 updateCourse(selectedCourseId);
+		 }
+	}
+	
+	public void updateInDatabase() {
+		try {
+			courseObj.updateCourseById(selectedCourse);
+			Notification notif = new Notification("Confirmation!", "Course successfully updated!", Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
+		}
+		catch (Exception ex) {
+			Notification notif = new Notification("Warning", "Unexpected error!", Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
+		}
+		finally {
+			courses = courseObj.getAllCourses();
+	        grid.setItems(courses);
+	        
+	        updateWindow.setVisible(false);
+	        buttonsHLayout.setVisible(false);
+		}
 	}
 	
 	@Override

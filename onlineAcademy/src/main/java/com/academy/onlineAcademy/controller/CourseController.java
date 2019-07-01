@@ -46,25 +46,11 @@ public class CourseController {
 			em = emFactoryObj.createEntityManager();
             
 		    em.getTransaction().begin();
-//		    Query query = em.createNativeQuery("INSERT INTO TCourse (name, description, teacher_name, duration, level, category, price, "
-//					+ "gives_certificate, cover_photo) VALUES (?,?,?,?,?,?,?,?,?)");
-//		        query.setParameter(1, name);
-//		        query.setParameter(2, description);
-//		        query.setParameter(3, teacherName);
-//		        query.setParameter(4, duration);
-//		        query.setParameter(5, level.name());
-//		        query.setParameter(6, category.name());
-//		        query.setParameter(7, price);
-//		        query.setParameter(8, givesCertificate);
-//		        query.setParameter(9, coverPhoto);
-//		        query.executeUpdate();
 		        
-		        Course course = new Course(name, description, teacherName, duration, level, category, price, givesCertificate, coverPhoto);
-			    em.persist(course);
+	        Course course = new Course(name, description, teacherName, duration, level, category, price, givesCertificate, coverPhoto);
+		    em.persist(course);
 		        
 		    em.getTransaction().commit();
-		    
-		    
 		    
 		} 
 		catch(PersistenceException e) {
@@ -122,6 +108,27 @@ public class CourseController {
 		}
 	}
 	
+	public Course getCourseById(int id) {
+		EntityManager em = null;
+		try {
+			em = emFactoryObj.createEntityManager();
+		    em.getTransaction().begin();
+		    
+		    TypedQuery<Course> query = em.createNamedQuery("findCourseById", Course.class);
+		    em.getTransaction().commit();
+		    return query.setParameter("id", id).getSingleResult();
+		} 
+		catch(PersistenceException e) {
+			
+		    em.getTransaction().rollback();
+		    
+		    throw e;
+		}
+        finally {
+		em.close();
+		}
+	}
+	
 	public List<Order> getAllCoursesByUser(int userId) {
 		EntityManager em = null;
 		try {
@@ -142,22 +149,12 @@ public class CourseController {
 		}
 	}
 	
-	public void updateCourseById(Course course, int id, String name, String description, String teacherName, int duration, Level level,
-			Category category, double price, boolean givesCertificate, byte[] coverPhoto) {
+	public void updateCourseById(Course course) {
 		try {
 
 		    emUPD.getTransaction().begin();
 		    
 		    Course newCourse = emUPD.merge(course);
-		    newCourse.setName(name);
-		    newCourse.setDescription(description);
-		    newCourse.setTeacherName(teacherName);
-		    newCourse.setDuration(duration);
-		    newCourse.setLevel(level);
-		    newCourse.setCategoty(category);
-		    newCourse.setPrice(price);
-		    newCourse.setGivesCertificate(givesCertificate);
-		    newCourse.setCoverPhoto(coverPhoto);
 		    
 		    emUPD.persist(newCourse);
 		    emUPD.getTransaction().commit();

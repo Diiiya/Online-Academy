@@ -1,15 +1,11 @@
 package com.academy.onlineAcademy.view;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.academy.onlineAcademy.controller.CourseController;
 import com.academy.onlineAcademy.controller.PersonController;
-import com.academy.onlineAcademy.model.Category;
 import com.academy.onlineAcademy.model.Course;
 import com.academy.onlineAcademy.model.Level;
 import com.academy.onlineAcademy.model.Person;
@@ -25,7 +21,6 @@ import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
@@ -162,10 +157,10 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		
 		deleteUserButton.addClickListener(e -> {
 			try {
-			personObj.deletePersonById(selectedPersonId);
-	        personas = personObj.getAllUsers();
-	        grid.setItems(personas);
-	        buttonsHLayout.setVisible(false);
+				personObj.deletePersonById(selectedPersonId);
+		        personas = personObj.getAllUsers();
+		        grid.setItems(personas);
+		        buttonsHLayout.setVisible(false);
 			}
 			catch(Exception ex) {
 				ex.printStackTrace();
@@ -199,7 +194,7 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		return grid;
 	}
 	
-	public Binder<Person> callBinder() {
+	public void callBinder() {
 		
 		binder.forField(fullNameField).withValidator(new StringLengthValidator(
 				"Name must be between 5 and 30 characters long!",3, 50))
@@ -219,10 +214,10 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		
 		binder.forField(passwordField).asRequired("Cannot be empty")
 		.bind(Person::getPassword, Person::setPassword);
-//		binder.forField(selectTypeComboBox)
-//		.asRequired("Cannot be empty");
+		binder.forField(selectTypeComboBox).asRequired("Cannot be empty")
+		.withConverter(Type::valueOf, String::valueOf, "Input value should be one from the list")
+		.bind(Person::getType, Person::setType);
 		
-		return binder;
 	}
 	
 	public Window callUpdateWindow() {
@@ -231,7 +226,7 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		
 		Button updateFormButton = new Button("Update", VaadinIcons.REFRESH);
 		updateFormButton.addClickListener(e -> /* checkFields() */ {
-			updatePersonSettings(selectedPersonId);
+			existingEmail(selectedPersonId);
 		});
 		
 		FormLayout content = new FormLayout();
@@ -270,7 +265,7 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 	public void updatePersonSettings(int userId) {
 		try {
 			binder.writeBean(person);
-			existingEmail(userId);	
+			updateInDatabase();
 		}
 		catch(Exception ex) {
 			Notification notif = new Notification("Warning", "Please correct the fields in red!", Notification.TYPE_WARNING_MESSAGE);
@@ -283,7 +278,7 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 			String enteredEmail = emailField.getValue();
 	    	person = personObj.getPersonByEmail(enteredEmail.toUpperCase());
 	    	if (enteredEmail.equals(person.getEmail())) {
-	    		 updateInDatabase();
+	    		updatePersonSettings(userId);
 	    	}
 	    	else {
 	    	Notification notif = new Notification("Warning", "The email is already used by another user!", Notification.TYPE_WARNING_MESSAGE);
@@ -291,13 +286,13 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 	    	}
 	     }
 		 catch (Exception ex) {
-			 updateInDatabase();
+			 updatePersonSettings(userId);
 		 }
 	}
 	
 	public void updateInDatabase() {
 		try {
-			personObj.updatePersonById(person, person.getId(), person.getFullName(), person.getUsername(), person.getEmail().toUpperCase(), person.getPassword(), person.getType());
+			personObj.updatePersonById(person);
 			Notification notif = new Notification("Confirmation!", "Profile successfully updated!", Notification.TYPE_WARNING_MESSAGE);
 			notif.show(Page.getCurrent());
 		}

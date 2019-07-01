@@ -29,26 +29,12 @@ public class NewCourseMethods {
 	private static String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 	private static FileInputStream fileStream = null;
 	
-//	public static void addNewCourse(Binder<Course> binder, String name, String description, String teacherName, int duration, Level level,
-//			Category category, double price, boolean givesCertificate /* , File coverPhoto */) {
-//		checkEmptyFields(name, description, teacherName, duration, level, category, price, givesCertificate /*, coverPhoto */);
-//		boolean fieldsAreValid = checkValidation(binder);
-//		if (fieldsAreValid == true) {
-//			//convertInputPhoto();
-//			boolean courseExists = existingCourseCheck();
-//			if (courseExists == true) {
-//				addCourseToDatabase();
-//			}
-//		}
-//		
-//	}
-	
 	public static void addNewCourse(Binder<Course> binder, String name, String description, String teacherName, int duration, Level level,
 			Category category, double price, boolean givesCertificate /* , File coverPhoto */) {
-		checkEmptyFields(binder, name, description, teacherName, duration, level, category, price, givesCertificate /*, coverPhoto */);
+		setFields(binder, name, description, teacherName, duration, level, category, price, givesCertificate /*, coverPhoto */);
 	}
 	
-	public static void checkEmptyFields(Binder<Course> binder, String name, String description, String teacherName, int duration, Level level,
+	public static void setFields(Binder<Course> binder, String name, String description, String teacherName, int duration, Level level,
 			Category category, double price, boolean givesCertificate /* , File coverPhoto */) {
 		if (name != "" && description != "" && teacherName != "" && duration != 0 && level != null && category != null &&
 				price != 0 /* && coverPhoto != null */) {
