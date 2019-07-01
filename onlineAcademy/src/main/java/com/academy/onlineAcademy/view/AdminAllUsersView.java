@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.academy.onlineAcademy.controller.PersonController;
+import com.academy.onlineAcademy.helpView.AdminViews;
 import com.academy.onlineAcademy.model.Course;
 import com.academy.onlineAcademy.model.Level;
 import com.academy.onlineAcademy.model.Person;
@@ -38,19 +39,16 @@ import com.vaadin.ui.MenuBar.MenuItem;
 
 public class AdminAllUsersView extends VerticalLayout implements View {
 	
-	Navigator navigator = UI.getCurrent().getNavigator();
+	private Navigator navigator = UI.getCurrent().getNavigator();
 	private String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-	Binder<Person> binder = new Binder<>();
-	Person person = new Person();
+	private Binder<Person> binder = new Binder<>();
+	private Person person = new Person();
 	
 	private final TextField fullNameField = new TextField("Full name:");
 	private final TextField usernameField = new TextField("Username:");
 	private final TextField emailField = new TextField("Email:");
 	private final PasswordField passwordField = new PasswordField("Password:");	
-	private final List<String> types = Stream.of(Type.values())
-            .map(Enum::name)
-            .collect(Collectors.toList());	
-	private final ComboBox<String> selectTypeComboBox = new ComboBox<>("Select type:", types);
+	private ComboBox<String> selectTypeComboBox;
 	
 	private HorizontalLayout buttonsHLayout;
 	private Window updateWindow;
@@ -71,8 +69,11 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		mainVLayout.setHeight("100%");
 		
-		HorizontalLayout layoutH = getTopBar();
+		HorizontalLayout layoutH = AdminViews.getTopBar(navigator);
 		HorizontalLayout searchHLayout = getSearchLayout();
+		
+		List<String> types = Stream.of(Type.values()).map(Enum::name).collect(Collectors.toList());
+		selectTypeComboBox = new ComboBox<>("Select type:", types);
 		selectTypeComboBox.setEmptySelectionAllowed(false);
 		Label topLabel = new Label("Seach for a specific user:");		
 		grid = getGrid();
@@ -86,37 +87,6 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		addComponent(mainVLayout);
 		
 		return mainVLayout;
-	}
-	
-	public HorizontalLayout getTopBar() {
-		
-		HorizontalLayout layoutH = new HorizontalLayout();
-		layoutH.setSpacing(true);
-		layoutH.setWidth("100%");
-		layoutH.setHeight("90px");
-		
-		FileResource logoResource = new FileResource(new File(basepath +
-	            "/logo.jpg"));
-		Image logoImage = new Image("", logoResource);
-		logoImage.setWidth("130px");
-		logoImage.setHeight("60px");
-		
-		// MENU bar and methods to navigate to different pages
-		MenuBar profileMenu = new MenuBar();
-		MenuItem myProfileMainItem = profileMenu.addItem("My profile", VaadinIcons.MENU, null);
-		myProfileMainItem.addItem("All courses", VaadinIcons.ACADEMY_CAP, createNavigationCommand("AdminAllCourses"));
-		myProfileMainItem.addItem("Add course", VaadinIcons.FILE_ADD, createNavigationCommand("AdminAddCourse"));
-		myProfileMainItem.addItem("All orders", VaadinIcons.NEWSPAPER, createNavigationCommand("AdminAllOrders"));
-		myProfileMainItem.addItem("All users", VaadinIcons.USERS, createNavigationCommand("AdminAllUsers"));
-		myProfileMainItem.addItem("Add user", VaadinIcons.PLUS, createNavigationCommand("AdminAddUser"));
-		myProfileMainItem.addItem("Settings", VaadinIcons.USER, createNavigationCommand("Settings"));
-		myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, createNavigationCommand("Home"));
-		
-		layoutH.addComponents(logoImage, profileMenu);
-		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
-		layoutH.setComponentAlignment(profileMenu, Alignment.BOTTOM_RIGHT);
-		
-		return layoutH;
 	}
 	
 	public HorizontalLayout getSearchLayout() {
@@ -239,14 +209,6 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		UI.getCurrent().addWindow(updateWindow);
 		
 		return updateWindow;
-	}
-	
-	MenuBar.Command createNavigationCommand(String navigationView) {
-		return new MenuBar.Command() {
-		    public void menuSelected(MenuItem selectedItem) {
-		    	navigator.navigateTo(navigationView);
-		    }
-		};
 	}
 	
 	public void getUserInfo(int userId) {

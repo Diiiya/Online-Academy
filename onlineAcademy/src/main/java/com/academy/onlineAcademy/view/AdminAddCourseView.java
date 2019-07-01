@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.academy.onlineAcademy.controller.CourseController;
+import com.academy.onlineAcademy.helpView.AdminViews;
 import com.academy.onlineAcademy.helper.NewCourseMethods;
 import com.academy.onlineAcademy.model.Category;
 import com.academy.onlineAcademy.model.Course;
@@ -44,27 +45,21 @@ import com.vaadin.ui.MenuBar.MenuItem;
 
 public class AdminAddCourseView extends VerticalLayout implements View {
 	
-	String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+//	String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 	
 	private final TextField nameField = new TextField("Course name:");
 	private final TextField descriptionField = new TextField("Course description:");
 	private final TextField teacherNameField = new TextField("Teacher's  name:");
 	private final TextField photoField = new TextField("Photo:");	
-	private final List<String> categories = Stream.of(Category.values())
-            .map(Enum::name)
-            .collect(Collectors.toList());
-	private final ComboBox<String> selectCategoryComboBox = new ComboBox<>("Select category:", categories);
-	private final List<String> levels = Stream.of(Level.values())
-            .map(Enum::name)
-            .collect(Collectors.toList());
-	private final ComboBox<String> selectLevelComboBox = new ComboBox<>("Select level:", levels);
+	private ComboBox<String> selectCategoryComboBox;
+	private ComboBox<String> selectLevelComboBox;
 	private final TextField durationField = new TextField("Duration:");
 	private final TextField priceField = new TextField("Price:");	
 	private final CheckBox certCheckbox = new CheckBox("Gives certificate:");
 	
 //	FileResource coverResource = new FileResource(new File(basepath + "/1online-courses_0.jpg"));
 	
-	Navigator navigator = UI.getCurrent().getNavigator();
+	private Navigator navigator = UI.getCurrent().getNavigator();
 	Binder<Course> binder;
 	
 	private String name;
@@ -87,7 +82,7 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 	public void initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		
-		HorizontalLayout layoutH = getTopBar();
+		HorizontalLayout layoutH = AdminViews.getTopBar(navigator);
 		VerticalLayout layoutVBody = getBodyLayout();
 		callBinder();
 		
@@ -95,34 +90,34 @@ public class AdminAddCourseView extends VerticalLayout implements View {
         addComponent(mainVLayout);
 	}
 	
-	public HorizontalLayout getTopBar() {
-		HorizontalLayout layoutH = new HorizontalLayout();
-		layoutH.setSpacing(true);
-		layoutH.setWidth("100%");
-		layoutH.setHeight("90px");
-		
-		FileResource logoResource = new FileResource(new File(basepath + "/logo.jpg"));
-		Image logoImage = new Image("", logoResource);
-		logoImage.setWidth("130px");
-		logoImage.setHeight("60px");
-		
-		// MENU bar and methods to navigate to different pages
-		MenuBar profileMenu = new MenuBar();
-		MenuItem myProfileMainItem = profileMenu.addItem("My profile", VaadinIcons.MENU, null);
-		myProfileMainItem.addItem("All courses", VaadinIcons.ACADEMY_CAP, createNavigationCommand("AdminAllCourses"));
-		myProfileMainItem.addItem("Add course", VaadinIcons.FILE_ADD, createNavigationCommand("AdminAddCourse"));
-		myProfileMainItem.addItem("All orders", VaadinIcons.NEWSPAPER, createNavigationCommand("AdminAllOrders"));
-		myProfileMainItem.addItem("All users", VaadinIcons.USERS, createNavigationCommand("AdminAllUsers"));
-		myProfileMainItem.addItem("Add user", VaadinIcons.PLUS, createNavigationCommand("AdminAddUser"));
-		myProfileMainItem.addItem("Settings", VaadinIcons.USER, createNavigationCommand("Settings"));
-		myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, createNavigationCommand("Home"));
-		
-		layoutH.addComponents(logoImage, profileMenu);
-		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
-		layoutH.setComponentAlignment(profileMenu, Alignment.BOTTOM_RIGHT);
-		
-		return layoutH;
-	}
+//	public HorizontalLayout getTopBar() {
+//		HorizontalLayout layoutH = new HorizontalLayout();
+//		layoutH.setSpacing(true);
+//		layoutH.setWidth("100%");
+//		layoutH.setHeight("90px");
+//		
+//		FileResource logoResource = new FileResource(new File(basepath + "/logo.jpg"));
+//		Image logoImage = new Image("", logoResource);
+//		logoImage.setWidth("130px");
+//		logoImage.setHeight("60px");
+//		
+//		// MENU bar and methods to navigate to different pages
+//		MenuBar profileMenu = new MenuBar();
+//		MenuItem myProfileMainItem = profileMenu.addItem("My profile", VaadinIcons.MENU, null);
+//		myProfileMainItem.addItem("All courses", VaadinIcons.ACADEMY_CAP, createNavigationCommand("AdminAllCourses"));
+//		myProfileMainItem.addItem("Add course", VaadinIcons.FILE_ADD, createNavigationCommand("AdminAddCourse"));
+//		myProfileMainItem.addItem("All orders", VaadinIcons.NEWSPAPER, createNavigationCommand("AdminAllOrders"));
+//		myProfileMainItem.addItem("All users", VaadinIcons.USERS, createNavigationCommand("AdminAllUsers"));
+//		myProfileMainItem.addItem("Add user", VaadinIcons.PLUS, createNavigationCommand("AdminAddUser"));
+//		myProfileMainItem.addItem("Settings", VaadinIcons.USER, createNavigationCommand("Settings"));
+//		myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, createNavigationCommand("Home"));
+//		
+//		layoutH.addComponents(logoImage, profileMenu);
+//		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
+//		layoutH.setComponentAlignment(profileMenu, Alignment.BOTTOM_RIGHT);
+//		
+//		return layoutH;
+//	}
 	
 	public VerticalLayout getBodyLayout() {
 		VerticalLayout layoutVBody = new VerticalLayout();
@@ -131,7 +126,11 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		Panel panel = new Panel("Add new course: ");
 		panel.setSizeUndefined();
 		
-        selectCategoryComboBox.setEmptySelectionAllowed(false);		
+		List<String> categories = Stream.of(Category.values()).map(Enum::name).collect(Collectors.toList());
+		selectCategoryComboBox = new ComboBox<>("Select category:", categories);
+        selectCategoryComboBox.setEmptySelectionAllowed(false);	
+        List<String> levels = Stream.of(Level.values()).map(Enum::name).collect(Collectors.toList());
+        selectLevelComboBox = new ComboBox<>("Select level:", levels);
 		selectLevelComboBox.setValue("BEGINNER");
 		selectLevelComboBox.setEmptySelectionAllowed(false);
 		certCheckbox.setValue(true);
@@ -176,13 +175,13 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		
 	}
 	
-	MenuBar.Command createNavigationCommand(String navigationView) {
-		return new MenuBar.Command() {
-		    public void menuSelected(MenuItem selectedItem) {
-		    	navigator.navigateTo(navigationView);
-		    }
-		};
-	}
+//	MenuBar.Command createNavigationCommand(String navigationView) {
+//		return new MenuBar.Command() {
+//		    public void menuSelected(MenuItem selectedItem) {
+//		    	navigator.navigateTo(navigationView);
+//		    }
+//		};
+//	}
 	
 	public void convertInputValues() {
 		

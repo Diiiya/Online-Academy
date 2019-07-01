@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.academy.onlineAcademy.controller.CourseController;
+import com.academy.onlineAcademy.helpView.AdminViews;
 import com.academy.onlineAcademy.model.Category;
 import com.academy.onlineAcademy.model.Course;
 import com.academy.onlineAcademy.model.Level;
@@ -45,7 +46,7 @@ import com.vaadin.ui.MenuBar.MenuItem;
 
 public class AdminAllCoursesView extends VerticalLayout implements View {
 	
-	Navigator navigator = UI.getCurrent().getNavigator();
+	private Navigator navigator = UI.getCurrent().getNavigator();
 	private String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 	private Window updateWindow;
 	
@@ -88,7 +89,7 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		mainVLayout.setHeight("100%");
 		
-		HorizontalLayout layoutH = getTopBar();
+		HorizontalLayout layoutH = AdminViews.getTopBar(navigator);
 		HorizontalLayout searchHLayout = getSearchLayout();
 		certCheckbox.setValue(true);
 		Label allCoursesLabel = new Label("All courses:");	
@@ -103,37 +104,6 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		addComponent(mainVLayout);
 		
 		return mainVLayout;
-	}
-	
-	public HorizontalLayout getTopBar() {
-		
-		HorizontalLayout layoutH = new HorizontalLayout();
-		layoutH.setSpacing(true);
-		layoutH.setWidth("100%");
-		layoutH.setHeight("90px");
-		
-		FileResource logoResource = new FileResource(new File(basepath +
-	            "/logo.jpg"));
-		Image logoImage = new Image("", logoResource);
-		logoImage.setWidth("130px");
-		logoImage.setHeight("60px");
-		
-		// MENU bar and methods to navigate to different pages
-		MenuBar profileMenu = new MenuBar();
-		MenuItem myProfileMainItem = profileMenu.addItem("My profile", VaadinIcons.MENU, null);
-		myProfileMainItem.addItem("All courses", VaadinIcons.ACADEMY_CAP, createNavigationCommand("AdminAllCourses"));
-		myProfileMainItem.addItem("Add course", VaadinIcons.FILE_ADD, createNavigationCommand("AdminAddCourse"));
-		myProfileMainItem.addItem("All orders", VaadinIcons.NEWSPAPER, createNavigationCommand("AdminAllOrders"));
-		myProfileMainItem.addItem("All users", VaadinIcons.USERS, createNavigationCommand("AdminAllUsers"));
-		myProfileMainItem.addItem("Add user", VaadinIcons.PLUS, createNavigationCommand("AdminAddUser"));
-		myProfileMainItem.addItem("Settings", VaadinIcons.USER, createNavigationCommand("Settings"));
-		myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, createNavigationCommand("Home"));
-		
-		layoutH.addComponents(logoImage, profileMenu);
-		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
-		layoutH.setComponentAlignment(profileMenu, Alignment.BOTTOM_RIGHT);
-		
-		return layoutH;
 	}
 	
 	public HorizontalLayout getSearchLayout() {
@@ -285,14 +255,6 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		UI.getCurrent().addWindow(updateWindow);
 		
 		return updateWindow;
-	}
-	
-	MenuBar.Command createNavigationCommand(String navigationView) {
-		return new MenuBar.Command() {
-		    public void menuSelected(MenuItem selectedItem) {
-		    	navigator.navigateTo(navigationView);
-		    }
-		};
 	}
 	
 	public void getCourseInfo(int courseId) {
