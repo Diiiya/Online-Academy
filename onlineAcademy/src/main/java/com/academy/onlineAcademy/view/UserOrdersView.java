@@ -20,12 +20,14 @@ import com.vaadin.ui.VerticalLayout;
 
 public class UserOrdersView extends VerticalLayout implements View {
 	
-	Navigator navigator = UI.getCurrent().getNavigator();
-	private OrderController orderObj = new OrderController();
-	private Grid<com.academy.onlineAcademy.model.Order> grid = new Grid<>();
+	private Navigator navigator;
+	private OrderController orderObj;
+	private Grid<com.academy.onlineAcademy.model.Order> grid;
 	
 	public UserOrdersView() {
 		
+		navigator = UI.getCurrent().getNavigator();
+		orderObj = new OrderController();
 		initMainLayout();
 		
 	}
@@ -35,7 +37,7 @@ public class UserOrdersView extends VerticalLayout implements View {
 		
 		HorizontalLayout layoutH = UserViews.getTopBar(navigator);
 		Label myOrdersLabel = new Label("My orders:");
-		Grid<com.academy.onlineAcademy.model.Order> grid = getGrid();
+		buildGrid();
 		
 		mainVLayout.addComponents(layoutH, myOrdersLabel, grid);
 		addComponent(mainVLayout);
@@ -43,7 +45,9 @@ public class UserOrdersView extends VerticalLayout implements View {
 		return mainVLayout;
 	}
 	
-	public Grid<Order> getGrid() {		
+	public void buildGrid() {
+		
+		grid = new Grid<>();
 	    grid.setWidth("100%");
 		
 		grid.addColumn(com.academy.onlineAcademy.model.Order::getUserId).setCaption("User id");
@@ -52,7 +56,6 @@ public class UserOrdersView extends VerticalLayout implements View {
 		grid.addColumn(com.academy.onlineAcademy.model.Order::isPaid).setCaption("Paid ?");
 		grid.addColumn(com.academy.onlineAcademy.model.Order::getPrice).setCaption("Price");
 		
-		return grid;
 	}
 	
 	@Override

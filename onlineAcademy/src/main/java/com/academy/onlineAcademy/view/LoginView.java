@@ -22,16 +22,18 @@ import com.vaadin.ui.VerticalLayout;
 
 public class LoginView extends VerticalLayout implements View {
 	
-	Navigator navigator = UI.getCurrent().getNavigator();
+	private Navigator navigator;
 	private String enteredUsername;
 	private String enteredPassword;
-	Person currentUser = new Person();
+	private Person currentUser;
 	
 	private final TextField usernameField = new TextField("Type your username:");
 	private final PasswordField passwordField = new PasswordField("Type your password:");
 	
 	public LoginView() {
 		
+		navigator = UI.getCurrent().getNavigator();
+		currentUser = new Person();
 		initMainLayout();
 		
 	}			
@@ -40,8 +42,7 @@ public class LoginView extends VerticalLayout implements View {
     	VerticalLayout layout = new VerticalLayout();
     	
 		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-		FileResource resource = new FileResource(new File(basepath +
-	            "/1024px-Circle-icons-profile.svg.png"));
+		FileResource resource = new FileResource(new File(basepath + "/1024px-Circle-icons-profile.svg.png"));
 		Image image = new Image("", resource);
 		image.setWidth("100px");
 		image.setHeight("100px");
@@ -102,6 +103,8 @@ public class LoginView extends VerticalLayout implements View {
 	
 	public void checkUsernamePasswordCombination() {
 		if (currentUser.getPassword().equals(enteredPassword)) {
+			// Should check the type of user
+		
     		navigator.navigateTo("UserCourses" + "/" + currentUser.getId());
     		
     		UI ui = UI.getCurrent();

@@ -36,8 +36,7 @@ import com.vaadin.ui.VerticalLayout;
 
 public class SignUpView extends VerticalLayout implements View {
 	
-	Navigator navigator = UI.getCurrent().getNavigator();
-	private Binder<Person> binder = new Binder<>();
+	private Binder<Person> binder;
 	private final TextField fullNameField = new TextField("Full name:");
 	private final TextField usernameField = new TextField("Username:");
 	private final TextField emailField = new TextField("Email:");
@@ -68,8 +67,7 @@ public class SignUpView extends VerticalLayout implements View {
 		layoutH.setHeight("90px");
 		
 		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-		FileResource logoResource = new FileResource(new File(basepath +
-	            "/logo.jpg"));	
+		FileResource logoResource = new FileResource(new File(basepath + "/logo.jpg"));	
 		Image logoImage = new Image("", logoResource);
 		logoImage.setWidth("130px");
 		logoImage.setHeight("60px");
@@ -108,9 +106,10 @@ public class SignUpView extends VerticalLayout implements View {
         return layoutVBody;
     }
     
-    public Binder<Person> callBinder() {
+    public void callBinder() {
     	
-		///////// BINDER Part + validations
+    	binder = new Binder<>();
+    	
 		binder.forField(fullNameField).withValidator(new StringLengthValidator(
 				"Name must be between 5 and 30 characters long!",3, 50))
 		.asRequired("Cannot be empty")
@@ -129,8 +128,6 @@ public class SignUpView extends VerticalLayout implements View {
 				+ "and be at least 8 characters long!", "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[#$^+=!*()@%&]).{8,30}$"))
 		.bind(Person::getPassword, Person::setPassword);
 		binder.forField(confirmPasswordField).asRequired("Cannot be empty");
-		
-		return binder;
 		
     }
 	

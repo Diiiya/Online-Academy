@@ -29,12 +29,8 @@ public class PersonController {
         return emFactoryObj.createEntityManager();
     }
 	
-	EntityManager emUPD;
-//	EntityManager emDEL;
-	
 	public PersonController() {
-		  emUPD = emFactoryObj.createEntityManager();
-//		  emDEL = emFactoryObj.createEntityManager();
+		  
 		}
 
 	public void addPerson(String fullName, String username, String email, String password, byte[] photo, Type type,
@@ -60,14 +56,14 @@ public class PersonController {
 		    em.persist(person);
 		    
 		    em.getTransaction().commit();
-		} catch(PersistenceException e) {
+		} 
+		catch(PersistenceException e) {
 
 		    em.getTransaction().rollback();
-		    
 		    throw e;
 		}
         finally {
-		em.close();
+		    em.close();
 		}
 	}
 	
@@ -80,14 +76,14 @@ public class PersonController {
 			TypedQuery<Person> query = em.createNamedQuery("getAllUsers", Person.class);
 		    em.getTransaction().commit();
 		    return query.getResultList();
-		} catch(PersistenceException e) {
+		} 
+		catch(PersistenceException e) {
 
 		    em.getTransaction().rollback();
-		    
 		    throw e;
 		}
         finally {
-		em.close();
+		    em.close();
 		}
 	}
 	
@@ -100,14 +96,14 @@ public class PersonController {
 		    TypedQuery<Person> query = em.createNamedQuery("findUserById", Person.class);
 		    em.getTransaction().commit();
 		    return query.setParameter("id", id).getSingleResult();
-		} catch(PersistenceException e) {
+		}
+		catch(PersistenceException e) {
 
 		    em.getTransaction().rollback();
-		    
 		    throw e;
 		}
         finally {
-		em.close();
+	    	em.close();
 		}
 	}
 	
@@ -120,14 +116,14 @@ public class PersonController {
 		    TypedQuery<Person> query = em.createNamedQuery("findUserByName", Person.class);
 		    em.getTransaction().commit();
 		    return query.setParameter("name", name).getSingleResult();
-		} catch(PersistenceException e) {
+		} 
+		catch(PersistenceException e) {
 
 		    em.getTransaction().rollback();
-		    
 		    throw e;
 		}
         finally {
-		em.close();
+		    em.close();
 		}
 	}
 	
@@ -140,14 +136,14 @@ public class PersonController {
 		    TypedQuery<Person> query = em.createNamedQuery("findUserByUsername", Person.class);
 		    em.getTransaction().commit();
 		    return query.setParameter("username", username).getSingleResult();
-		} catch(PersistenceException e) {
+		} 
+		catch(PersistenceException e) {
 
 		    em.getTransaction().rollback();
-		    
 		    throw e;
 		}
         finally {
-		em.close();
+		    em.close();
 		}
 	}
 	
@@ -160,14 +156,14 @@ public class PersonController {
 		    TypedQuery<Person> query = em.createNamedQuery("findUserByEmail", Person.class);
 		    em.getTransaction().commit();
 		    return query.setParameter("email", email).getSingleResult();
-		} catch(PersistenceException e) {
+		} 
+		catch(PersistenceException e) {
 
 		    em.getTransaction().rollback();
-		    
 		    throw e;
 		}
         finally {
-		em.close();
+		    em.close();
 		}
 	}
 	
@@ -198,9 +194,10 @@ public class PersonController {
 //		}
 //	}
 	
-	public void updatePersonById(Person person) {
+	public void updatePerson(Person person) {
+		EntityManager emUPD = null;
 		try {
-
+			emUPD = emFactoryObj.createEntityManager();
 		    emUPD.getTransaction().begin();
 		    
 		    Person updatedPerson = emUPD.merge(person);
@@ -208,14 +205,14 @@ public class PersonController {
 		    emUPD.persist(updatedPerson);
 		    emUPD.getTransaction().commit();
 		    
-		} catch(PersistenceException e) {
+		} 
+		catch(PersistenceException e) {
 
 		    emUPD.getTransaction().rollback();
-		    
 		    throw e;
 		}
         finally {
-		emUPD.close();
+		    emUPD.close();
 		}
 	}
 	
@@ -228,14 +225,14 @@ public class PersonController {
 		    int count = emDEL.createNamedQuery("deleteAllUsers", Person.class).executeUpdate();
 		    emDEL.getTransaction().commit();
 		    return count;
-		} catch(PersistenceException e) {
+		} 
+		catch(PersistenceException e) {
 
 		    emDEL.getTransaction().rollback();
-		    
 		    throw e;
 		}
         finally {
-		emDEL.close();
+		    emDEL.close();
 		}
 	}
 	
@@ -248,14 +245,14 @@ public class PersonController {
 		    int count = emDEL.createNamedQuery("deleteByPersonId", Person.class).setParameter("id", id).executeUpdate();
 		    emDEL.getTransaction().commit();
 		    return count;
-		} catch(PersistenceException e) {
+		} 
+		catch(PersistenceException e) {
 
 		    emDEL.getTransaction().rollback();
-		    
 		    throw e;
 		}
         finally {
-		emDEL.close();
+		    emDEL.close();
 		}
 	}
 	

@@ -46,8 +46,7 @@ import com.vaadin.ui.MenuBar.MenuItem;
 
 public class AdminAllCoursesView extends VerticalLayout implements View {
 	
-	private Navigator navigator = UI.getCurrent().getNavigator();
-	private String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+	private Navigator navigator;
 	private Window updateWindow;
 	
 	private Binder<Course> binder;
@@ -56,31 +55,26 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 	private final TextField teacherNameField = new TextField("Teacher's  name:");
 	private final TextField photoField = new TextField("Photo:");
 	
-	private final List<String> categories = Stream.of(Category.values())
-            .map(Enum::name)
-            .collect(Collectors.toList());
-	
-	private final ComboBox<String> selectCategoryComboBox = new ComboBox<>("Select category:", categories);
-	
-	private final List<String> levels = Stream.of(Level.values())
-            .map(Enum::name)
-            .collect(Collectors.toList());
-	
-	private final ComboBox<String> selectLevelComboBox = new ComboBox<>("Select level:", levels);
+	private List<String> categories;	
+	private ComboBox<String> selectCategoryComboBox;	
+	private List<String> levels;	
+	private ComboBox<String> selectLevelComboBox;
 	
 	private HorizontalLayout buttonsHLayout;
 	private final TextField durationField = new TextField("Duration:");
 	private final TextField priceField = new TextField("Price:");	
 	private final CheckBox certCheckbox = new CheckBox("Gives certificate:");
 	
-	private CourseController courseObj = new CourseController();
+	private CourseController courseObj;
 	private List<Course> courses;
 	private Grid<com.academy.onlineAcademy.model.Course> grid;
 	private Course selectedCourse;
-	int selectedCourseId;
+	private int selectedCourseId;
 	
 	public AdminAllCoursesView() {
 		
+		navigator = UI.getCurrent().getNavigator();
+		courseObj = new CourseController();
 		initMainLayout();		
 		
 	}
@@ -93,10 +87,10 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		HorizontalLayout searchHLayout = getSearchLayout();
 		certCheckbox.setValue(true);
 		Label allCoursesLabel = new Label("All courses:");	
-		grid = getGrid();
+		buildGrid();
 		buttonsHLayout = getButtonsDELIUPDLayout();
-		callBinder();
 		callUpdateWindow();
+		binder = getBinder();
 		
 		mainVLayout.addComponents(layoutH, searchHLayout, allCoursesLabel, grid, buttonsHLayout);
 		mainVLayout.setComponentAlignment(searchHLayout, Alignment.MIDDLE_CENTER);
@@ -131,7 +125,7 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		return searchHLayout;
 	}
 	
-	public Grid<Course> getGrid() {
+	public void buildGrid() {
 		grid = new Grid<Course>();
 		
 		courses = courseObj.getAllCourses();
@@ -154,8 +148,6 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 			selectedCourseId = selectedCourse.getId();
 			buttonsHLayout.setVisible(true);
 		});
-		
-		return grid;
 	}
 	
 	public HorizontalLayout getButtonsDELIUPDLayout() {
@@ -185,7 +177,7 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		return buttonsHLayout;
 	}
 	
-	public void callBinder() {
+	public Binder<Course> getBinder() {
 		binder = new Binder<>();
 		
 		binder.forField(nameField).withValidator(new StringLengthValidator("Name must be between 3 and 30 characters long!",3, 30)).asRequired("Cannot be empty")
@@ -196,8 +188,9 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 	    .bind(Course::getTeacherName, Course::setTeacherName);
 		
 //		.withConverter(Integer::valueOf, String::valueOf, "Input value should be an integer")
-		binder.forField(selectCategoryComboBox).asRequired("Cannot be empty")
+		binder.forField(selectCategoryComboBox)
 		.withConverter(Category::valueOf, String::valueOf, "Input value should be one from the list")
+		.asRequired("Cannot be empty")
 		.bind(Course::getCategory, Course::setCategory);
 		binder.forField(durationField).withConverter(new StringToIntegerConverter("Must enter a number!")).asRequired("Cannot be empty")
 		.bind(Course::getDuration, Course::setDuration);
@@ -209,13 +202,18 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		.bind(Course::getPrice, Course::setPrice);
 		binder.forField(certCheckbox).bind(Course::getGivesCertificate, Course::setGivesCertificate);
 		
+		return binder;
 	}
 	
 	public Window callUpdateWindow() { 
 		updateWindow = new Window("UPDATE COURSE");
 		updateWindow.setVisible(false);
 	
+		categories = Stream.of(Category.values()).map(Enum::name).collect(Collectors.toList());
+		selectCategoryComboBox = new ComboBox<>("Select category:", categories);
 		selectCategoryComboBox.setEmptySelectionAllowed(false);
+		levels = Stream.of(Level.values()).map(Enum::name).collect(Collectors.toList());
+		selectLevelComboBox = new ComboBox<>("Select level:", levels);
 		selectLevelComboBox.setEmptySelectionAllowed(false);
 		
 		Button updateFormButton = new Button("Update", VaadinIcons.REFRESH);

@@ -27,12 +27,14 @@ public class HomeView extends VerticalLayout implements View {
 	
 	private String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 	
-	Navigator navigator = UI.getCurrent().getNavigator();
-	private Grid<com.academy.onlineAcademy.model.Course> grid = new Grid<>();
-	private CourseController courseObj = new CourseController();
+	private Navigator navigator;
+	private Grid<com.academy.onlineAcademy.model.Course> grid;
+	private CourseController courseObj;
 			
 	public HomeView() {
 		
+		navigator = UI.getCurrent().getNavigator();
+		courseObj = new CourseController();
 		initMainlayout();
 		
 	}
@@ -50,7 +52,7 @@ public class HomeView extends VerticalLayout implements View {
 		
 		HorizontalLayout searchHLayout = getSearchLayout();
 		Label topCoursesLabel = new Label("Top courses:");	
-		grid = callGrid();
+		buildGrid();
 		
 		mainVLayout.addComponents(layoutH, coverImage, searchHLayout, topCoursesLabel, grid);
 		mainVLayout.setComponentAlignment(searchHLayout, Alignment.MIDDLE_CENTER);
@@ -113,8 +115,9 @@ public class HomeView extends VerticalLayout implements View {
 		return searchHLayout;
 	}
 	
-	public Grid<Course> callGrid() {
+	public void buildGrid() {
 		
+		grid = new Grid<>();
 		List<Course> courses = courseObj.getAllCourses();
 		grid.setItems(courses);		
 		
@@ -135,8 +138,6 @@ public class HomeView extends VerticalLayout implements View {
 			int selectedCourseId = selectedCourse.getId();
 			System.out.println(selectedCourseId);
 		});
-		
-		return grid;
 	}
 			
 	

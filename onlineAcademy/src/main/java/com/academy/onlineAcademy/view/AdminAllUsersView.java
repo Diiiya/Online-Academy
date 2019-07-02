@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 
 import com.academy.onlineAcademy.controller.PersonController;
 import com.academy.onlineAcademy.helpView.AdminViews;
+import com.academy.onlineAcademy.helper.UpdateUserMethods;
 import com.academy.onlineAcademy.model.Course;
 import com.academy.onlineAcademy.model.Level;
 import com.academy.onlineAcademy.model.Person;
@@ -39,11 +40,10 @@ import com.vaadin.ui.MenuBar.MenuItem;
 
 public class AdminAllUsersView extends VerticalLayout implements View {
 	
-	private Navigator navigator = UI.getCurrent().getNavigator();
-	private String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-	private Binder<Person> binder = new Binder<>();
-	private Person person = new Person();
+	private Navigator navigator;
+	private Binder<Person> binder;
 	
+	private Grid<com.academy.onlineAcademy.model.Person> grid;
 	private final TextField fullNameField = new TextField("Full name:");
 	private final TextField usernameField = new TextField("Username:");
 	private final TextField emailField = new TextField("Email:");
@@ -53,14 +53,16 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 	private HorizontalLayout buttonsHLayout;
 	private Window updateWindow;
 	
-	private PersonController personObj = new PersonController();
+	private PersonController personObj;
 	private List<Person> personas;
-	private Grid<com.academy.onlineAcademy.model.Person> grid = new Grid<>();
 	private Person selectedPerson;
 	private int selectedPersonId;
 	
 	public AdminAllUsersView() {
 		
+		navigator = UI.getCurrent().getNavigator();
+		selectedPerson = new Person();
+		personObj = new PersonController();
 		initMainLayout();
 		
 	}
@@ -76,9 +78,9 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		selectTypeComboBox = new ComboBox<>("Select type:", types);
 		selectTypeComboBox.setEmptySelectionAllowed(false);
 		Label topLabel = new Label("Seach for a specific user:");		
-		grid = getGrid();
+		buildGrid();
 		buttonsHLayout = buttonsDELIUPDLayout();
-		callBinder();
+		binder = getBinder();
 		callUpdateWindow();
 		
 		mainVLayout.addComponents(layoutH, searchHLayout, topLabel, grid, buttonsHLayout);
@@ -122,7 +124,8 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		buttonsHLayout.addComponents(updateUserButton, deleteUserButton);
 		
 		updateUserButton.addClickListener(e -> {
-			getUserInfo(selectedPersonId);
+			UpdateUserMethods.getUserInfo(selectedPersonId, binder, personObj, selectedPerson);
+			updateWindow.setVisible(true);
 		});
 		
 		deleteUserButton.addClickListener(e -> {
@@ -140,9 +143,10 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		return buttonsHLayout;
 	}
 	
-	public Grid<Person> getGrid() {
-        personas = personObj.getAllUsers();
+	public void buildGrid() {
 		
+		grid = new Grid<>();
+        personas = personObj.getAllUsers();		
 		grid.setItems(personas);		
 		
 		grid.addColumn(com.academy.onlineAcademy.model.Person::getId).setCaption("Id");
@@ -160,14 +164,13 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 			selectedPersonId = selectedPerson.getId();
 			buttonsHLayout.setVisible(true);
 		});
-		
-		return grid;
 	}
 	
-	public void callBinder() {
+	public Binder<Person> getBinder() {
 		
-		binder.forField(fullNameField).withValidator(new StringLengthValidator(
-				"Name must be between 5 and 30 characters long!",3, 50))
+		binder = new Binder<>();
+		
+		binder.forField(fullNameField).withValidator(new StringLengthValidator("Name must be between 5 and 30 characters long!",3, 50))
 		.asRequired("Cannot be empty")
 	    .bind(Person::getFullName, Person::setFullName);
 		
@@ -176,8 +179,7 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 //		.asRequired("Cannot be empty")
 //	    .bind(Person::getUsername, Person::setUsername);
 		
-		binder.forField(emailField).withValidator(new EmailValidator(
-			    "This doesn't seem to be a valid email address"))
+		binder.forField(emailField).withValidator(new EmailValidator("This doesn't seem to be a valid email address"))
 		.withValidator(email -> email.length() <= 50, "Email address should be max 50 characters long!")
 		.asRequired("Cannot be empty")
 	    .bind(Person::getEmail, Person::setEmail);
@@ -188,6 +190,7 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		.withConverter(Type::valueOf, String::valueOf, "Input value should be one from the list")
 		.bind(Person::getType, Person::setType);
 		
+		return binder;
 	}
 	
 	public Window callUpdateWindow() {
@@ -196,7 +199,19 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		
 		Button updateFormButton = new Button("Update", VaadinIcons.REFRESH);
 		updateFormButton.addClickListener(e -> /* checkFields() */ {
-			existingEmail(selectedPersonId);
+			String personEmail = emailField.getValue();
+			UpdateUserMethods.existingEmail(selectedPerson, personEmail, binder, personObj);
+			if (UpdateUserMethods.isSuccessful == true) {
+				personas = personObj.getAllUsers();
+		        grid.setItems(personas);
+		        
+		        updateWindow.setVisible(false);
+		        buttonsHLayout.setVisible(false);
+			}
+			else {
+				
+			}
+			
 		});
 		
 		FormLayout content = new FormLayout();
@@ -209,66 +224,6 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		UI.getCurrent().addWindow(updateWindow);
 		
 		return updateWindow;
-	}
-	
-	public void getUserInfo(int userId) {
-		try {
-			person = personObj.getPersonById(userId);			
-			binder.readBean(person);
-			updateWindow.setVisible(true);
-			
-		}
-		catch(Exception ex) {
-			Notification notif = new Notification("Warning", "Unexpected error!", Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-		}
-	}
-	
-	public void updatePersonSettings(int userId) {
-		try {
-			binder.writeBean(person);
-			updateInDatabase();
-		}
-		catch(Exception ex) {
-			Notification notif = new Notification("Warning", "Please correct the fields in red!", Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-		}
-	}
-	
-	public void existingEmail(int userId) {
-		try {
-			String enteredEmail = emailField.getValue();
-	    	person = personObj.getPersonByEmail(enteredEmail.toUpperCase());
-	    	if (enteredEmail.equals(person.getEmail())) {
-	    		updatePersonSettings(userId);
-	    	}
-	    	else {
-	    	Notification notif = new Notification("Warning", "The email is already used by another user!", Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-	    	}
-	     }
-		 catch (Exception ex) {
-			 updatePersonSettings(userId);
-		 }
-	}
-	
-	public void updateInDatabase() {
-		try {
-			personObj.updatePersonById(person);
-			Notification notif = new Notification("Confirmation!", "Profile successfully updated!", Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-		}
-		catch (Exception ex) {
-			Notification notif = new Notification("Warning", "Unexpected error!", Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-		}
-		finally {
-			personas = personObj.getAllUsers();
-	        grid.setItems(personas);
-	        
-	        updateWindow.setVisible(false);
-	        buttonsHLayout.setVisible(false);
-		}
 	}
 
 

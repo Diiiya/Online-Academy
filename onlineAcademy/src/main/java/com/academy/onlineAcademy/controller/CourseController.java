@@ -31,12 +31,9 @@ public class CourseController {
         return emFactoryObj.createEntityManager();
     }
 	
-	EntityManager emUPD;
-	EntityManager emDEL;
 	
 	public CourseController() {
-	  emUPD = emFactoryObj.createEntityManager();
-	  emDEL = emFactoryObj.createEntityManager();
+	  
 	}
 	
 	public void addCourse(String name, String description, String teacherName, int duration, Level level,
@@ -77,13 +74,11 @@ public class CourseController {
 		    return query.getResultList();
 		} 
 		catch(PersistenceException e) {
-
 		    em.getTransaction().rollback();
-		    
 		    throw e;
 		}
         finally {
-		em.close();
+	    	em.close();
 		}
 	}
 	
@@ -98,13 +93,11 @@ public class CourseController {
 		    return query.setParameter("name", name).getSingleResult();
 		} 
 		catch(PersistenceException e) {
-			
 		    em.getTransaction().rollback();
-		    
 		    throw e;
 		}
         finally {
-		em.close();
+		    em.close();
 		}
 	}
 	
@@ -119,13 +112,11 @@ public class CourseController {
 		    return query.setParameter("id", id).getSingleResult();
 		} 
 		catch(PersistenceException e) {
-			
 		    em.getTransaction().rollback();
-		    
 		    throw e;
 		}
         finally {
-		em.close();
+		    em.close();
 		}
 	}
 	
@@ -138,20 +129,20 @@ public class CourseController {
 			TypedQuery<Order> query = em.createNamedQuery("", Order.class);
 		    em.getTransaction().commit();
 		    return query.setParameter("user_id", userId).getResultList();
-		} catch(PersistenceException e) {
-
+		} 
+		catch(PersistenceException e) {
 		    em.getTransaction().rollback();
-		    
 		    throw e;
 		}
         finally {
-		em.close();
+	    	em.close();
 		}
 	}
 	
 	public void updateCourseById(Course course) {
+		EntityManager emUPD = null;
 		try {
-
+			emUPD = emFactoryObj.createEntityManager();
 		    emUPD.getTransaction().begin();
 		    
 		    Course newCourse = emUPD.merge(course);
@@ -160,42 +151,38 @@ public class CourseController {
 		    emUPD.getTransaction().commit();
 		} 
 		catch(PersistenceException e) {
-
 		    emUPD.getTransaction().rollback();
-		    
 		    throw e;
 		}
         finally {
-		emUPD.close();
+		    emUPD.close();
 		}
 	}
 
 	public int deleteAllCourse(int id) {
+		EntityManager emDEL = null;
 		try 
 		{
-
+			emDEL = emFactoryObj.createEntityManager();
 		    emDEL.getTransaction().begin();
-		    
 		    int count = emDEL.createNamedQuery("deleteAllCourses", Course.class).executeUpdate();
 		    emDEL.getTransaction().commit();
 		    return count;
 		} 
 		catch(PersistenceException e) {
-
 		    emDEL.getTransaction().rollback();
-		    
 		    throw e;
 		}
         finally {
-		emDEL.close();
+		    emDEL.close();
 		}
 	}
 	
 	public void deleteCourseById(int id) {
 		
-		EntityManager emDEL = emFactoryObj.createEntityManager();
+		EntityManager emDEL = null;
 		try {
-
+			emDEL = emFactoryObj.createEntityManager();
 		    emDEL.getTransaction().begin();
 		    emDEL.createNamedQuery("deleteByCourseId", Course.class).setParameter("id", id).executeUpdate();
 		    emDEL.getTransaction().commit();

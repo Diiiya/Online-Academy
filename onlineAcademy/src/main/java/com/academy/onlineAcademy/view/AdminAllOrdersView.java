@@ -27,15 +27,17 @@ import com.vaadin.ui.MenuBar.MenuItem;
 
 public class AdminAllOrdersView extends VerticalLayout implements View {
 	
-	private Navigator navigator = UI.getCurrent().getNavigator();
+	private Navigator navigator;
 	private HorizontalLayout buttonsHLayout;	
 	private TextField searchField;
-	private OrderController orderObj = new OrderController();
-	private Grid<com.academy.onlineAcademy.model.Order> grid = new Grid<>();
+	private OrderController orderObj;
+	private Grid<com.academy.onlineAcademy.model.Order> grid;
 	private int selectedOrderId;
 	
 	public AdminAllOrdersView() {
 		
+		navigator = UI.getCurrent().getNavigator();
+		orderObj = new OrderController();
 		initMainLayout();
 	
 	}
@@ -47,7 +49,7 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		HorizontalLayout layoutH = AdminViews.getTopBar(navigator);
 		HorizontalLayout searchHLayout = getSearchLayout();
 		Label topLabel = new Label("Seach for a specific order by ID:");
-		grid = getGrid();
+		buildGrid();
 		buttonsHLayout = getDELIUPDButtonsLayout();
 		
 		mainVLayout.addComponents(layoutH, searchHLayout, topLabel, grid, buttonsHLayout);
@@ -89,7 +91,8 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		return buttonsHLayout;
 	}
 	
-	public Grid<Order> getGrid() {
+	public void buildGrid() {
+		grid = new Grid<>();
 		
 		grid.addColumn(com.academy.onlineAcademy.model.Order::getId).setCaption("Id");
 		grid.addColumn(com.academy.onlineAcademy.model.Order::getCourseId).setCaption("Course ID");
@@ -107,8 +110,7 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 			System.out.println(selectedOrderId);
 			buttonsHLayout.setVisible(true);
 		});
-		
-		return grid;
+
 	}
 	
 	public void lookForOrderById() {

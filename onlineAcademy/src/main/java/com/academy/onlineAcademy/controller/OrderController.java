@@ -26,15 +26,7 @@ public class OrderController {
         return emFactoryObj.createEntityManager();
     }
 	
-	//EntityManager em;
-	EntityManager emUPD;
-	EntityManager emDEL;
-	
 	public OrderController() {
-		
-		// em = emFactoryObj.createEntityManager();
-		 emUPD = emFactoryObj.createEntityManager();
-		 emDEL = emFactoryObj.createEntityManager();
 		
 	}
 
@@ -55,14 +47,14 @@ public class OrderController {
 		    em.persist(order);
 		    
 		    em.getTransaction().commit();
-		} catch(PersistenceException e) {
+		} 
+		catch(PersistenceException e) {
 
 		    em.getTransaction().rollback();
-		    
 		    throw e;
 		}
         finally {
-		em.close();
+		    em.close();
 		}
 	}
 	
@@ -75,14 +67,14 @@ public class OrderController {
 			TypedQuery<Order> query = em.createNamedQuery("getAllOrders", Order.class);
 		    em.getTransaction().commit();
 		    return query.getResultList();
-		} catch(PersistenceException e) {
+		} 
+		catch(PersistenceException e) {
 
 		    em.getTransaction().rollback();
-		    
 		    throw e;
 		}
         finally {
-		em.close();
+		    em.close();
 		}
 	}
 	
@@ -95,14 +87,14 @@ public class OrderController {
 			TypedQuery<Order> query = em.createNamedQuery("getAllOrdersByUser", Order.class);
 		    em.getTransaction().commit();
 		    return query.setParameter("userId", userId).getResultList();
-		} catch(PersistenceException e) {
+		} 
+		catch(PersistenceException e) {
 
 		    em.getTransaction().rollback();
-		    
 		    throw e;
 		}
         finally {
-		em.close();
+		    em.close();
 		}
 	}
 	
@@ -115,33 +107,34 @@ public class OrderController {
 		    TypedQuery<Order> query = em.createNamedQuery("findOrderById", Order.class);
 		    em.getTransaction().commit();
 		    return query.setParameter("id", id).getSingleResult();
-		} catch(PersistenceException e) {
+		} 
+		catch(PersistenceException e) {
 
 		    em.getTransaction().rollback();
-		    
 		    throw e;
 		}
         finally {
-		em.close();
+		    em.close();
 		}
 	}
 	
 	public int deleteOrderById(int id) {
+		EntityManager emDEL = null;
 		try {
-
+			emDEL = emFactoryObj.createEntityManager();
 		    emDEL.getTransaction().begin();
 		    
 		    int count = emDEL.createNamedQuery("deleteByOrderId", Person.class).executeUpdate();
 		    emDEL.getTransaction().commit();
 		    return count;
-		} catch(PersistenceException e) {
+		} 
+		catch(PersistenceException e) {
 
 		    emDEL.getTransaction().rollback();
-		    
 		    throw e;
 		}
         finally {
-		emDEL.close();
+		    emDEL.close();
 		}
 	}
 	

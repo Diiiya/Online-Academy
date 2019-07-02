@@ -15,11 +15,11 @@ import com.vaadin.ui.VerticalLayout;
 
 public class CourseView extends VerticalLayout implements View {
 	
-	Navigator navigator = UI.getCurrent().getNavigator();
-	private String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+	Navigator navigator;
 	
 	public CourseView() {
 		
+		navigator = UI.getCurrent().getNavigator();
 		initMainlayout();
 		
 	}
@@ -42,8 +42,8 @@ public class CourseView extends VerticalLayout implements View {
 		layoutVL.setWidth("1200px");
 		
 		Label courseTitleLabel = new Label("COURSE TITLE");
-		FileResource courseImageResource = new FileResource(new File(basepath +
-	            "/1online-courses_0.jpg"));
+		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+		FileResource courseImageResource = new FileResource(new File(basepath + "/1online-courses_0.jpg"));
 		Image courseImage = new Image("", courseImageResource);
 		courseImage.setWidth("600px");
 		courseImage.setHeight("300px");

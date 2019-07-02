@@ -39,21 +39,20 @@ import com.vaadin.ui.MenuBar.MenuItem;
 
 public class AdminAddUserView extends VerticalLayout implements View {
 	
-	private Navigator navigator = UI.getCurrent().getNavigator();
-	private Binder<Person> binder = new Binder<>();
+	private Navigator navigator;
+	private Binder<Person> binder;
 	
 	private final TextField fullNameField = new TextField("Full name:");
 	private final TextField usernameField = new TextField("Username:");
 	private final TextField emailField = new TextField("Email:");
 	private final PasswordField passwordField = new PasswordField("Password: ");
 	private final PasswordField confirmPasswordField = new PasswordField("Repeat password: ");
-	private final List<String> types = Stream.of(Type.values())
-            .map(Enum::name)
-            .collect(Collectors.toList());
-	private final ComboBox<String> selectTypeComboBox = new ComboBox<>("Select type:", types);
+	private List<String> types;
+	private ComboBox<String> selectTypeComboBox;
 	
 	public AdminAddUserView() {
 		
+		navigator = UI.getCurrent().getNavigator();
 		initMainLayout();
 		
 	}
@@ -77,6 +76,8 @@ public class AdminAddUserView extends VerticalLayout implements View {
 		
 		Panel panel = new Panel("Add a new user ... ");
 		panel.setSizeUndefined();
+		types = Stream.of(Type.values()).map(Enum::name).collect(Collectors.toList());
+		selectTypeComboBox = new ComboBox<>("Select type:", types);
 		selectTypeComboBox.setValue(types.get(2));
 		selectTypeComboBox.setEmptySelectionAllowed(false);
 		
@@ -104,7 +105,9 @@ public class AdminAddUserView extends VerticalLayout implements View {
 	}
 	
 	public void callBinder() {
-		///////// BINDER Part + validations
+		
+		binder = new Binder<>();
+		
 		binder.forField(fullNameField)
 		.withValidator(new StringLengthValidator("Name must be between 5 and 30 characters long!",3, 50))
 		.withValidator(string -> string != null && !string.isEmpty(), "Input values should not be empty")

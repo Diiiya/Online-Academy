@@ -22,12 +22,14 @@ import com.vaadin.ui.VerticalLayout;
 
 public class UserCoursesView extends VerticalLayout implements View {
 	
-	Navigator navigator = UI.getCurrent().getNavigator();
-	private CourseController courseObj = new CourseController();
-	private Grid<com.academy.onlineAcademy.model.Course> grid = new Grid<>();
+	Navigator navigator;
+	private CourseController courseObj;
+	private Grid<com.academy.onlineAcademy.model.Course> grid;
 	
 	public UserCoursesView() {
 		
+		navigator = UI.getCurrent().getNavigator();
+		courseObj = new CourseController();
 		initMainLayout();
 	
 	}
@@ -52,12 +54,14 @@ public class UserCoursesView extends VerticalLayout implements View {
 		layoutV.setSpacing(true);
 		layoutV.setWidth("100%");
 		
-		grid = getGrid();
+		buildGrid();
 		layoutV.addComponents(myCoursesLabel, grid);
 		return layoutV;
 	}
 	
-	public Grid<Course> getGrid() {
+	public void buildGrid() {
+		
+		grid = new Grid<>();
 		grid.setWidth("100%");
 		
 		grid.addColumn(com.academy.onlineAcademy.model.Course::getId).setCaption("Id");
@@ -70,7 +74,6 @@ public class UserCoursesView extends VerticalLayout implements View {
 		grid.addColumn(com.academy.onlineAcademy.model.Course::getPrice).setCaption("Price in euros");
 		grid.addColumn(com.academy.onlineAcademy.model.Course::getGivesCertificate).setCaption("Gives certificate");
 		
-		return grid;
 	}
 
 	@Override

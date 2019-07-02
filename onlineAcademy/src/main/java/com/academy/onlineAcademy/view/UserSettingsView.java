@@ -4,6 +4,7 @@ import java.io.File;
 
 import com.academy.onlineAcademy.controller.PersonController;
 import com.academy.onlineAcademy.helpView.UserViews;
+import com.academy.onlineAcademy.helper.UpdateUserMethods;
 import com.academy.onlineAcademy.model.Person;
 import com.vaadin.data.Binder;
 import com.vaadin.data.validator.EmailValidator;
@@ -30,17 +31,14 @@ import com.vaadin.ui.VerticalLayout;
 
 public class UserSettingsView extends VerticalLayout implements View {
 	
-	private Navigator navigator = UI.getCurrent().getNavigator();
-	private Binder<Person> binder = new Binder<Person>();
-	private PersonController personObj = new PersonController();
-	private Person person = new Person();
-	private int userId;
-	
-	private String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();				
+	private Navigator navigator;
+	private Binder<Person> binder;
+	private PersonController personObj;
+	private Person person;
+	private int userId;		
 	
 	private Panel photoPanel;	
-	private Panel accountPanel;
-	
+	private Panel accountPanel;	
 	private TextField fullNameField;
 	private TextField emailField;
 	private PasswordField passwordField;
@@ -48,6 +46,9 @@ public class UserSettingsView extends VerticalLayout implements View {
 		
 	public UserSettingsView() {
 		
+		navigator = UI.getCurrent().getNavigator();
+		person = new Person();
+		personObj = new PersonController();
 		getMainLayout();
 				
 	}
@@ -74,7 +75,10 @@ public class UserSettingsView extends VerticalLayout implements View {
 		callBinder();
 		Button updateButton = new Button("UPDATE");
 		updateButton.setWidth("800");
-		updateButton.addClickListener(e -> updatePersonSettings(userId));
+		updateButton.addClickListener(e -> {
+			String enteredEmail = emailField.getValue();
+			UpdateUserMethods.existingEmail(person, enteredEmail, binder, personObj);
+			});
 		
 		layoutHBody.addComponents(photoPanel, accountPanel);
 		layoutHBody.setComponentAlignment(accountPanel, Alignment.MIDDLE_CENTER);
@@ -89,8 +93,8 @@ public class UserSettingsView extends VerticalLayout implements View {
 	public Panel getPhotoPanel() {
 		photoPanel = new Panel("Update my photo");
 		FormLayout photoContent = new FormLayout();
-		FileResource profileImageResource = new FileResource(new File(basepath +
-	            "/1024px-Circle-icons-profile.svg.png"));
+		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();	
+		FileResource profileImageResource = new FileResource(new File(basepath + "/1024px-Circle-icons-profile.svg.png"));
 		Image profileImage = new Image("", profileImageResource);
 		HorizontalLayout layoutHsmall = new HorizontalLayout();
 		TextField photoLabel = new TextField("Photo");
@@ -134,13 +138,15 @@ public class UserSettingsView extends VerticalLayout implements View {
 	}
 	
 	public void callBinder() {
-        ///////// BINDER Part + validations
-		binder.forField(fullNameField).withValidator(new StringLengthValidator("Name must be between 5 and 30 characters long!",3, 50))
+		binder = new Binder<Person>();
+		
+		binder.forField(fullNameField)
+		.withValidator(new StringLengthValidator("Name must be between 5 and 30 characters long!",3, 50))
 		.asRequired("Cannot be empty")
 	    .bind(Person::getFullName, Person::setFullName);
 		
-		binder.forField(emailField).withValidator(new EmailValidator(
-			    "This doesn't seem to be a valid email address"))
+		binder.forField(emailField)
+		.withValidator(new EmailValidator("This doesn't seem to be a valid email address"))
 		.withValidator(email -> email.length() <= 50, "Email address should be max 50 characters long!")
 		.asRequired("Cannot be empty")
 	    .bind(Person::getEmail, Person::setEmail);
@@ -160,63 +166,10 @@ public class UserSettingsView extends VerticalLayout implements View {
 		VaadinSession session = ui.getSession();
 		if (session.getAttribute("user-id") != null) {
 			int userId = Integer.valueOf(String.valueOf(session.getAttribute("user-id")));
-			getUserInfo(userId);
+			UpdateUserMethods.getUserInfo(userId, binder, personObj, person);
 		}
 		else {
 			System.out.println("USER ID VAL:" + session.getAttribute("user-id"));
-		}
-	}
-	
-	public void getUserInfo(int userId) {
-		try {
-			person = personObj.getPersonById(userId);			
-			binder.readBean(person);
-		}
-		catch(Exception ex) {
-			Notification notif = new Notification("Warning", "Unexpected error!", Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-		}
-	}
-	
-	
-	public void updatePersonSettings(int userId) {
-		try {
-			binder.writeBean(person);
-			existingEmail(userId);	
-		}
-		catch(Exception ex) {
-			Notification notif = new Notification("Warning", "Please correct the fields in red!", Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-		}
-	}
-	
-	public void existingEmail(int userId) {
-		try {
-			String enteredEmail = emailField.getValue();
-	    	personObj.getPersonByEmail(enteredEmail.toUpperCase());
-	    	if (enteredEmail.equals(person.getEmail())) {
-	    		 updateInDatabase();
-	    	}
-	    	else {
-	    	Notification notif = new Notification("Warning", "The email is already used by another user!",
-				    Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-	    	}
-	     }
-		 catch (Exception ex) {
-			 updateInDatabase();
-		 }
-	}
-	
-	public void updateInDatabase() {
-		try {
-			personObj.updatePersonById(person);
-			Notification notif = new Notification("Confirmation!", "Profile successfully updated!", Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-		}
-		catch (Exception ex) {
-			Notification notif = new Notification("Warning", "Unexpected error!", Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
 		}
 	}
 	

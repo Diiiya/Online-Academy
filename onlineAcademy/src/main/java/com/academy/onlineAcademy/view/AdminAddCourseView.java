@@ -45,7 +45,8 @@ import com.vaadin.ui.MenuBar.MenuItem;
 
 public class AdminAddCourseView extends VerticalLayout implements View {
 	
-//	String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+	private Navigator navigator;
+	Binder<Course> binder;
 	
 	private final TextField nameField = new TextField("Course name:");
 	private final TextField descriptionField = new TextField("Course description:");
@@ -56,11 +57,6 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 	private final TextField durationField = new TextField("Duration:");
 	private final TextField priceField = new TextField("Price:");	
 	private final CheckBox certCheckbox = new CheckBox("Gives certificate:");
-	
-//	FileResource coverResource = new FileResource(new File(basepath + "/1online-courses_0.jpg"));
-	
-	private Navigator navigator = UI.getCurrent().getNavigator();
-	Binder<Course> binder;
 	
 	private String name;
 	private String description;
@@ -75,6 +71,7 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 					
 	public AdminAddCourseView() {
 		
+		navigator = UI.getCurrent().getNavigator();
 		initMainLayout();
         
 	}
@@ -89,35 +86,6 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		mainVLayout.addComponents(layoutH, layoutVBody);
         addComponent(mainVLayout);
 	}
-	
-//	public HorizontalLayout getTopBar() {
-//		HorizontalLayout layoutH = new HorizontalLayout();
-//		layoutH.setSpacing(true);
-//		layoutH.setWidth("100%");
-//		layoutH.setHeight("90px");
-//		
-//		FileResource logoResource = new FileResource(new File(basepath + "/logo.jpg"));
-//		Image logoImage = new Image("", logoResource);
-//		logoImage.setWidth("130px");
-//		logoImage.setHeight("60px");
-//		
-//		// MENU bar and methods to navigate to different pages
-//		MenuBar profileMenu = new MenuBar();
-//		MenuItem myProfileMainItem = profileMenu.addItem("My profile", VaadinIcons.MENU, null);
-//		myProfileMainItem.addItem("All courses", VaadinIcons.ACADEMY_CAP, createNavigationCommand("AdminAllCourses"));
-//		myProfileMainItem.addItem("Add course", VaadinIcons.FILE_ADD, createNavigationCommand("AdminAddCourse"));
-//		myProfileMainItem.addItem("All orders", VaadinIcons.NEWSPAPER, createNavigationCommand("AdminAllOrders"));
-//		myProfileMainItem.addItem("All users", VaadinIcons.USERS, createNavigationCommand("AdminAllUsers"));
-//		myProfileMainItem.addItem("Add user", VaadinIcons.PLUS, createNavigationCommand("AdminAddUser"));
-//		myProfileMainItem.addItem("Settings", VaadinIcons.USER, createNavigationCommand("Settings"));
-//		myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, createNavigationCommand("Home"));
-//		
-//		layoutH.addComponents(logoImage, profileMenu);
-//		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
-//		layoutH.setComponentAlignment(profileMenu, Alignment.BOTTOM_RIGHT);
-//		
-//		return layoutH;
-//	}
 	
 	public VerticalLayout getBodyLayout() {
 		VerticalLayout layoutVBody = new VerticalLayout();
@@ -175,14 +143,6 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		
 	}
 	
-//	MenuBar.Command createNavigationCommand(String navigationView) {
-//		return new MenuBar.Command() {
-//		    public void menuSelected(MenuItem selectedItem) {
-//		    	navigator.navigateTo(navigationView);
-//		    }
-//		};
-//	}
-	
 	public void convertInputValues() {
 		
 		name = nameField.getValue();
@@ -196,9 +156,9 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 	public void checkDurationFieldEmpty() {
 		if (durationField.getValue() != "") {
 			try {
-			duration = Integer.parseInt(durationField.getValue());
-			System.out.println("Gets here");
-			checkPriceFieldEmpty();
+				duration = Integer.parseInt(durationField.getValue());
+				System.out.println("Gets here");
+				checkPriceFieldEmpty();
 			}
 			catch (Exception ex) {
 				Notification notif = new Notification("Warning", "The duration should be a numeric value!", Notification.TYPE_WARNING_MESSAGE);
@@ -214,8 +174,8 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 	public void checkPriceFieldEmpty() {
 		if (priceField.getValue() != "") {
 			try {
-			price = Integer.parseInt(priceField.getValue());
-			checkCategoryFieldEmpty();
+				price = Integer.parseInt(priceField.getValue());
+				checkCategoryFieldEmpty();
 			}
 			catch (Exception ex){
 				Notification notif = new Notification("Warning", "The price should be a numeric value!", Notification.TYPE_WARNING_MESSAGE);
