@@ -103,20 +103,34 @@ public class LoginView extends VerticalLayout implements View {
 	
 	public void checkUsernamePasswordCombination() {
 		if (currentUser.getPassword().equals(enteredPassword)) {
-			// Should check the type of user
-		
-    		navigator.navigateTo("UserCourses" + "/" + currentUser.getId());
-    		
-    		UI ui = UI.getCurrent();
-    		VaadinSession session = ui.getSession();
-    		session.setAttribute("user-id", currentUser.getId());
-
+			checkTypeOfUser();
     	}
     	else {
     		Notification notif = new Notification("Warning", "The combination of username and password is not correct!",
 				    Notification.TYPE_WARNING_MESSAGE);
 			notif.show(Page.getCurrent());
     	}
+	}
+	
+	public void checkTypeOfUser() {
+		UI ui = UI.getCurrent();
+		VaadinSession session = ui.getSession();
+		if (currentUser.getType().toString() == "USER") {
+            navigator.navigateTo("UserCourses" + "/" + currentUser.getId());
+    		session.setAttribute("user-id", currentUser.getId());
+		}
+		else if (currentUser.getType().toString() == "TEACHER") {
+			
+		}
+		else if (currentUser.getType().toString() == "ADMIN") {
+            navigator.navigateTo("AdminAllCourses" + "/" + currentUser.getId());
+    		session.setAttribute("user-id", currentUser.getId());
+		}
+		else {
+			Notification notif = new Notification("Warning", "Unexpected error! Please try again!",
+				    Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
+		}
 	}
 
 	

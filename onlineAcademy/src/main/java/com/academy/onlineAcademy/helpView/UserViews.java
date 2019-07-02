@@ -31,6 +31,10 @@ public class UserViews extends VerticalLayout implements View {
 		Image logoImage = new Image("", logoResource);
 		logoImage.setWidth("130px");
 		logoImage.setHeight("60px");
+		logoImage.addClickListener(e -> 
+		{
+			navigator.navigateTo("Home");
+		});
 		
 		// MENU bar and methods to navigate to different pages	
 		MenuBar profileMenu = new MenuBar();	

@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 import com.academy.onlineAcademy.controller.CourseController;
 import com.academy.onlineAcademy.helpView.AdminViews;
+import com.academy.onlineAcademy.helper.UpdateUserMethods;
 import com.academy.onlineAcademy.model.Category;
 import com.academy.onlineAcademy.model.Course;
 import com.academy.onlineAcademy.model.Level;
@@ -25,6 +26,7 @@ import com.vaadin.sass.ArgumentParser.Option;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
@@ -271,7 +273,6 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 	public void updateCourse(int courseId) {
 		try {
 			binder.writeBean(selectedCourse);
-			System.out.println("Writes bean");
 			updateInDatabase();
 		}
 		catch(Exception ex) {
@@ -320,9 +321,10 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 	
 	@Override
 	public void enter(ViewChangeEvent event) {
-		View.super.enter(event);
-        courses = courseObj.getAllCourses();		
+		View.super.enter(event);		
+		courses = courseObj.getAllCourses();		
 		grid.setItems(courses);
 	}
+
 
 }

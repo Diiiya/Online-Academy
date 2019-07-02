@@ -30,7 +30,8 @@ public class OrderController {
 		
 	}
 
-	public void addOrder(int userId, int courseId, Date purchaseDate, boolean isPaid, double price) {
+//	public void addOrder(int userId, int courseId, Date purchaseDate, boolean isPaid, double price) {
+	public void addOrder(Order order) {
 		EntityManager em = null;
 		try {
 			em = emFactoryObj.createEntityManager();
@@ -43,7 +44,7 @@ public class OrderController {
 //		        query.setParameter(5, price);
 //		        query.executeUpdate();
 		    
-		    Order order = new Order(userId, courseId, purchaseDate, isPaid, price);
+		    //Order order = new Order(userId, courseId, purchaseDate, isPaid, price);
 		    em.persist(order);
 		    
 		    em.getTransaction().commit();

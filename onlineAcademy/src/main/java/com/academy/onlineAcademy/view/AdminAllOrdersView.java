@@ -1,43 +1,53 @@
 package com.academy.onlineAcademy.view;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import com.academy.onlineAcademy.controller.CourseController;
 import com.academy.onlineAcademy.controller.OrderController;
+import com.academy.onlineAcademy.controller.PersonController;
 import com.academy.onlineAcademy.helpView.AdminViews;
+import com.academy.onlineAcademy.model.Course;
 import com.academy.onlineAcademy.model.Order;
+import com.academy.onlineAcademy.model.Person;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
-import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
-import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.MenuBar.MenuItem;
 
 public class AdminAllOrdersView extends VerticalLayout implements View {
 	
 	private Navigator navigator;
 	private HorizontalLayout buttonsHLayout;	
 	private TextField searchField;
+	private TextField customerEmailField;
 	private OrderController orderObj;
+	private CourseController courseObj;
+	private PersonController personObj;
 	private Grid<com.academy.onlineAcademy.model.Order> grid;
 	private int selectedOrderId;
+	private ComboBox<String> selectCourseCB;
+	private Person person;
+	private int courseId;
+	private String userEmail;
 	
 	public AdminAllOrdersView() {
 		
 		navigator = UI.getCurrent().getNavigator();
 		orderObj = new OrderController();
+		courseObj = new CourseController();
+		personObj = new PersonController();
 		initMainLayout();
 	
 	}
@@ -51,8 +61,9 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		Label topLabel = new Label("Seach for a specific order by ID:");
 		buildGrid();
 		buttonsHLayout = getDELIUPDButtonsLayout();
+		HorizontalLayout addOrderLayout = getAddOrderLayout();
 		
-		mainVLayout.addComponents(layoutH, searchHLayout, topLabel, grid, buttonsHLayout);
+		mainVLayout.addComponents(layoutH, searchHLayout, topLabel, grid, buttonsHLayout, addOrderLayout);
 		mainVLayout.setComponentAlignment(searchHLayout, Alignment.MIDDLE_CENTER);
 		mainVLayout.setComponentAlignment(buttonsHLayout, Alignment.BOTTOM_CENTER);
 		addComponent(mainVLayout);
@@ -91,6 +102,67 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		return buttonsHLayout;
 	}
 	
+	public HorizontalLayout getAddOrderLayout() {
+		HorizontalLayout addOrderLayout = new HorizontalLayout();
+		
+		selectCourseCB = new ComboBox<>("Select a course");
+		getCourses();
+		
+		customerEmailField = new TextField("User email: ");
+		Button orderButton = new Button("MAKE ORDER");
+		orderButton.addClickListener(e -> placeOrder());
+		
+		addOrderLayout.addComponents(selectCourseCB, customerEmailField, orderButton);
+		addOrderLayout.setComponentAlignment(orderButton, Alignment.BOTTOM_RIGHT);
+		
+		return addOrderLayout;
+	}
+	
+	public void getCourses() {
+		List<String> courseNames = new ArrayList<>();
+		List<Course> courses;
+		courses = courseObj.getAllCourses();
+		for (Course course : courses) {
+			courseNames.add(course.getName());}
+		
+		selectCourseCB.setItems(courseNames);
+	}
+	
+	public boolean checkIfEmailExists(String email) {
+		try {
+			person = personObj.getPersonByEmail(email.toUpperCase());
+			System.out.println("Email: " + email.toUpperCase());
+			return true;
+		}
+		catch (Exception ex) {
+			Notification notif = new Notification("Warning", "The is no user with this email address", Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
+		}
+		return false;
+	}
+	
+	public void placeOrder() {
+		userEmail = customerEmailField.getValue();
+		boolean result = checkIfEmailExists(userEmail);
+		if (result == true) {
+			getCourseId();
+			Date date = new Date();
+			Order newOrder = new Order(person.getId(), courseId, date, true, 0);
+			orderObj.addOrder(newOrder);
+		}
+		else {
+			Notification notif = new Notification("Warning", "Unexpected error!", Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
+		}
+		
+	}
+	
+	public void getCourseId() {
+		String courseName = selectCourseCB.getValue();
+		Course course = courseObj.getCourseByName(courseName);
+		courseId = course.getId();
+	}
+	
 	public void buildGrid() {
 		grid = new Grid<>();
 		
@@ -102,7 +174,7 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		grid.addColumn(com.academy.onlineAcademy.model.Order::getPrice).setCaption("Price");
 		
 		grid.setWidth("100%");
-		grid.setHeight("100%");
+		grid.setHeight("50%");
 		
 		grid.addItemClickListener(e -> {
 			Order selectedOrder = e.getItem();
