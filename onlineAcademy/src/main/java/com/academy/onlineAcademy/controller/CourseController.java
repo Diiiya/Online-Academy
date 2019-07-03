@@ -86,18 +86,18 @@ public class CourseController {
 		EntityManager em = null;
 		try {
 			em = emFactoryObj.createEntityManager();
-		    em.getTransaction().begin();
+//		    em.getTransaction().begin();
 		    
 		    TypedQuery<Course> query = em.createNamedQuery("findCourseByName", Course.class);
-		    em.getTransaction().commit();
+//		    em.getTransaction().commit();
 		    return query.setParameter("name", name).getSingleResult();
 		} 
 		catch(PersistenceException e) {
-		    em.getTransaction().rollback();
+//		    em.getTransaction().rollback();
 		    throw e;
 		}
         finally {
-		    em.close();
+//		    em.close();
 		}
 	}
 	
@@ -194,7 +194,7 @@ public class CourseController {
 		    
 		}
 		finally {
-        		emDEL.close();
+        	emDEL.close();
 		}
 	}
 	

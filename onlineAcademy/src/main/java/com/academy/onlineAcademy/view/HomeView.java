@@ -1,10 +1,14 @@
 package com.academy.onlineAcademy.view;
 
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 import com.academy.onlineAcademy.controller.CourseController;
+import com.academy.onlineAcademy.controller.OrderController;
+import com.academy.onlineAcademy.helpView.UserViews;
 import com.academy.onlineAcademy.model.Course;
+import com.academy.onlineAcademy.model.Order;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
@@ -12,6 +16,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
@@ -30,11 +35,18 @@ public class HomeView extends VerticalLayout implements View {
 	private Navigator navigator;
 	private Grid<com.academy.onlineAcademy.model.Course> grid;
 	private CourseController courseObj;
+	private Button buyCourseButton;
+	//private int userId;
+	
+	private int selectedCourseId;
+	private Course selectedCourse;
+	private OrderController orderObj;
 			
 	public HomeView() {
 		
 		navigator = UI.getCurrent().getNavigator();
 		courseObj = new CourseController();
+		orderObj = new OrderController();
 		initMainlayout();
 		
 	}
@@ -43,7 +55,7 @@ public class HomeView extends VerticalLayout implements View {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		mainVLayout.setHeight("100%");
 		
-		HorizontalLayout layoutH = getTopBar();
+		HorizontalLayout layoutH = getRightTopBar();
 		
 		FileResource coverResource = new FileResource(new File(basepath + "/1online-courses_0.jpg"));
 		Image coverImage = new Image("", coverResource);
@@ -53,8 +65,14 @@ public class HomeView extends VerticalLayout implements View {
 		HorizontalLayout searchHLayout = getSearchLayout();
 		Label topCoursesLabel = new Label("Top courses:");	
 		buildGrid();
+		buyCourseButton = new Button("PURCHASE");
+		buyCourseButton.setVisible(false);
+		buyCourseButton.addClickListener(e -> {
+			getUserId();
+			placeOrder();
+		});
 		
-		mainVLayout.addComponents(layoutH, coverImage, searchHLayout, topCoursesLabel, grid);
+		mainVLayout.addComponents(layoutH, coverImage, searchHLayout, topCoursesLabel, grid, buyCourseButton);
 		mainVLayout.setComponentAlignment(searchHLayout, Alignment.MIDDLE_CENTER);
 		addComponent(mainVLayout);
 		
@@ -100,9 +118,7 @@ public class HomeView extends VerticalLayout implements View {
 				grid.setItems(selectedCourse);
 			}
 			catch(Exception ex) {
-				Notification notif = new Notification(
-					    "Warning",
-					    "No course with such name have been found!",
+				Notification notif = new Notification("Warning","No course with such name has been found!",
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
 			}
@@ -134,19 +150,80 @@ public class HomeView extends VerticalLayout implements View {
 		grid.setWidth("100%");
 		
 		grid.addItemClickListener(e -> {
-			Course selectedCourse = e.getItem();
-			int selectedCourseId = selectedCourse.getId();
+			buyCourseButton.setVisible(true);
+			selectedCourse = e.getItem();
+			selectedCourseId = selectedCourse.getId();
 			System.out.println(selectedCourseId);
 		});
 	}
-			
+	
+	public void placeOrder() {
+		Date date = new Date();
+		int userId = getUserId();
+		if(userId == 0) {
+			Notification notif = new Notification("Warning","Please log in to continue ... ",
+				    Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
+		}
+		else {
+			Order newOrder = new Order(userId, selectedCourseId, date, false, selectedCourse.getPrice());
+			Notification notif = new Notification("Confirmation","The course has been added!",
+				    Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
+			orderObj.addOrder(newOrder);
+		}
+	}
+	
+	public HorizontalLayout getRightTopBar() {
+		HorizontalLayout layoutH = new HorizontalLayout();
+		int userId = getUserId();
+		if (userId != 0) {
+			layoutH = UserViews.getTopBar();
+			System.out.println("USER ID Top bar != 0: " + userId);
+		}
+		else {
+			layoutH = getTopBar();
+			System.out.println("USER ID Top bar == 0: " + userId);
+		}
+		return layoutH;
+	}
 	
 	@Override
 	public void enter(ViewChangeEvent event) {
 		View.super.enter(event);
         List<Course> courses = courseObj.getAllCourses();
-		
 		grid.setItems(courses);
+		
+		initMainlayout();
+		System.out.println("Executes the top bar method again");
+		
+//		UI ui = UI.getCurrent();
+//		VaadinSession session = ui.getSession();
+//		int userId = getUserId();
+//		if (session.getAttribute("user-id") != null) {
+//			userId = Integer.valueOf(String.valueOf(session.getAttribute("user-id")));
+//		}
+//		else {
+////			System.out.println("USER ID VAL:" + session.getAttribute("user-id"));
+////			System.out.println("USER ID VAL 2:" + userId);
+//		}S
 	}
+	
+	public int getUserId() {
+		int userId;
+		UI ui = UI.getCurrent();
+		VaadinSession session = ui.getSession();
+		if (session.getAttribute("user-id") != null) {
+			userId = Integer.valueOf(String.valueOf(session.getAttribute("user-id")));
+			System.out.println("USER ID :" + userId);
+		}
+		else {
+			userId = 0;
+			System.out.println("USER ID = 0");
+		}
+		return userId;
+	}
+	
+	
 
 }

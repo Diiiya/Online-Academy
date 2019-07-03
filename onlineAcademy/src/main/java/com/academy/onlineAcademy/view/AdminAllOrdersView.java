@@ -7,7 +7,10 @@ import java.util.List;
 import com.academy.onlineAcademy.controller.CourseController;
 import com.academy.onlineAcademy.controller.OrderController;
 import com.academy.onlineAcademy.controller.PersonController;
+import com.academy.onlineAcademy.exceptions.LoginException;
+import com.academy.onlineAcademy.exceptions.OrderException;
 import com.academy.onlineAcademy.helpView.AdminViews;
+import com.academy.onlineAcademy.helper.NewOrderMethods;
 import com.academy.onlineAcademy.model.Course;
 import com.academy.onlineAcademy.model.Order;
 import com.academy.onlineAcademy.model.Person;
@@ -38,9 +41,6 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 	private Grid<com.academy.onlineAcademy.model.Order> grid;
 	private int selectedOrderId;
 	private ComboBox<String> selectCourseCB;
-	private Person person;
-	private int courseId;
-	private String userEmail;
 	
 	public AdminAllOrdersView() {
 		
@@ -106,61 +106,18 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		HorizontalLayout addOrderLayout = new HorizontalLayout();
 		
 		selectCourseCB = new ComboBox<>("Select a course");
-		getCourses();
+		
+		List<String> courseNames = NewOrderMethods.getCourses(courseObj);
+		selectCourseCB.setItems(courseNames);
 		
 		customerEmailField = new TextField("User email: ");
 		Button orderButton = new Button("MAKE ORDER");
-		orderButton.addClickListener(e -> placeOrder());
+		orderButton.addClickListener(e -> order());
 		
 		addOrderLayout.addComponents(selectCourseCB, customerEmailField, orderButton);
 		addOrderLayout.setComponentAlignment(orderButton, Alignment.BOTTOM_RIGHT);
 		
 		return addOrderLayout;
-	}
-	
-	public void getCourses() {
-		List<String> courseNames = new ArrayList<>();
-		List<Course> courses;
-		courses = courseObj.getAllCourses();
-		for (Course course : courses) {
-			courseNames.add(course.getName());}
-		
-		selectCourseCB.setItems(courseNames);
-	}
-	
-	public boolean checkIfEmailExists(String email) {
-		try {
-			person = personObj.getPersonByEmail(email.toUpperCase());
-			System.out.println("Email: " + email.toUpperCase());
-			return true;
-		}
-		catch (Exception ex) {
-			Notification notif = new Notification("Warning", "The is no user with this email address", Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-		}
-		return false;
-	}
-	
-	public void placeOrder() {
-		userEmail = customerEmailField.getValue();
-		boolean result = checkIfEmailExists(userEmail);
-		if (result == true) {
-			getCourseId();
-			Date date = new Date();
-			Order newOrder = new Order(person.getId(), courseId, date, true, 0);
-			orderObj.addOrder(newOrder);
-		}
-		else {
-			Notification notif = new Notification("Warning", "Unexpected error!", Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-		}
-		
-	}
-	
-	public void getCourseId() {
-		String courseName = selectCourseCB.getValue();
-		Course course = courseObj.getCourseByName(courseName);
-		courseId = course.getId();
 	}
 	
 	public void buildGrid() {
@@ -206,6 +163,19 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();
+		}
+	}
+	
+	public void order() {
+		String courseName = selectCourseCB.getValue();
+		String userEmail = customerEmailField.getValue();
+		if (courseName != null) {
+			NewOrderMethods.placeOrder(userEmail, personObj, orderObj, courseName, courseObj);
+		}
+		else {
+			Notification notif = new Notification("Warning!", "Both fields should be filled in",
+				    Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
 		}
 	}
 	

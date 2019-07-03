@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 import com.academy.onlineAcademy.controller.CourseController;
 import com.academy.onlineAcademy.helpView.AdminViews;
+import com.academy.onlineAcademy.helper.UpdateCourseMethods;
 import com.academy.onlineAcademy.helper.UpdateUserMethods;
 import com.academy.onlineAcademy.model.Category;
 import com.academy.onlineAcademy.model.Course;
@@ -146,7 +147,7 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		grid.setWidth("100%");
 		
 		grid.addItemClickListener(e -> {
-			Course selectedCourse = e.getItem();
+			selectedCourse = e.getItem();
 			selectedCourseId = selectedCourse.getId();
 			buttonsHLayout.setVisible(true);
 		});
@@ -174,7 +175,10 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 			}
 		});
 		
-		updateCourseButton.addClickListener(e -> getCourseInfo(selectedCourseId));
+		updateCourseButton.addClickListener(e -> {
+			UpdateCourseMethods.getCourseInfo(selectedCourseId, binder, courseObj, selectedCourse);
+			updateWindow.setVisible(true);
+		});
 		
 		return buttonsHLayout;
 	}
@@ -240,7 +244,15 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 //						}
 //					}
 //				}
-			existingCourse(selectedCourseId);	
+			String courseName = nameField.getValue();
+			boolean isSuccessful = UpdateCourseMethods.updateCourse(selectedCourseId, binder, courseObj, selectedCourse, courseName);	
+			if (isSuccessful == true) {
+				courses = courseObj.getAllCourses();
+		        grid.setItems(courses);
+		        
+		        updateWindow.setVisible(false);
+		        buttonsHLayout.setVisible(false);
+			}
 		});
 		
 		FormLayout content = new FormLayout();
@@ -255,68 +267,6 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		UI.getCurrent().addWindow(updateWindow);
 		
 		return updateWindow;
-	}
-	
-	public void getCourseInfo(int courseId) {
-		try {
-			selectedCourse = courseObj.getCourseById(selectedCourseId);
-			binder.readBean(selectedCourse);
-			updateWindow.setVisible(true);
-			
-		}
-		catch(Exception ex) {
-			Notification notif = new Notification("Warning", "Unexpected error!", Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-		}
-	}
-	
-	public void updateCourse(int courseId) {
-		try {
-			binder.writeBean(selectedCourse);
-			updateInDatabase();
-		}
-		catch(Exception ex) {
-			Notification notif = new Notification("Warning", "Please correct the fields in red!", Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-		}
-	}
-	
-	public void existingCourse(int courseId) {
-		try {
-			String enteredCourseName = nameField.getValue();
-			selectedCourse = courseObj.getCourseById(selectedCourseId);
-			System.out.println("Checks the course name");
-	    	if (enteredCourseName.equals(selectedCourse.getName())) {
-	    		updateCourse(selectedCourseId);
-	    		 System.out.println("Passes the update in db");
-	    	}
-	    	else {
-	    	Notification notif = new Notification("Warning", "Course with the same name already exists. Please choose another name.", Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-	    	}
-	     }
-		 catch (Exception ex) {
-			 updateCourse(selectedCourseId);
-		 }
-	}
-	
-	public void updateInDatabase() {
-		try {
-			courseObj.updateCourseById(selectedCourse);
-			Notification notif = new Notification("Confirmation!", "Course successfully updated!", Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-		}
-		catch (Exception ex) {
-			Notification notif = new Notification("Warning", "Unexpected error!", Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-		}
-		finally {
-			courses = courseObj.getAllCourses();
-	        grid.setItems(courses);
-	        
-	        updateWindow.setVisible(false);
-	        buttonsHLayout.setVisible(false);
-		}
 	}
 	
 	@Override

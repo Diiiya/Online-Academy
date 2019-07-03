@@ -78,9 +78,7 @@ public class UserOrdersView extends VerticalLayout implements View {
 			grid.setItems(orders);
 		}
 		catch(Exception ex) {
-			Notification notif = new Notification(
-				    "Warning",
-				    "No order(s) for this user have been found!",
+			Notification notif = new Notification("Warning", "No order(s) for this user have been found!",
 				    Notification.TYPE_WARNING_MESSAGE);
 			notif.show(Page.getCurrent());
 		}

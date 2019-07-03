@@ -96,9 +96,7 @@ public class UserCoursesView extends VerticalLayout implements View {
 			//grid.setItems(courses);
 		}
 		catch(Exception ex) {
-			Notification notif = new Notification(
-				    "Warning",
-				    "No course(s) for this user have been found!",
+			Notification notif = new Notification("Warning", "No course(s) for this user have been found!",
 				    Notification.TYPE_WARNING_MESSAGE);
 			notif.show(Page.getCurrent());
 		}
