@@ -98,7 +98,7 @@ public class AdminAddUserView extends VerticalLayout implements View {
 	public Button getAddButton() {
 		Button addButton = new Button("ADD");
 		addButton.setWidth("100");
-		addButton.addClickListener(e -> NewUserMethods.setFieldsValues(binder, Type.ADMIN, fullNameField.getValue(), usernameField.getValue(), emailField.getValue(),
+		addButton.addClickListener(e -> NewUserMethods.addUser(binder, Type.ADMIN, fullNameField.getValue(), usernameField.getValue(), emailField.getValue(),
 				passwordField.getValue(), confirmPasswordField.getValue()));
 		
 		return addButton;

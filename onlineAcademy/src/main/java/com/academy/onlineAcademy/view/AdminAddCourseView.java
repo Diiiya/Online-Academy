@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.academy.onlineAcademy.controller.CourseController;
+import com.academy.onlineAcademy.exceptions.NewCourseException;
+import com.academy.onlineAcademy.exceptions.NewCourseException.NewCourseTypeError;
 import com.academy.onlineAcademy.helpView.AdminViews;
 import com.academy.onlineAcademy.helper.NewCourseMethods;
 import com.academy.onlineAcademy.model.Category;
@@ -46,7 +48,7 @@ import com.vaadin.ui.MenuBar.MenuItem;
 public class AdminAddCourseView extends VerticalLayout implements View {
 	
 	private Navigator navigator;
-	Binder<Course> binder;
+	private Binder<Course> binder;
 	
 	private final TextField nameField = new TextField("Course name:");
 	private final TextField descriptionField = new TextField("Course description:");
@@ -62,6 +64,7 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 	private String description;
 	private String teacherName;
 	private int duration;
+	private Category category;
 	private Level level;
 	private double price;
 	private boolean givesCertificate;
@@ -112,12 +115,7 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		
 		Button addButton = new Button("ADD");
 		addButton.setWidth("100");
-		addButton.addClickListener(e -> {
-				
-			convertInputValues();
-			checkDurationFieldEmpty();
-
-			});
+		addButton.addClickListener(e -> addCourse());
 		
 		layoutVBody.addComponents(panel, addButton);
 		layoutVBody.setComponentAlignment(panel, Alignment.MIDDLE_CENTER);
@@ -143,59 +141,113 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		
 	}
 	
-	public void convertInputValues() {
+	private void addCourse() {
+		try {
+			checkValidation();
+			convertInputValues();
+			NewCourseMethods.addNewCourse(binder, name, description, teacherName, duration, level, category, price, givesCertificate);
+		}
+		catch (NewCourseException ex) {
+			if (ex.getNewCourseTypeError() == NewCourseTypeError.VALIDATION_FAILED) {
+				Notification notif = new Notification("Warning", "Correct the field(s) in red.",
+					    Notification.TYPE_WARNING_MESSAGE);
+				notif.show(Page.getCurrent());
+			}
+			else if (ex.getNewCourseTypeError() == NewCourseTypeError.DATABASE_FAIL) {
+				Notification notif = new Notification("Warning", "Filed to save it to the database.",
+					    Notification.TYPE_WARNING_MESSAGE);
+				notif.show(Page.getCurrent());
+			}
+		}
+	}
+	
+	private boolean checkValidation() throws NewCourseException {
+		if (binder.validate().isOk()) {
+			return true;
+		}
+		else { 
+			throw new NewCourseException(NewCourseTypeError.VALIDATION_FAILED);
+		}
+	}
+	
+	private void convertInputValues() {
 		
 		name = nameField.getValue();
 		description = descriptionField.getValue();
 		teacherName = teacherNameField.getValue();
 		level = Level.valueOf(selectLevelComboBox.getValue());
 		givesCertificate = certCheckbox.getValue();
-	
-	}
-	
-	public void checkDurationFieldEmpty() {
-		if (durationField.getValue() != "") {
-			try {
-				duration = Integer.parseInt(durationField.getValue());
-				System.out.println("Gets here");
-				checkPriceFieldEmpty();
-			}
-			catch (Exception ex) {
+		
+		try {
+			duration = checkDurationFieldEmpty();
+			price = checkPriceFieldEmpty();
+			category = checkCategoryFieldEmpty();
+		}
+		catch (NewCourseException ex) {
+			if (ex.getNewCourseTypeError() == NewCourseException.NewCourseTypeError.DURATION_NUMERIC_VALUE) {
 				Notification notif = new Notification("Warning", "The duration should be a numeric value!", Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
 			}
-		}
-		else {
-			Notification notif = new Notification("Warning", "The duration field should be filled in!", Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-		}
-	}
-	
-	public void checkPriceFieldEmpty() {
-		if (priceField.getValue() != "") {
-			try {
-				price = Integer.parseInt(priceField.getValue());
-				checkCategoryFieldEmpty();
-			}
-			catch (Exception ex){
+			else if (ex.getNewCourseTypeError() == NewCourseTypeError.PRICE_NUMERIC_VALUE) {
 				Notification notif = new Notification("Warning", "The price should be a numeric value!", Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
 			}
+			else if (ex.getNewCourseTypeError() == NewCourseTypeError.CATEGORY_REQUIRED) {
+				Notification notif = new Notification("Warning", "The category field should be filled in!", Notification.TYPE_WARNING_MESSAGE);
+				notif.show(Page.getCurrent());
+			}
+		}
+	
+	}
+	
+	private int checkDurationFieldEmpty() throws NewCourseException {
+		if (!durationField.getValue().isBlank()) {
+			parseDuration();
+			return duration;
 		}
 		else {
-			Notification notif = new Notification("Warning", "The price should be a filled in!", Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
+			throw new NewCourseException(NewCourseTypeError.DURATION_NUMERIC_VALUE);
 		}
 	}
 	
-	public void checkCategoryFieldEmpty() {
-		if (selectCategoryComboBox.getValue() != null) {
-			Category category = Category.valueOf(selectCategoryComboBox.getValue());
-			NewCourseMethods.addNewCourse(binder, name, description, teacherName, duration, level, category, price, givesCertificate);
+	private int parseDuration() throws NewCourseException{
+		try {
+			duration = Integer.parseInt(durationField.getValue());
+			return duration;
+		}
+		catch (Exception ex) {
+			throw new NewCourseException(NewCourseTypeError.DURATION_NUMERIC_VALUE);
+		}
+	}
+	
+	private double checkPriceFieldEmpty() throws NewCourseException {
+		if (!priceField.getValue().isBlank()) {
+			parsePrice();
+			return price;
 		}
 		else {
-			Notification notif = new Notification("Warning", "The category field should be filled in!", Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
+			throw new NewCourseException(NewCourseTypeError.PRICE_NUMERIC_VALUE);
+		}
+	}
+	
+	private double parsePrice() throws NewCourseException {
+		try {
+			price = Integer.parseInt(priceField.getValue());
+			return price;
+		}
+		catch (Exception ex){
+			throw new NewCourseException(NewCourseTypeError.PRICE_NUMERIC_VALUE);
+		}
+	}
+	
+	private Category checkCategoryFieldEmpty() throws NewCourseException {
+		try {
+			selectCategoryComboBox.getValue();
+			category = Category.valueOf(selectCategoryComboBox.getValue());
+			return category;
+		}
+		catch (Exception ex) {
+			 throw new NewCourseException(NewCourseTypeError.CATEGORY_REQUIRED);
 		}
 	}
 

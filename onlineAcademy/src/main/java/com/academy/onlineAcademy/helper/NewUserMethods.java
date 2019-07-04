@@ -1,6 +1,10 @@
 package com.academy.onlineAcademy.helper;
 
+import javax.persistence.PersistenceException;
+
 import com.academy.onlineAcademy.controller.PersonController;
+import com.academy.onlineAcademy.exceptions.NewUserException;
+import com.academy.onlineAcademy.exceptions.NewUserException.NewUserErrorType;
 import com.academy.onlineAcademy.model.Type;
 import com.academy.onlineAcademy.model.Person;
 import com.academy.onlineAcademy.view.AdminAddUserView;
@@ -20,83 +24,112 @@ public class NewUserMethods {
 	static String enteredPassword;
 	static String enteredConfirmPassword;
 	
-	public static void setFieldsValues(Binder<Person> binder, Type userType, String fullName, String username, String email, String password, String confirmPassword) {
+	public static void addUser(Binder<Person> binder, Type userType, String fullName, String username, String email, String password, String confirmPassword) {
+		try {
+			setFieldsValues(fullName, username, email, password, confirmPassword);
+			checkValidation(userType, binder);
+			existingUsername();
+			existingEmail();
+			matchingPasswords();
+			addUserToDatabase();
+		}
+		catch(NewUserException ex) {
+			if (ex.getNewUserErrorType() == NewUserErrorType.FAILED_VALIDATION) {
+				Notification notif = new Notification("Warning", "Correct the field(s) in red.",
+					    Notification.TYPE_WARNING_MESSAGE);
+				notif.show(Page.getCurrent());
+			}
+			else if (ex.getNewUserErrorType() == NewUserErrorType.NO_USER_TYPE) {
+				Notification notif = new Notification("Warning", "ERROR!",
+					    Notification.TYPE_WARNING_MESSAGE);
+				notif.show(Page.getCurrent());
+			}
+			else if (ex.getNewUserErrorType() == NewUserErrorType.EXISTING_USERNAME) {
+				Notification notif = new Notification("Warning", "The username already exists! Please use another one or log in!",
+					    Notification.TYPE_WARNING_MESSAGE);
+				notif.show(Page.getCurrent());
+			}
+			else if (ex.getNewUserErrorType() == NewUserErrorType.EXISTING_EMAIL) {
+				Notification notif = new Notification("Warning", "The email already exists! Please log in!",
+					    Notification.TYPE_WARNING_MESSAGE);
+				notif.show(Page.getCurrent());
+			}
+			else if (ex.getNewUserErrorType() == NewUserErrorType.PASSWORDS_NOT_MATCHING) {
+				Notification notif = new Notification("Warning", "The fields for password and confrim password do not match!",
+					    Notification.TYPE_WARNING_MESSAGE);
+				notif.show(Page.getCurrent());
+			}
+			else if(ex.getNewUserErrorType() == NewUserErrorType.DATABASE_FAIL) {
+				Notification notif = new Notification("Warning", "Saving to database failed!",
+					    Notification.TYPE_WARNING_MESSAGE);
+				notif.show(Page.getCurrent());
+			}
+		}
+		
+	}
+	
+	public static void setFieldsValues(String fullName, String username, String email, String password, String confirmPassword) {
 		
 			enteredFullName = fullName;
 			enteredUsername = username;
 			enteredEmail = email;
 			enteredPassword = password;
 			enteredConfirmPassword = confirmPassword;
-			checkValidation(userType, binder);
 		
 	}
 	
-	public static void checkValidation(Type userType, Binder<Person> binder) {
+	public static void checkValidation(Type userType, Binder<Person> binder) throws NewUserException{
 		if(userType == Type.ADMIN) {
 			if (binder.validate().isOk() == true) {
-	            existingUsername();
+				
 			}
 			else { 
-				Notification notif = new Notification("Warning", "Correct the field(s) in red.",
-				    Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
+				throw new NewUserException(NewUserErrorType.FAILED_VALIDATION);
 			}
 		}
 		else if (userType == Type.USER) {
 			if (binder.validate().isOk() == true) {
-	            existingUsername();
+				
 			}
 			else { 
-				Notification notif = new Notification("Warning", "Correct the field(s) in red.",
-				    Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
+				throw new NewUserException(NewUserErrorType.FAILED_VALIDATION);
 			}
 		}
 		else {
-			Notification notif = new Notification("Warning", "ERROR!",
-				    Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
+			throw new NewUserException(NewUserErrorType.NO_USER_TYPE);
 		}
 	}
 	
-	public static void existingUsername() {
+	public static void existingUsername() throws NewUserException {
 		try {
 	    	databaseUsername = obj.getPersonByUsername(enteredUsername.toUpperCase()).getUsername();
-	    	Notification notif = new Notification("Warning", "The username already exists! Please use another one or log in!",
-				    Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
+	    	throw new NewUserException(NewUserErrorType.EXISTING_USERNAME);
 	    	
 	     }
-		 catch (Exception ex) {
-			 existingEmail();
+		catch (PersistenceException e) {
 		 }
 	}
 	
-	public static void existingEmail() {
+	public static void existingEmail() throws NewUserException {
 		try {
 	    	databaseEmail = obj.getPersonByEmail(enteredEmail.toUpperCase()).getEmail();
-	    	Notification notif = new Notification("Warning", "The email already exists! Please log in!",
-				    Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-	    	
+	    	throw new NewUserException(NewUserErrorType.EXISTING_EMAIL);	    	
 	     }
-		 catch (Exception ex) {
-			 matchingPasswords();
+		 catch (PersistenceException ex) {
 		 }
+		
 	}
 	
-	public static void matchingPasswords() {
+	public static void matchingPasswords() throws NewUserException {
 		if (enteredPassword.equals(enteredConfirmPassword)) {
-			addUserToDatabase();
+			
 		}
 		else {
-			Notification notif = new Notification("Warning", "The fields for password and confrim password do not match!",
-				    Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
+			throw new NewUserException(NewUserErrorType.PASSWORDS_NOT_MATCHING);
 		}	
 	}
 	
-	public static void addUserToDatabase() {
+	public static void addUserToDatabase() throws NewUserException {
 		try {
 			obj.addPerson(enteredFullName, enteredUsername.toUpperCase(), enteredEmail.toUpperCase(), enteredPassword, null, Type.USER, null, null);
 			
@@ -104,8 +137,8 @@ public class NewUserMethods {
 				    Notification.TYPE_WARNING_MESSAGE);
 			notif.show(Page.getCurrent());
 		}
-		catch(Exception ex2) {
-			ex2.printStackTrace();
+		catch(PersistenceException ex) {
+			throw new NewUserException(NewUserErrorType.DATABASE_FAIL);
 		}
 	}
 	

@@ -64,79 +64,30 @@ public class CourseController {
 	}
 	
 	public List<Course> getAllCourses() {
-		EntityManager em = null;
-		try {
-            em = emFactoryObj.createEntityManager();
-		    em.getTransaction().begin();
-		    
-			TypedQuery<Course> query = em.createNamedQuery("getAllCourses", Course.class);
-		    em.getTransaction().commit();
-		    return query.getResultList();
-		} 
-		catch(PersistenceException e) {
-		    em.getTransaction().rollback();
-		    throw e;
-		}
-        finally {
-	    	em.close();
-		}
+		EntityManager em = emFactoryObj.createEntityManager();
+		TypedQuery<Course> query = em.createNamedQuery("getAllCourses", Course.class);
+	    return query.getResultList();
 	}
 	
 	public Course getCourseByName(String name) {
-		EntityManager em = null;
-		try {
-			em = emFactoryObj.createEntityManager();
-//		    em.getTransaction().begin();
-		    
-		    TypedQuery<Course> query = em.createNamedQuery("findCourseByName", Course.class);
-//		    em.getTransaction().commit();
-		    return query.setParameter("name", name).getSingleResult();
-		} 
-		catch(PersistenceException e) {
-//		    em.getTransaction().rollback();
-		    throw e;
-		}
-        finally {
-//		    em.close();
-		}
+		EntityManager em = emFactoryObj.createEntityManager();		    
+	    TypedQuery<Course> query = em.createNamedQuery("findCourseByName", Course.class);
+	    
+	    return query.setParameter("name", name).getSingleResult();
 	}
 	
 	public Course getCourseById(int id) {
-		EntityManager em = null;
-		try {
-			em = emFactoryObj.createEntityManager();
-		    em.getTransaction().begin();
-		    
-		    TypedQuery<Course> query = em.createNamedQuery("findCourseById", Course.class);
-		    em.getTransaction().commit();
-		    return query.setParameter("id", id).getSingleResult();
-		} 
-		catch(PersistenceException e) {
-		    em.getTransaction().rollback();
-		    throw e;
-		}
-        finally {
-		    em.close();
-		}
+		EntityManager em = emFactoryObj.createEntityManager();
+	    TypedQuery<Course> query = em.createNamedQuery("findCourseById", Course.class);
+	    
+	    return query.setParameter("id", id).getSingleResult();
 	}
 	
 	public List<Order> getAllCoursesByUser(int userId) {
-		EntityManager em = null;
-		try {
-			em = emFactoryObj.createEntityManager();
-		    em.getTransaction().begin();
-		    
-			TypedQuery<Order> query = em.createNamedQuery("", Order.class);
-		    em.getTransaction().commit();
-		    return query.setParameter("user_id", userId).getResultList();
-		} 
-		catch(PersistenceException e) {
-		    em.getTransaction().rollback();
-		    throw e;
-		}
-        finally {
-	    	em.close();
-		}
+		EntityManager em = emFactoryObj.createEntityManager();
+		TypedQuery<Order> query = em.createNamedQuery("", Order.class);
+		
+	    return query.setParameter("user_id", userId).getResultList();
 	}
 	
 	public void updateCourseById(Course course) {

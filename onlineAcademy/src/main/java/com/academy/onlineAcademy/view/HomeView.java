@@ -47,7 +47,6 @@ public class HomeView extends VerticalLayout implements View {
 		navigator = UI.getCurrent().getNavigator();
 		courseObj = new CourseController();
 		orderObj = new OrderController();
-		initMainlayout();
 		
 	}
 	
@@ -191,10 +190,11 @@ public class HomeView extends VerticalLayout implements View {
 	@Override
 	public void enter(ViewChangeEvent event) {
 		View.super.enter(event);
-        List<Course> courses = courseObj.getAllCourses();
-		grid.setItems(courses);
-		
 		initMainlayout();
+		
+        List<Course> courses = courseObj.getAllCourses();
+        grid.setItems(courses);
+		
 		System.out.println("Executes the top bar method again");
 		
 //		UI ui = UI.getCurrent();

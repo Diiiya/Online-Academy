@@ -68,103 +68,33 @@ public class PersonController {
 	}
 	
 	public List<Person> getAllUsers() {
-		EntityManager em = null;
-		try {
-			em = emFactoryObj.createEntityManager();
-		    em.getTransaction().begin();
-		    
-			TypedQuery<Person> query = em.createNamedQuery("getAllUsers", Person.class);
-		    em.getTransaction().commit();
-		    return query.getResultList();
-		} 
-		catch(PersistenceException e) {
-
-		    em.getTransaction().rollback();
-		    throw e;
-		}
-        finally {
-		    em.close();
-		}
+		EntityManager em = emFactoryObj.createEntityManager();
+		TypedQuery<Person> query = em.createNamedQuery("getAllUsers", Person.class);
+	    return query.getResultList();
 	}
 	
 	public Person getPersonById(int id) {
-		EntityManager em = null;
-		try {
-			em = emFactoryObj.createEntityManager();
-		    em.getTransaction().begin();
-		    
-		    TypedQuery<Person> query = em.createNamedQuery("findUserById", Person.class);
-		    em.getTransaction().commit();
-		    return query.setParameter("id", id).getSingleResult();
-		}
-		catch(PersistenceException e) {
-
-		    em.getTransaction().rollback();
-		    throw e;
-		}
-        finally {
-	    	em.close();
-		}
+		EntityManager em = emFactoryObj.createEntityManager();	    
+	    TypedQuery<Person> query = em.createNamedQuery("findUserById", Person.class);
+	    return query.setParameter("id", id).getSingleResult();
 	}
 	
 	public Person getPersonByName(String name) {
-		EntityManager em = null;
-		try {
-			em = emFactoryObj.createEntityManager();
-		    em.getTransaction().begin();
-		    
-		    TypedQuery<Person> query = em.createNamedQuery("findUserByName", Person.class);
-		    em.getTransaction().commit();
-		    return query.setParameter("name", name).getSingleResult();
-		} 
-		catch(PersistenceException e) {
-
-		    em.getTransaction().rollback();
-		    throw e;
-		}
-        finally {
-		    em.close();
-		}
+		EntityManager em = emFactoryObj.createEntityManager();
+	    TypedQuery<Person> query = em.createNamedQuery("findUserByName", Person.class);
+	    return query.setParameter("name", name).getSingleResult();
 	}
 	
 	public Person getPersonByUsername(String username) {
-		EntityManager em = null;
-		try {
-			em = emFactoryObj.createEntityManager();
-		    em.getTransaction().begin();
-		    
-		    TypedQuery<Person> query = em.createNamedQuery("findUserByUsername", Person.class);
-		    em.getTransaction().commit();
-		    return query.setParameter("username", username).getSingleResult();
-		} 
-		catch(PersistenceException e) {
-
-		    em.getTransaction().rollback();
-		    throw e;
-		}
-        finally {
-		    em.close();
-		}
+		EntityManager em = emFactoryObj.createEntityManager();		    
+	    TypedQuery<Person> query = em.createNamedQuery("findUserByUsername", Person.class);
+	    return query.setParameter("username", username).getSingleResult();
 	}
 	
 	public Person getPersonByEmail(String email) {
-		EntityManager em = null;
-		try {
-			em = emFactoryObj.createEntityManager();
-		    em.getTransaction().begin();
-		    
-		    TypedQuery<Person> query = em.createNamedQuery("findUserByEmail", Person.class);
-		    em.getTransaction().commit();
-		    return query.setParameter("email", email).getSingleResult();
-		} 
-		catch(PersistenceException e) {
-
-		    em.getTransaction().rollback();
-		    throw e;
-		}
-        finally {
-		    em.close();
-		}
+		EntityManager em = emFactoryObj.createEntityManager();	    
+	    TypedQuery<Person> query = em.createNamedQuery("findUserByEmail", Person.class);
+	    return query.setParameter("email", email).getSingleResult();
 	}
 	
 //	public void updatePersonById(Person person, int id, String fullName, String username, String email, String password, Type type) {

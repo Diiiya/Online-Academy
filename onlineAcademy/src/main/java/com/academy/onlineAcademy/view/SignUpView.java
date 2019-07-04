@@ -94,7 +94,7 @@ public class SignUpView extends VerticalLayout implements View {
 		
 		addButton.setWidth("100");
 		addButton.addClickListener(e -> {
-			NewUserMethods.setFieldsValues(binder, Type.USER, fullNameField.getValue(), usernameField.getValue(), emailField.getValue(),
+			NewUserMethods.addUser(binder, Type.USER, fullNameField.getValue(), usernameField.getValue(), emailField.getValue(),
 					passwordField.getValue(), confirmPasswordField.getValue()); 
 		});
 		

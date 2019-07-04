@@ -60,63 +60,21 @@ public class OrderController {
 	}
 	
 	public List<Order> getAllOrders() {
-		EntityManager em = null;
-		try {
-			em = emFactoryObj.createEntityManager();
-		    em.getTransaction().begin();
-		    
-			TypedQuery<Order> query = em.createNamedQuery("getAllOrders", Order.class);
-		    em.getTransaction().commit();
-		    return query.getResultList();
-		} 
-		catch(PersistenceException e) {
-
-		    em.getTransaction().rollback();
-		    throw e;
-		}
-        finally {
-		    em.close();
-		}
+		EntityManager em = emFactoryObj.createEntityManager();
+		TypedQuery<Order> query = em.createNamedQuery("getAllOrders", Order.class);
+	    return query.getResultList();
 	}
 	
 	public List<Order> getAllOrdersByUser(int userId) {
-		EntityManager em = null;
-		try {
-			em = emFactoryObj.createEntityManager();
-		    em.getTransaction().begin();
-		    
-			TypedQuery<Order> query = em.createNamedQuery("getAllOrdersByUser", Order.class);
-		    em.getTransaction().commit();
-		    return query.setParameter("userId", userId).getResultList();
-		} 
-		catch(PersistenceException e) {
-
-		    em.getTransaction().rollback();
-		    throw e;
-		}
-        finally {
-		    em.close();
-		}
+		EntityManager em = emFactoryObj.createEntityManager();
+		TypedQuery<Order> query = em.createNamedQuery("getAllOrdersByUser", Order.class);
+	    return query.setParameter("userId", userId).getResultList();
 	}
 	
 	public Order getOrderById(int id) {
-		EntityManager em = null;
-		try {
-			em = emFactoryObj.createEntityManager();
-		    em.getTransaction().begin();
-		    
-		    TypedQuery<Order> query = em.createNamedQuery("findOrderById", Order.class);
-		    em.getTransaction().commit();
-		    return query.setParameter("id", id).getSingleResult();
-		} 
-		catch(PersistenceException e) {
-
-		    em.getTransaction().rollback();
-		    throw e;
-		}
-        finally {
-		    em.close();
-		}
+		EntityManager em = emFactoryObj.createEntityManager();
+	    TypedQuery<Order> query = em.createNamedQuery("findOrderById", Order.class);
+	    return query.setParameter("id", id).getSingleResult();
 	}
 	
 	public int deleteOrderById(int id) {

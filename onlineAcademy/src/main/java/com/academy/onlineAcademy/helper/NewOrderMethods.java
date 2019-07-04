@@ -8,6 +8,7 @@ import com.academy.onlineAcademy.controller.CourseController;
 import com.academy.onlineAcademy.controller.OrderController;
 import com.academy.onlineAcademy.controller.PersonController;
 import com.academy.onlineAcademy.exceptions.OrderException;
+import com.academy.onlineAcademy.exceptions.OrderException.OrderErrorType;
 import com.academy.onlineAcademy.model.Course;
 import com.academy.onlineAcademy.model.Order;
 import com.academy.onlineAcademy.model.Person;
@@ -37,12 +38,12 @@ public class NewOrderMethods {
 			createNewOrder(courseId, orderObj);
 		}
 		catch(OrderException e) {
-			if (e.getOrderErrorType() == com.academy.onlineAcademy.exceptions.OrderException.OrderErrorType.NOT_EXISTING_EMAIL) {
+			if (e.getOrderErrorType() == OrderErrorType.NOT_EXISTING_EMAIL) {
 				Notification notif = new Notification("Warning", "The is no user with this email address!",
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
 			}
-			else if (e.getOrderErrorType() == com.academy.onlineAcademy.exceptions.OrderException.OrderErrorType.ORDER_FAILED) {
+			else if (e.getOrderErrorType() == OrderErrorType.ORDER_FAILED) {
 				Notification notif = new Notification("Warning", "Unexpected error!",
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
