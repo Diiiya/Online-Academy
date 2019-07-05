@@ -238,6 +238,9 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 	@Override
 	public void enter(ViewChangeEvent event) {
 		View.super.enter(event);
+		personas = personObj.getAllUsers();
+        grid.setItems(personas);
+		
 		grid.addItemClickListener(e -> {
 			selectedPerson = e.getItem();
 			selectedPersonId = selectedPerson.getId();

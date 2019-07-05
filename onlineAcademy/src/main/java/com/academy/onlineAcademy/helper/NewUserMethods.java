@@ -21,20 +21,14 @@ public class NewUserMethods {
 	private static Logger logger = Logger.getLogger(NewUserMethods.class.getName());
 	
 	static PersonController obj = new PersonController();
-	static String enteredFullName;
-	static String enteredUsername;
-	static String enteredEmail;
-	static String enteredPassword;
-	static String enteredConfirmPassword;
 	
 	public static void addUser(Binder<Person> binder, Type userType, String fullName, String username, String email, String password, String confirmPassword) {
 		try {
-			setFieldsValues(fullName, username, email, password, confirmPassword);
 			checkValidation(userType, binder);
-			existingUsername();
-			existingEmail();
-			matchingPasswords();
-			addUserToDatabase();
+			existingUsername(username);
+			existingEmail(email);
+			matchingPasswords(password, confirmPassword);
+			addUserToDatabase(fullName, username, email, password);
 		}
 		catch(NewUserException ex) {
 			if (ex.getNewUserErrorType() == NewUserErrorType.FAILED_VALIDATION) {
@@ -83,16 +77,6 @@ public class NewUserMethods {
 		
 	}
 	
-	private static void setFieldsValues(String fullName, String username, String email, String password, String confirmPassword) {
-		
-			enteredFullName = fullName;
-			enteredUsername = username;
-			enteredEmail = email;
-			enteredPassword = password;
-			enteredConfirmPassword = confirmPassword;
-		
-	}
-	
 	private static void checkValidation(Type userType, Binder<Person> binder) throws NewUserException{
 		if(userType == Type.ADMIN) {
 			if (binder.validate().isOk() == true) {
@@ -115,9 +99,9 @@ public class NewUserMethods {
 		}
 	}
 	
-	private static void existingUsername() throws NewUserException {
+	private static void existingUsername(String username) throws NewUserException {
 		try {
-	    	obj.getPersonByUsername(enteredUsername.toUpperCase()).getUsername();
+	    	obj.getPersonByUsername(username.toUpperCase());
 	    	throw new NewUserException(NewUserErrorType.EXISTING_USERNAME);
 	    	
 	     }
@@ -125,9 +109,9 @@ public class NewUserMethods {
 		 }
 	}
 	
-	private static void existingEmail() throws NewUserException {
+	private static void existingEmail(String email) throws NewUserException {
 		try {
-	    	obj.getPersonByEmail(enteredEmail.toUpperCase()).getEmail();
+	    	obj.getPersonByEmail(email.toUpperCase());
 	    	throw new NewUserException(NewUserErrorType.EXISTING_EMAIL);	    	
 	     }
 		 catch (PersistenceException ex) {
@@ -135,8 +119,8 @@ public class NewUserMethods {
 		
 	}
 	
-	private static void matchingPasswords() throws NewUserException {
-		if (enteredPassword.equals(enteredConfirmPassword)) {
+	private static void matchingPasswords(String password, String confirmPassword) throws NewUserException {
+		if (password.equals(confirmPassword)) {
 			
 		}
 		else {
@@ -144,15 +128,15 @@ public class NewUserMethods {
 		}	
 	}
 	
-	private static void addUserToDatabase() throws NewUserException {
+	private static void addUserToDatabase(String fullName, String username, String email, String password) throws NewUserException {
 		try {
-			obj.addPerson(enteredFullName, enteredUsername.toUpperCase(), enteredEmail.toUpperCase(), enteredPassword, null, Type.USER, null, null);
+			obj.addPerson(fullName, username, email, password, null, Type.USER, null, null);
 			
 			Notification notif = new Notification("Confirmation", "The user has been created!",
 				    Notification.TYPE_WARNING_MESSAGE);
 			notif.show(Page.getCurrent());
 			
-			logger.log(Level.INFO, "User " + enteredUsername + " has been created.");
+			logger.log(Level.INFO, "User " + username + " has been created.");
 		}
 		catch(PersistenceException ex) {
 			throw new NewUserException(NewUserErrorType.DATABASE_FAIL);
