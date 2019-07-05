@@ -1,6 +1,8 @@
 package com.academy.onlineAcademy.view;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.academy.onlineAcademy.controller.OrderController;
 import com.academy.onlineAcademy.helpView.UserViews;
@@ -19,6 +21,8 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 public class UserOrdersView extends VerticalLayout implements View {
+	
+	private static Logger logger = Logger.getLogger(UserOrdersView.class.getName());
 	
 	private Navigator navigator;
 	private OrderController orderObj;
@@ -81,6 +85,8 @@ public class UserOrdersView extends VerticalLayout implements View {
 			Notification notif = new Notification("Warning", "No order(s) for this user have been found!",
 				    Notification.TYPE_WARNING_MESSAGE);
 			notif.show(Page.getCurrent());
+			
+			logger.log(Level.SEVERE, "No order(s) for this user have been found!");
 		}
 	}
 	

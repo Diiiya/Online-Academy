@@ -33,9 +33,8 @@ public class UserSettingsView extends VerticalLayout implements View {
 	
 	private Navigator navigator;
 	private Binder<Person> binder;
-	private PersonController personObj;
 	private Person person;
-	private int userId;		
+	int userId;
 	
 	private Panel photoPanel;	
 	private Panel accountPanel;	
@@ -48,16 +47,17 @@ public class UserSettingsView extends VerticalLayout implements View {
 		
 		navigator = UI.getCurrent().getNavigator();
 		person = new Person();
-		personObj = new PersonController();
-		getMainLayout();
+		initMainLayout();
 				
 	}
     
-	public VerticalLayout getMainLayout() {
+	public VerticalLayout initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		
 		HorizontalLayout layoutH = UserViews.getTopBar(navigator);
 		VerticalLayout layoutVBody = getBodyLayout();
+		
+		binder = callBinder();
 		
 		mainVLayout.addComponents(layoutH, layoutVBody);
 		addComponents(mainVLayout);
@@ -72,12 +72,14 @@ public class UserSettingsView extends VerticalLayout implements View {
 		layoutHBody.setSizeUndefined();
 		getPhotoPanel();
 		getAccountpanel();
-		callBinder();
 		Button updateButton = new Button("UPDATE");
+		
 		updateButton.setWidth("800");
 		updateButton.addClickListener(e -> {
 			String enteredEmail = emailField.getValue();
-			UpdateUserMethods.existingEmail(person, enteredEmail, binder, personObj);
+			enteredEmail.toUpperCase();
+			System.out.println("UI email " + enteredEmail);
+			UpdateUserMethods.updatePersonSettings(person, binder, enteredEmail);
 			});
 		
 		layoutHBody.addComponents(photoPanel, accountPanel);
@@ -137,7 +139,7 @@ public class UserSettingsView extends VerticalLayout implements View {
 		return accountPanel;
 	}
 	
-	public void callBinder() {
+	public Binder<Person> callBinder() {
 		binder = new Binder<Person>();
 		
 		binder.forField(fullNameField)
@@ -157,6 +159,7 @@ public class UserSettingsView extends VerticalLayout implements View {
 		.bind(Person::getPassword, Person::setPassword);
 		//binder.forField(confirmPasswordField).asRequired("Cannot be empty");
 		
+		return binder;
 	}
 	
 	@Override
@@ -166,7 +169,8 @@ public class UserSettingsView extends VerticalLayout implements View {
 		VaadinSession session = ui.getSession();
 		if (session.getAttribute("user-id") != null) {
 			int userId = Integer.valueOf(String.valueOf(session.getAttribute("user-id")));
-			UpdateUserMethods.getUserInfo(userId, binder, personObj, person);
+			UpdateUserMethods.getUserInfo(userId, binder);
+			person = UpdateUserMethods.getPerson();
 		}
 		else {
 			System.out.println("USER ID VAL:" + session.getAttribute("user-id"));

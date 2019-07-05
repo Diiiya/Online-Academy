@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -14,6 +15,7 @@ import com.academy.onlineAcademy.exceptions.NewCourseException;
 import com.academy.onlineAcademy.exceptions.NewCourseException.NewCourseTypeError;
 import com.academy.onlineAcademy.helpView.AdminViews;
 import com.academy.onlineAcademy.helper.NewCourseMethods;
+import com.academy.onlineAcademy.helper.NewUserMethods;
 import com.academy.onlineAcademy.model.Category;
 import com.academy.onlineAcademy.model.Course;
 import com.academy.onlineAcademy.model.Level;
@@ -46,6 +48,8 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.MenuBar.MenuItem;
 
 public class AdminAddCourseView extends VerticalLayout implements View {
+	
+	private static Logger logger = Logger.getLogger(AdminAddCourseView.class.getName());
 	
 	private Navigator navigator;
 	private Binder<Course> binder;
@@ -152,11 +156,15 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 				Notification notif = new Notification("Warning", "Correct the field(s) in red.",
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
+				
+				logger.log(java.util.logging.Level.SEVERE, "Not all fields are filled in as expected! Validation failed!");
 			}
 			else if (ex.getNewCourseTypeError() == NewCourseTypeError.DATABASE_FAIL) {
-				Notification notif = new Notification("Warning", "Filed to save it to the database.",
+				Notification notif = new Notification("Warning", "Failed to save it to the database.",
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
+				
+				logger.log(java.util.logging.Level.SEVERE, "Failed to add the course to the database!");
 			}
 		}
 	}
@@ -187,14 +195,20 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 			if (ex.getNewCourseTypeError() == NewCourseException.NewCourseTypeError.DURATION_NUMERIC_VALUE) {
 				Notification notif = new Notification("Warning", "The duration should be a numeric value!", Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
+				
+				logger.log(java.util.logging.Level.SEVERE, "The duration value should be a number!");
 			}
 			else if (ex.getNewCourseTypeError() == NewCourseTypeError.PRICE_NUMERIC_VALUE) {
 				Notification notif = new Notification("Warning", "The price should be a numeric value!", Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
+				
+				logger.log(java.util.logging.Level.SEVERE, "The price value should be a number!");
 			}
 			else if (ex.getNewCourseTypeError() == NewCourseTypeError.CATEGORY_REQUIRED) {
 				Notification notif = new Notification("Warning", "The category field should be filled in!", Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
+				
+				logger.log(java.util.logging.Level.SEVERE, "The category filed cannot be left empty!");
 			}
 		}
 	

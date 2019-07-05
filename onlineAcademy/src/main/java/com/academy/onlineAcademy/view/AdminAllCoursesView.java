@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -48,6 +49,8 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.MenuBar.MenuItem;
 
 public class AdminAllCoursesView extends VerticalLayout implements View {
+	
+	private static Logger logger = Logger.getLogger(AdminAllCoursesView.class.getName());
 	
 	private Navigator navigator;
 	private Window updateWindow;
@@ -119,6 +122,8 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 			catch (Exception ex) {
 				Notification notif = new Notification("Warning!", "No course with this name has been found!", Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
+				
+				logger.log(java.util.logging.Level.SEVERE, "No course with this name has been found!");
 			}
 			
 		});

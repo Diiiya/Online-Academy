@@ -101,13 +101,13 @@ public class Person implements Serializable{
 		return username;
 	}
 	public void setUsername(String username) {
-		this.username = username;
+		this.username = username.toUpperCase();
 	}
 	public String getEmail() {
 		return email;
 	}
 	public void setEmail(String email) {
-		this.email = email;
+		this.email = email.toUpperCase();
 	}
 	public String getPassword() {
 		return password;

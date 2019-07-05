@@ -1,19 +1,16 @@
 package com.academy.onlineAcademy.view;
 
-import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.academy.onlineAcademy.controller.CourseController;
 import com.academy.onlineAcademy.controller.OrderController;
 import com.academy.onlineAcademy.controller.PersonController;
-import com.academy.onlineAcademy.exceptions.LoginException;
-import com.academy.onlineAcademy.exceptions.OrderException;
 import com.academy.onlineAcademy.helpView.AdminViews;
 import com.academy.onlineAcademy.helper.NewOrderMethods;
-import com.academy.onlineAcademy.model.Course;
 import com.academy.onlineAcademy.model.Order;
-import com.academy.onlineAcademy.model.Person;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
@@ -30,6 +27,8 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 public class AdminAllOrdersView extends VerticalLayout implements View {
+	
+	private static Logger logger = Logger.getLogger(AdminAllCoursesView.class.getName());
 	
 	private Navigator navigator;
 	private HorizontalLayout buttonsHLayout;	
@@ -151,6 +150,8 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 			Notification notif = new Notification("Warning", "There was no order with this id found!",
 				    Notification.TYPE_WARNING_MESSAGE);
 			notif.show(Page.getCurrent());
+			
+			logger.log(Level.SEVERE, "The was no order with this id found!");
 		}
 	}
 	
@@ -176,6 +177,8 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 			Notification notif = new Notification("Warning!", "Both fields should be filled in",
 				    Notification.TYPE_WARNING_MESSAGE);
 			notif.show(Page.getCurrent());
+			
+			logger.log(Level.SEVERE, "Bothe fields should be filled in!");
 		}
 	}
 	

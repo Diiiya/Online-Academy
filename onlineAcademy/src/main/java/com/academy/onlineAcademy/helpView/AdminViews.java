@@ -7,6 +7,7 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.VaadinService;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
@@ -40,7 +41,7 @@ public class AdminViews extends VerticalLayout implements View {
 		myProfileMainItem.addItem("All users", VaadinIcons.USERS, createNavigationCommand("AdminAllUsers"));
 		myProfileMainItem.addItem("Add user", VaadinIcons.PLUS, createNavigationCommand("AdminAddUser"));
 		myProfileMainItem.addItem("Settings", VaadinIcons.USER, createNavigationCommand("Settings"));
-		myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, createNavigationCommand("Home"));
+		myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, logoutNavigationCommand(""));
 		
 		layoutH.addComponents(logoImage, profileMenu);
 		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
@@ -52,6 +53,17 @@ public class AdminViews extends VerticalLayout implements View {
 	static MenuBar.Command createNavigationCommand(String navigationView) {
 		return new MenuBar.Command() {
 		    public void menuSelected(MenuItem selectedItem) {
+		    	navigator.navigateTo(navigationView);
+		    }
+		};
+	}
+	
+	static MenuBar.Command logoutNavigationCommand(String navigationView) {
+		return new MenuBar.Command() {
+		    public void menuSelected(MenuItem selectedItem) {
+		    	UI ui = UI.getCurrent();
+				VaadinSession session = ui.getSession();
+				session.setAttribute("user-id", null);
 		    	navigator.navigateTo(navigationView);
 		    }
 		};

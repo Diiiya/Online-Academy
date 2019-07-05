@@ -3,6 +3,8 @@ package com.academy.onlineAcademy.view;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.academy.onlineAcademy.controller.CourseController;
 import com.academy.onlineAcademy.helpView.UserViews;
@@ -22,7 +24,9 @@ import com.vaadin.ui.VerticalLayout;
 
 public class UserCoursesView extends VerticalLayout implements View {
 	
-	Navigator navigator;
+	private static Logger logger = Logger.getLogger(UserCoursesView.class.getName());
+	
+	private Navigator navigator;
 	private CourseController courseObj;
 	private Grid<com.academy.onlineAcademy.model.Course> grid;
 	
@@ -99,6 +103,8 @@ public class UserCoursesView extends VerticalLayout implements View {
 			Notification notif = new Notification("Warning", "No course(s) for this user have been found!",
 				    Notification.TYPE_WARNING_MESSAGE);
 			notif.show(Page.getCurrent());
+			
+			logger.log(Level.SEVERE, "No course(s) for this user have been found!");
 		}
 	}
 	

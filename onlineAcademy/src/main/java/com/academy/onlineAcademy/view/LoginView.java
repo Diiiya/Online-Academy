@@ -1,6 +1,8 @@
 package com.academy.onlineAcademy.view;
 
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.academy.onlineAcademy.controller.PersonController;
 import com.academy.onlineAcademy.exceptions.LoginException;
@@ -23,6 +25,8 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 public class LoginView extends VerticalLayout implements View {
+	
+	private static Logger logger = Logger.getLogger(LoginView.class.getName());
 	
 	private Navigator navigator;
 	private String enteredUsername;
@@ -88,16 +92,22 @@ public class LoginView extends VerticalLayout implements View {
 						Notification notif = new Notification("Warning", "The username doesn't exist! Please use another one or create an account!",
 							    Notification.TYPE_WARNING_MESSAGE);
 						notif.show(Page.getCurrent());
+						
+						logger.log(Level.SEVERE, "The username doesn't exist! Please use another one or create an account!");
 					}
 					else if (e1.getErrorType() == LoginErrorType.INVALID_USERNAME_PASSWORD_COMBINATION) {
 						Notification notif = new Notification("Warning", "The combination of username and password is not correct!",
 							    Notification.TYPE_WARNING_MESSAGE);
 						notif.show(Page.getCurrent());
+						
+						logger.log(Level.SEVERE, "The combination of username and password is not correct!");
 					}
 					else if (e1.getErrorType() == LoginErrorType.INVALID_USER_TYPE) {
 						Notification notif = new Notification("Warning", "The combination of username and password is not correct!",
 							    Notification.TYPE_WARNING_MESSAGE);
 						notif.show(Page.getCurrent());
+						
+						logger.log(Level.SEVERE, "The combination of username and password is not correct!");
 					}
 				}
  		          
@@ -106,6 +116,8 @@ public class LoginView extends VerticalLayout implements View {
  		    	Notification notif = new Notification("Warning", "Both fields should be filled in!",
  					    Notification.TYPE_WARNING_MESSAGE);
  		    	notif.show(Page.getCurrent());
+ 		    	
+ 		    	logger.log(Level.SEVERE, "Both fields should be filled in!");
  		    }
  	    });
  	    
@@ -118,22 +130,14 @@ public class LoginView extends VerticalLayout implements View {
 	    	currentUser = obj.getPersonByUsername(enteredUsername);
 	     }
 		 catch (Exception ex) {
-//			 Notification notif = new Notification("Warning", "The username doesn't exist! Please use another one or create an account!",
-//					    Notification.TYPE_WARNING_MESSAGE);
-//				notif.show(Page.getCurrent());
-				
-				throw new LoginException(LoginErrorType.USERNAME_EXISTS);
+			throw new LoginException(LoginErrorType.USERNAME_EXISTS);
 		 }
 	}
 	
 	public void checkUsernamePasswordCombination() throws LoginException {
 		if (currentUser.getPassword().equals(enteredPassword)) {
-			//checkTypeOfUser();
     	}
     	else {
-//    		Notification notif = new Notification("Warning", "The combination of username and password is not correct!",
-//				    Notification.TYPE_WARNING_MESSAGE);
-//			notif.show(Page.getCurrent());
     		throw new LoginException(LoginErrorType.INVALID_USERNAME_PASSWORD_COMBINATION);
     	}
 	}
@@ -153,9 +157,6 @@ public class LoginView extends VerticalLayout implements View {
     		session.setAttribute("user-id", currentUser.getId());
 		}
 		else {
-//			Notification notif = new Notification("Warning", "Unexpected error! Please try again!",
-//				    Notification.TYPE_WARNING_MESSAGE);
-//			notif.show(Page.getCurrent());
 			throw new LoginException(LoginErrorType.INVALID_USER_TYPE);
 		}
 	}

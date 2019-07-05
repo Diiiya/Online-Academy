@@ -1,5 +1,9 @@
 package com.academy.onlineAcademy;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.logging.LogManager;
+
 import javax.servlet.annotation.WebServlet;
 
 import com.academy.onlineAcademy.view.AdminAddCourseView;
@@ -58,7 +62,7 @@ public class MyUI extends UI {
         
         navigator.addView("Login", loginViewObj);
         navigator.addView("SignUp", signUpViewObj);
-        navigator.addView("Home", homeViewObj);
+        navigator.addView("", homeViewObj);
         navigator.addView("UserCourses", userCoursesViewObj);
         navigator.addView("Course", courseViewObj);
         navigator.addView("UserOrders", userOrdersViewObj);
@@ -69,10 +73,21 @@ public class MyUI extends UI {
         navigator.addView("AdminAllCourses", adminAllCourseViewObj);
         navigator.addView("AdminAllOrders", adminAllOrdersViewObj);
         
-        navigator.navigateTo("Home");
+        navigator.navigateTo("");
         
         setContent(layout);
+        
+//        configureLogging();
     }
+    
+//    private void configureLogging() {
+//    	try {
+//            LogManager.getLogManager().readConfiguration(new FileInputStream("logging.properties"));
+//        } 
+//    	catch (SecurityException | IOException e1) {
+//            e1.printStackTrace();
+//        }
+//    }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)

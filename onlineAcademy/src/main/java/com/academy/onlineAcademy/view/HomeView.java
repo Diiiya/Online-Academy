@@ -3,6 +3,8 @@ package com.academy.onlineAcademy.view;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.academy.onlineAcademy.controller.CourseController;
 import com.academy.onlineAcademy.controller.OrderController;
@@ -30,6 +32,7 @@ import com.vaadin.ui.VerticalLayout;
 
 public class HomeView extends VerticalLayout implements View {
 	
+	private static Logger logger = Logger.getLogger(HomeView.class.getName());
 	private String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 	
 	private Navigator navigator;
@@ -120,6 +123,8 @@ public class HomeView extends VerticalLayout implements View {
 				Notification notif = new Notification("Warning","No course with such name has been found!",
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
+				
+				logger.log(Level.SEVERE, "No course with this name has been found!");
 			}
 
 		});
@@ -163,12 +168,17 @@ public class HomeView extends VerticalLayout implements View {
 			Notification notif = new Notification("Warning","Please log in to continue ... ",
 				    Notification.TYPE_WARNING_MESSAGE);
 			notif.show(Page.getCurrent());
+			
+			logger.log(Level.SEVERE, "No user has been logged in, to place order!");
 		}
 		else {
 			Order newOrder = new Order(userId, selectedCourseId, date, false, selectedCourse.getPrice());
 			Notification notif = new Notification("Confirmation","The course has been added!",
 				    Notification.TYPE_WARNING_MESSAGE);
 			notif.show(Page.getCurrent());
+			
+			logger.log(Level.INFO, "The course has been added!");
+			
 			orderObj.addOrder(newOrder);
 		}
 	}
@@ -177,12 +187,10 @@ public class HomeView extends VerticalLayout implements View {
 		HorizontalLayout layoutH = new HorizontalLayout();
 		int userId = getUserId();
 		if (userId != 0) {
-			layoutH = UserViews.getTopBar();
-			System.out.println("USER ID Top bar != 0: " + userId);
+			layoutH = UserViews.getTopBar(navigator);
 		}
 		else {
 			layoutH = getTopBar();
-			System.out.println("USER ID Top bar == 0: " + userId);
 		}
 		return layoutH;
 	}
@@ -194,19 +202,6 @@ public class HomeView extends VerticalLayout implements View {
 		
         List<Course> courses = courseObj.getAllCourses();
         grid.setItems(courses);
-		
-		System.out.println("Executes the top bar method again");
-		
-//		UI ui = UI.getCurrent();
-//		VaadinSession session = ui.getSession();
-//		int userId = getUserId();
-//		if (session.getAttribute("user-id") != null) {
-//			userId = Integer.valueOf(String.valueOf(session.getAttribute("user-id")));
-//		}
-//		else {
-////			System.out.println("USER ID VAL:" + session.getAttribute("user-id"));
-////			System.out.println("USER ID VAL 2:" + userId);
-//		}S
 	}
 	
 	public int getUserId() {

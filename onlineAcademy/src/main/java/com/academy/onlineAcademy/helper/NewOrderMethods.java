@@ -3,6 +3,8 @@ package com.academy.onlineAcademy.helper;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.academy.onlineAcademy.controller.CourseController;
 import com.academy.onlineAcademy.controller.OrderController;
@@ -16,6 +18,8 @@ import com.vaadin.server.Page;
 import com.vaadin.ui.Notification;
 
 public class NewOrderMethods {
+	
+	static Logger logger = Logger.getLogger(NewOrderMethods.class.getName());
 	
 	private static Person person;
 	
@@ -39,14 +43,18 @@ public class NewOrderMethods {
 		}
 		catch(OrderException e) {
 			if (e.getOrderErrorType() == OrderErrorType.NOT_EXISTING_EMAIL) {
-				Notification notif = new Notification("Warning", "The is no user with this email address!",
+				Notification notif = new Notification("Warning", "There is no user with this email address!",
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
+				
+				logger.log(Level.SEVERE, "No user with email " + userEmail + " exists. Use an existing email!");
 			}
 			else if (e.getOrderErrorType() == OrderErrorType.ORDER_FAILED) {
 				Notification notif = new Notification("Warning", "Unexpected error!",
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
+				
+				logger.log(java.util.logging.Level.SEVERE, "Failed to save the new order to the database.");
 			}
 
 		}
@@ -69,6 +77,8 @@ public class NewOrderMethods {
 			Notification notif = new Notification("Confirmation", "The order has been placed! Order id: " + newOrder.getId(),
 				    Notification.TYPE_WARNING_MESSAGE);
 			notif.show(Page.getCurrent());
+			
+			logger.log(java.util.logging.Level.INFO, "The order has been placed");
 		}
 		catch (Exception e) {
 			throw new OrderException(com.academy.onlineAcademy.exceptions.OrderException.OrderErrorType.ORDER_FAILED);

@@ -1,5 +1,8 @@
 package com.academy.onlineAcademy.helper;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.persistence.PersistenceException;
 
 import com.academy.onlineAcademy.controller.PersonController;
@@ -15,12 +18,12 @@ import com.vaadin.ui.Notification;
 
 public class NewUserMethods {
 	
+	private static Logger logger = Logger.getLogger(NewUserMethods.class.getName());
+	
 	static PersonController obj = new PersonController();
 	static String enteredFullName;
 	static String enteredUsername;
-	static String databaseUsername;
 	static String enteredEmail;
-	static String databaseEmail;
 	static String enteredPassword;
 	static String enteredConfirmPassword;
 	
@@ -38,37 +41,49 @@ public class NewUserMethods {
 				Notification notif = new Notification("Warning", "Correct the field(s) in red.",
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
+				
+				logger.log(Level.SEVERE, "Not all fields are filled in as expected!");
 			}
 			else if (ex.getNewUserErrorType() == NewUserErrorType.NO_USER_TYPE) {
 				Notification notif = new Notification("Warning", "ERROR!",
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
+				
+				logger.log(Level.SEVERE, "The type " + userType + " is not recognized.");
 			}
 			else if (ex.getNewUserErrorType() == NewUserErrorType.EXISTING_USERNAME) {
 				Notification notif = new Notification("Warning", "The username already exists! Please use another one or log in!",
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
+				
+				logger.log(Level.SEVERE, "The username " + username + " already exists!");
 			}
 			else if (ex.getNewUserErrorType() == NewUserErrorType.EXISTING_EMAIL) {
 				Notification notif = new Notification("Warning", "The email already exists! Please log in!",
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
+				
+				logger.log(Level.SEVERE, "The email " + email + " already exists!");
 			}
 			else if (ex.getNewUserErrorType() == NewUserErrorType.PASSWORDS_NOT_MATCHING) {
 				Notification notif = new Notification("Warning", "The fields for password and confrim password do not match!",
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
+				
+				logger.log(Level.SEVERE, "The password and confrim password values do not match!");
 			}
 			else if(ex.getNewUserErrorType() == NewUserErrorType.DATABASE_FAIL) {
 				Notification notif = new Notification("Warning", "Saving to database failed!",
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
+				
+				logger.log(Level.SEVERE, "Failed to save the new user to the database!");
 			}
 		}
 		
 	}
 	
-	public static void setFieldsValues(String fullName, String username, String email, String password, String confirmPassword) {
+	private static void setFieldsValues(String fullName, String username, String email, String password, String confirmPassword) {
 		
 			enteredFullName = fullName;
 			enteredUsername = username;
@@ -78,7 +93,7 @@ public class NewUserMethods {
 		
 	}
 	
-	public static void checkValidation(Type userType, Binder<Person> binder) throws NewUserException{
+	private static void checkValidation(Type userType, Binder<Person> binder) throws NewUserException{
 		if(userType == Type.ADMIN) {
 			if (binder.validate().isOk() == true) {
 				
@@ -100,9 +115,9 @@ public class NewUserMethods {
 		}
 	}
 	
-	public static void existingUsername() throws NewUserException {
+	private static void existingUsername() throws NewUserException {
 		try {
-	    	databaseUsername = obj.getPersonByUsername(enteredUsername.toUpperCase()).getUsername();
+	    	obj.getPersonByUsername(enteredUsername.toUpperCase()).getUsername();
 	    	throw new NewUserException(NewUserErrorType.EXISTING_USERNAME);
 	    	
 	     }
@@ -110,9 +125,9 @@ public class NewUserMethods {
 		 }
 	}
 	
-	public static void existingEmail() throws NewUserException {
+	private static void existingEmail() throws NewUserException {
 		try {
-	    	databaseEmail = obj.getPersonByEmail(enteredEmail.toUpperCase()).getEmail();
+	    	obj.getPersonByEmail(enteredEmail.toUpperCase()).getEmail();
 	    	throw new NewUserException(NewUserErrorType.EXISTING_EMAIL);	    	
 	     }
 		 catch (PersistenceException ex) {
@@ -120,7 +135,7 @@ public class NewUserMethods {
 		
 	}
 	
-	public static void matchingPasswords() throws NewUserException {
+	private static void matchingPasswords() throws NewUserException {
 		if (enteredPassword.equals(enteredConfirmPassword)) {
 			
 		}
@@ -129,13 +144,15 @@ public class NewUserMethods {
 		}	
 	}
 	
-	public static void addUserToDatabase() throws NewUserException {
+	private static void addUserToDatabase() throws NewUserException {
 		try {
 			obj.addPerson(enteredFullName, enteredUsername.toUpperCase(), enteredEmail.toUpperCase(), enteredPassword, null, Type.USER, null, null);
 			
 			Notification notif = new Notification("Confirmation", "The user has been created!",
 				    Notification.TYPE_WARNING_MESSAGE);
 			notif.show(Page.getCurrent());
+			
+			logger.log(Level.INFO, "User " + enteredUsername + " has been created.");
 		}
 		catch(PersistenceException ex) {
 			throw new NewUserException(NewUserErrorType.DATABASE_FAIL);

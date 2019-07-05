@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.logging.Logger;
 
 import com.academy.onlineAcademy.controller.PersonController;
 import com.academy.onlineAcademy.helpView.AdminViews;
@@ -18,6 +19,7 @@ import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
@@ -36,9 +38,13 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+
+
 import com.vaadin.ui.MenuBar.MenuItem;
 
 public class AdminAllUsersView extends VerticalLayout implements View {
+	
+	private static Logger logger = Logger.getLogger(AdminAllUsersView.class.getName());
 	
 	private Navigator navigator;
 	private Binder<Person> binder;
@@ -105,6 +111,8 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 			catch(Exception ex) {
 				Notification notif = new Notification("Warning", "No user with this id has been found!", Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
+				
+				logger.log(java.util.logging.Level.SEVERE, "No user with this id has been found!");
 			}			
 		});
 		searchHLayout.addComponents(searchField, searchButton);
@@ -124,7 +132,7 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		buttonsHLayout.addComponents(updateUserButton, deleteUserButton);
 		
 		updateUserButton.addClickListener(e -> {
-			UpdateUserMethods.getUserInfo(selectedPersonId, binder, personObj, selectedPerson);
+			UpdateUserMethods.getUserInfo(selectedPersonId, binder);
 			updateWindow.setVisible(true);
 		});
 		
@@ -159,11 +167,11 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		grid.setWidth("100%");
 		grid.setHeight("100%");
 		
-		grid.addItemClickListener(e -> {
-			selectedPerson = e.getItem();
-			selectedPersonId = selectedPerson.getId();
-			buttonsHLayout.setVisible(true);
-		});
+//		grid.addItemClickListener(e -> {
+//			selectedPerson = e.getItem();
+//			selectedPersonId = selectedPerson.getId();
+//			buttonsHLayout.setVisible(true);
+//		});
 	}
 	
 	public Binder<Person> getBinder() {
@@ -198,10 +206,11 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		updateWindow.setVisible(false);
 		
 		Button updateFormButton = new Button("Update", VaadinIcons.REFRESH);
-		updateFormButton.addClickListener(e -> /* checkFields() */ {
-			String personEmail = emailField.getValue();
-			UpdateUserMethods.existingEmail(selectedPerson, personEmail, binder, personObj);
-			if (UpdateUserMethods.isSuccessful == true) {
+		updateFormButton.addClickListener(e -> {
+			selectedPerson = UpdateUserMethods.getPerson();
+			String enteredEmail = emailField.getValue();
+			boolean isSuccessful = UpdateUserMethods.updatePersonSettings(selectedPerson, binder, enteredEmail);
+			if (isSuccessful == true) {
 				personas = personObj.getAllUsers();
 		        grid.setItems(personas);
 		        
@@ -226,5 +235,15 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		return updateWindow;
 	}
 
-
+	@Override
+	public void enter(ViewChangeEvent event) {
+		View.super.enter(event);
+		grid.addItemClickListener(e -> {
+			selectedPerson = e.getItem();
+			selectedPersonId = selectedPerson.getId();
+			buttonsHLayout.setVisible(true);
+		});
+	}
+	
+	
 }

@@ -3,6 +3,7 @@ package com.academy.onlineAcademy.helper;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.persistence.PersistenceException;
 
@@ -18,6 +19,8 @@ import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Notification;
 
 public class NewCourseMethods {
+	
+	static Logger logger = Logger.getLogger(NewCourseMethods.class.getName());
 	
 	private static CourseController courseObj = new CourseController();
 	private static String enteredName;
@@ -38,11 +41,15 @@ public class NewCourseMethods {
 				Notification notif = new Notification("Warning", "Correct the field(s) in red.",
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
+				
+				logger.log(java.util.logging.Level.SEVERE, "Not all fields are filled in as expected!");
 			}
 			else if (ex.getNewCourseTypeError() == NewCourseTypeError.EXISTING_COURSE) {
 				Notification notif = new Notification("Warning", "A course with the same name already exists! Please review or use a different name!",
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
+				
+				logger.log(java.util.logging.Level.SEVERE, "A couse " + name + " already exists! Another name should be given!");
 			}
 		}
 		
@@ -88,6 +95,8 @@ public class NewCourseMethods {
 			Notification notif = new Notification("Confirmation", "The course has been created!",
 				    Notification.TYPE_WARNING_MESSAGE);
 			notif.show(Page.getCurrent());
+			
+			logger.log(java.util.logging.Level.INFO, "The course has been created!");
 		}
 		catch(Exception ex2) {
 			ex2.printStackTrace();

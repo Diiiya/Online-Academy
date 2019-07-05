@@ -9,6 +9,7 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import com.academy.onlineAcademy.exceptions.UpdateUserException;
 import com.academy.onlineAcademy.model.Category;
 import com.academy.onlineAcademy.model.Course;
 import com.academy.onlineAcademy.model.Level;
@@ -81,8 +82,8 @@ public class PersonController {
 	
 	public Person getPersonByName(String name) {
 		EntityManager em = emFactoryObj.createEntityManager();
-	    TypedQuery<Person> query = em.createNamedQuery("findUserByName", Person.class);
-	    return query.setParameter("name", name).getSingleResult();
+		TypedQuery<Person> query = em.createNamedQuery("findUserByName", Person.class);
+		return query.setParameter("name", name).getSingleResult();
 	}
 	
 	public Person getPersonByUsername(String username) {
