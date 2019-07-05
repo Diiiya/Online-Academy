@@ -113,10 +113,9 @@ public class HomeView extends VerticalLayout implements View {
 		
 		searchButton.addClickListener(e -> {
 			try {
-				courseObj.getCourseByName(searchField.getValue());
 //				List<Course> selectedCourses = courseObj.getAllCourses();
 //				grid.setItems(selectedCourses);
-				Course selectedCourse = courseObj.getCourseByName(searchField.getValue());
+				Course selectedCourse = courseObj.getCourseByName(searchField.getValue().toUpperCase());
 				grid.setItems(selectedCourse);
 			}
 			catch(Exception ex) {

@@ -113,10 +113,11 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		Button searchButton = new Button("Search", VaadinIcons.SEARCH);
 		searchButton.addClickListener(e -> {
 			try { 
-				courseObj.getCourseByName(searchField.getValue());
 //				List<Course> selectedCourses = courseObj.getAllCourses();
 //				grid.setItems(selectedCourses);
-				Course selectedCourse = courseObj.getCourseByName(searchField.getValue());
+				String searchedCourse = searchField.getValue().toUpperCase();
+				System.out.println("COURSE" + searchedCourse);
+				Course selectedCourse = courseObj.getCourseByName(searchedCourse);
 				grid.setItems(selectedCourse);
 			}
 			catch (Exception ex) {

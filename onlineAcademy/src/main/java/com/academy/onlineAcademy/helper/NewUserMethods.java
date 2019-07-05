@@ -130,7 +130,7 @@ public class NewUserMethods {
 	
 	private static void addUserToDatabase(String fullName, String username, String email, String password) throws NewUserException {
 		try {
-			obj.addPerson(fullName, username, email, password, null, Type.USER, null, null);
+			obj.addPerson(fullName, username.toUpperCase(), email, password, null, Type.USER, null, null);
 			
 			Notification notif = new Notification("Confirmation", "The user has been created!",
 				    Notification.TYPE_WARNING_MESSAGE);
