@@ -36,19 +36,19 @@ public class UpdateCourseMethods {
 				Notification notif = new Notification("Warning", "Course with the same name already exists. Please choose another name.", Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
 				
-				logger.log(Level.SEVERE, "A course with name " + courseName + " already exists. Use another name!");
+				logger.log(Level.SEVERE, "A course with name " + courseName + " already exists. Use another name!", ex);
 			}
 			else if (ex.getCourseErrorType() == CourseException.CourseErrorType.FIELDS_VALIDATION) {
 				Notification notif = new Notification("Warning", "Please correct the fields in red!", Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
 				
-				logger.log(Level.SEVERE, "Not all fields are filled in as required. Validation failed!");
+				logger.log(Level.SEVERE, "Not all fields are filled in as required. Validation failed!", ex);
 			}
 			else if (ex.getCourseErrorType() == CourseException.CourseErrorType.DATABASE_UPDATE_FAILED) {
 				Notification notif = new Notification("Warning", "Unexpected error!", Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
 				
-				logger.log(Level.SEVERE, "Failed to update the course in the database.");
+				logger.log(Level.SEVERE, "Failed to update the course in the database.", ex);
 			}
 		}
 		return false;

@@ -83,7 +83,7 @@ public class OrderController {
 			emDEL = emFactoryObj.createEntityManager();
 		    emDEL.getTransaction().begin();
 		    
-		    int count = emDEL.createNamedQuery("deleteByOrderId", Person.class).executeUpdate();
+		    int count = emDEL.createNamedQuery("deleteByOrderId", Order.class).setParameter("id", id).executeUpdate();
 		    emDEL.getTransaction().commit();
 		    return count;
 		} 

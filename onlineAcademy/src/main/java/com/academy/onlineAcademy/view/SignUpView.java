@@ -49,7 +49,7 @@ public class SignUpView extends VerticalLayout implements View {
 		
 	}
 	
-	public void initMainLayout() {
+	private void initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		
 		HorizontalLayout layoutH = getTopBar();
@@ -60,7 +60,7 @@ public class SignUpView extends VerticalLayout implements View {
 	    addComponent(mainVLayout);		
 	}
 	
-    public HorizontalLayout getTopBar() {
+    private HorizontalLayout getTopBar() {
     	HorizontalLayout layoutH = new HorizontalLayout();
     	layoutH.setSpacing(true);
 		layoutH.setWidth("100%");
@@ -78,7 +78,7 @@ public class SignUpView extends VerticalLayout implements View {
 		return layoutH;
     }
     
-    public VerticalLayout getLayoutBody() {
+    private VerticalLayout getLayoutBody() {
     	VerticalLayout layoutVBody = new VerticalLayout();
     	layoutVBody.setWidth("100%");
     	
@@ -106,7 +106,7 @@ public class SignUpView extends VerticalLayout implements View {
         return layoutVBody;
     }
     
-    public void callBinder() {
+    private void callBinder() {
     	
     	binder = new Binder<>();
     	

@@ -44,7 +44,7 @@ public class LoginView extends VerticalLayout implements View {
 		
 	}			
 			
-    public VerticalLayout initMainLayout() {
+    private VerticalLayout initMainLayout() {
     	VerticalLayout layout = new VerticalLayout();
     	
 		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
@@ -74,7 +74,7 @@ public class LoginView extends VerticalLayout implements View {
 	    return layout;
     }
     
-    public Button getLoginButton() {
+    private Button getLoginButton() {
     	Button loginButton = new Button("Login");
     	loginButton.setWidth("200px");
  	    
@@ -87,27 +87,27 @@ public class LoginView extends VerticalLayout implements View {
 					  checkUsernamePasswordCombination();
 					  checkTypeOfUser();
 				  } 
- 		          catch (LoginException e1) {
-					if (e1.getErrorType() == LoginErrorType.USERNAME_EXISTS) {
+ 		          catch (LoginException ex) {
+					if (ex.getErrorType() == LoginErrorType.USERNAME_EXISTS) {
 						Notification notif = new Notification("Warning", "The username doesn't exist! Please use another one or create an account!",
 							    Notification.TYPE_WARNING_MESSAGE);
 						notif.show(Page.getCurrent());
 						
-						logger.log(Level.SEVERE, "The username doesn't exist! Please use another one or create an account!");
+						logger.log(Level.SEVERE, "The username doesn't exist! Please use another one or create an account!", ex);
 					}
-					else if (e1.getErrorType() == LoginErrorType.INVALID_USERNAME_PASSWORD_COMBINATION) {
+					else if (ex.getErrorType() == LoginErrorType.INVALID_USERNAME_PASSWORD_COMBINATION) {
 						Notification notif = new Notification("Warning", "The combination of username and password is not correct!",
 							    Notification.TYPE_WARNING_MESSAGE);
 						notif.show(Page.getCurrent());
 						
-						logger.log(Level.SEVERE, "The combination of username and password is not correct!");
+						logger.log(Level.SEVERE, "The combination of username and password is not correct!", ex);
 					}
-					else if (e1.getErrorType() == LoginErrorType.INVALID_USER_TYPE) {
+					else if (ex.getErrorType() == LoginErrorType.INVALID_USER_TYPE) {
 						Notification notif = new Notification("Warning", "The combination of username and password is not correct!",
 							    Notification.TYPE_WARNING_MESSAGE);
 						notif.show(Page.getCurrent());
 						
-						logger.log(Level.SEVERE, "The combination of username and password is not correct!");
+						logger.log(Level.SEVERE, "The combination of username and password is not correct!", ex);
 					}
 				}
  		          
@@ -124,7 +124,7 @@ public class LoginView extends VerticalLayout implements View {
  	    return loginButton;
     }
 	
-	public void checkIfTheUsernameExists() throws LoginException {
+	private void checkIfTheUsernameExists() throws LoginException {
 		 try {
 			PersonController obj = new PersonController();
 	    	currentUser = obj.getPersonByUsername(enteredUsername);
@@ -134,7 +134,7 @@ public class LoginView extends VerticalLayout implements View {
 		 }
 	}
 	
-	public void checkUsernamePasswordCombination() throws LoginException {
+	private void checkUsernamePasswordCombination() throws LoginException {
 		if (currentUser.getPassword().equals(enteredPassword)) {
     	}
     	else {
@@ -142,7 +142,7 @@ public class LoginView extends VerticalLayout implements View {
     	}
 	}
 	
-	public void checkTypeOfUser() throws LoginException {
+	private void checkTypeOfUser() throws LoginException {
 		UI ui = UI.getCurrent();
 		VaadinSession session = ui.getSession();
 		if (currentUser.getType().toString() == "USER") {

@@ -42,14 +42,14 @@ public class NewCourseMethods {
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
 				
-				logger.log(java.util.logging.Level.SEVERE, "Not all fields are filled in as expected!");
+				logger.log(java.util.logging.Level.SEVERE, "Not all fields are filled in as expected!", ex);
 			}
 			else if (ex.getNewCourseTypeError() == NewCourseTypeError.EXISTING_COURSE) {
 				Notification notif = new Notification("Warning", "A course with the same name already exists! Please review or use a different name!",
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
 				
-				logger.log(java.util.logging.Level.SEVERE, "A couse " + name + " already exists! Another name should be given!");
+				logger.log(java.util.logging.Level.SEVERE, "A couse " + name + " already exists! Another name should be given!", ex);
 			}
 		}
 		

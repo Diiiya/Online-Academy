@@ -51,7 +51,7 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 	
 	}
 	
-	public VerticalLayout initMainLayout() {
+	private VerticalLayout initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		mainVLayout.setHeight("100%");
 		
@@ -70,7 +70,7 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		return mainVLayout;
 	}
 	
-	public HorizontalLayout getSearchLayout() {
+	private HorizontalLayout getSearchLayout() {
 		
 		HorizontalLayout searchHLayout = new HorizontalLayout();
 		
@@ -86,7 +86,7 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		
 	}
 	
-	public HorizontalLayout getDELIUPDButtonsLayout() {
+	private HorizontalLayout getDELIUPDButtonsLayout() {
 		buttonsHLayout = new HorizontalLayout();
 		
 		buttonsHLayout.setVisible(false);
@@ -101,7 +101,7 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		return buttonsHLayout;
 	}
 	
-	public HorizontalLayout getAddOrderLayout() {
+	private HorizontalLayout getAddOrderLayout() {
 		HorizontalLayout addOrderLayout = new HorizontalLayout();
 		
 		selectCourseCB = new ComboBox<>("Select a course");
@@ -119,7 +119,7 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		return addOrderLayout;
 	}
 	
-	public void buildGrid() {
+	private void buildGrid() {
 		grid = new Grid<>();
 		
 		grid.addColumn(com.academy.onlineAcademy.model.Order::getId).setCaption("Id");
@@ -141,7 +141,7 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 
 	}
 	
-	public void lookForOrderById() {
+	private void lookForOrderById() {
 		try {
 			Order selectedOrder = orderObj.getOrderById(Integer.parseInt(searchField.getValue()));
 			grid.setItems(selectedOrder);
@@ -151,11 +151,11 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 				    Notification.TYPE_WARNING_MESSAGE);
 			notif.show(Page.getCurrent());
 			
-			logger.log(Level.SEVERE, "The was no order with this id found!");
+			logger.log(Level.SEVERE, "The was no order with this id found!", ex);
 		}
 	}
 	
-	public void deleteOrderById() {
+	private void deleteOrderById() {
 		try {
 			orderObj.deleteOrderById(selectedOrderId);
 	        List<Order> orders = orderObj.getAllOrders();
@@ -167,7 +167,7 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		}
 	}
 	
-	public void order() {
+	private void order() {
 		String courseName = selectCourseCB.getValue();
 		String userEmail = customerEmailField.getValue();
 		if (courseName != null) {

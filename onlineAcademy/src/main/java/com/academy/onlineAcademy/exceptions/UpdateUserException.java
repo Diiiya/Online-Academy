@@ -3,7 +3,7 @@ package com.academy.onlineAcademy.exceptions;
 public class UpdateUserException extends Exception {
 
 	public enum UpdateUserExErrorType {
-		EXISTING_EMAIL, VALIDATION_FAILED, DATABASE_FAILED
+		EXISTING_EMAIL, PASSWORDS_NOT_MATCHING, VALIDATION_FAILED, DATABASE_FAILED
 	}
 	
 	private UpdateUserExErrorType updateUserExErrortype;

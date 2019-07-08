@@ -196,19 +196,19 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 				Notification notif = new Notification("Warning", "The duration should be a numeric value!", Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
 				
-				logger.log(java.util.logging.Level.SEVERE, "The duration value should be a number!");
+				logger.log(java.util.logging.Level.SEVERE, "The duration value should be a number!", ex);
 			}
 			else if (ex.getNewCourseTypeError() == NewCourseTypeError.PRICE_NUMERIC_VALUE) {
 				Notification notif = new Notification("Warning", "The price should be a numeric value!", Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
 				
-				logger.log(java.util.logging.Level.SEVERE, "The price value should be a number!");
+				logger.log(java.util.logging.Level.SEVERE, "The price value should be a number!", ex);
 			}
 			else if (ex.getNewCourseTypeError() == NewCourseTypeError.CATEGORY_REQUIRED) {
 				Notification notif = new Notification("Warning", "The category field should be filled in!", Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
 				
-				logger.log(java.util.logging.Level.SEVERE, "The category filed cannot be left empty!");
+				logger.log(java.util.logging.Level.SEVERE, "The category filed cannot be left empty!", ex);
 			}
 		}
 	

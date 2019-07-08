@@ -73,7 +73,7 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		
 	}
 	
-	public VerticalLayout initMainLayout() {
+	private VerticalLayout initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		mainVLayout.setHeight("100%");
 		
@@ -97,7 +97,7 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		return mainVLayout;
 	}
 	
-	public HorizontalLayout getSearchLayout() {
+	private HorizontalLayout getSearchLayout() {
 		HorizontalLayout searchHLayout = new HorizontalLayout();
 		
 		TextField searchField = new TextField("");
@@ -121,7 +121,7 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		return searchHLayout;
 	}
 	
-	public HorizontalLayout buttonsDELIUPDLayout() {
+	private HorizontalLayout buttonsDELIUPDLayout() {
 		buttonsHLayout = new HorizontalLayout();
 		buttonsHLayout.setVisible(false);
 		
@@ -151,7 +151,7 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		return buttonsHLayout;
 	}
 	
-	public void buildGrid() {
+	private void buildGrid() {
 		
 		grid = new Grid<>();
         personas = personObj.getAllUsers();		
@@ -174,7 +174,7 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 //		});
 	}
 	
-	public Binder<Person> getBinder() {
+	private Binder<Person> getBinder() {
 		
 		binder = new Binder<>();
 		
@@ -201,7 +201,7 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		return binder;
 	}
 	
-	public Window callUpdateWindow() {
+	private Window callUpdateWindow() {
 		updateWindow = new Window("UPDATE USER");
 		updateWindow.setVisible(false);
 		

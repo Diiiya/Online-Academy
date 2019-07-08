@@ -15,7 +15,8 @@ import com.vaadin.ui.VerticalLayout;
 
 public class CourseView extends VerticalLayout implements View {
 	
-	Navigator navigator;
+	private Navigator navigator;
+	private int userId;
 	
 	public CourseView() {
 		
@@ -24,10 +25,10 @@ public class CourseView extends VerticalLayout implements View {
 		
 	}
 	
-	public VerticalLayout initMainlayout() {
+	private VerticalLayout initMainlayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		
-		HorizontalLayout layoutH = UserViews.getTopBar(navigator);
+		HorizontalLayout layoutH = UserViews.getTopBar(navigator, userId);
 		HorizontalLayout layoutBody = getLayoutBody();
 		
 		mainVLayout.addComponents(layoutH, layoutBody);
@@ -36,7 +37,7 @@ public class CourseView extends VerticalLayout implements View {
 		return mainVLayout;
 	}		
 	
-	public HorizontalLayout getLayoutBody() {
+	private HorizontalLayout getLayoutBody() {
 		HorizontalLayout layoutBody = new HorizontalLayout();
 		VerticalLayout layoutVL = new VerticalLayout();
 		layoutVL.setWidth("1200px");

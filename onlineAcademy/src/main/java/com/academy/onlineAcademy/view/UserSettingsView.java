@@ -34,30 +34,38 @@ public class UserSettingsView extends VerticalLayout implements View {
 	private Navigator navigator;
 	private Binder<Person> binder;
 	private Person person;
-	int userId;
+	private String password = null;
+	private String confirmPassword = null;
+	private String enteredEmail;
+	private int userId;
 	
 	private Panel photoPanel;	
 	private Panel accountPanel;	
-	private TextField fullNameField;
-	private TextField emailField;
-	private PasswordField passwordField;
-	private PasswordField confirmPasswordField;
+//	private TextField fullNameField;
+//	private TextField emailField;
+//	private PasswordField passwordField;
+	private TextField fullNameField = new TextField("Full name:");
+	private TextField emailField = new TextField("Email:");
+	private PasswordField passwordField = new PasswordField("Password:");
+	private PasswordField confirmPasswordField = new PasswordField("Confirm password:");
+//	private PasswordField confirmPasswordField;
 		
 	public UserSettingsView() {
 		
 		navigator = UI.getCurrent().getNavigator();
 		person = new Person();
-		initMainLayout();
+		//initMainLayout();
 				
 	}
     
-	public VerticalLayout initMainLayout() {
+	private VerticalLayout initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		
-		HorizontalLayout layoutH = UserViews.getTopBar(navigator);
+		System.out.println(" User settings ID :" + userId);
+		HorizontalLayout layoutH = UserViews.getTopBar(navigator, userId);
 		VerticalLayout layoutVBody = getBodyLayout();
 		
-		binder = callBinder();
+//		binder = callBinder();
 		
 		mainVLayout.addComponents(layoutH, layoutVBody);
 		addComponents(mainVLayout);
@@ -65,7 +73,7 @@ public class UserSettingsView extends VerticalLayout implements View {
 		return mainVLayout;
 	}
 					
-	public VerticalLayout getBodyLayout() {
+	private VerticalLayout getBodyLayout() {
 		VerticalLayout layoutVBody = new VerticalLayout();		
     	layoutVBody.setWidth("100%");
     	HorizontalLayout layoutHBody = new HorizontalLayout();
@@ -76,11 +84,12 @@ public class UserSettingsView extends VerticalLayout implements View {
 		
 		updateButton.setWidth("800");
 		updateButton.addClickListener(e -> {
-			String enteredEmail = emailField.getValue();
-			enteredEmail.toUpperCase();
-			System.out.println("UI email " + enteredEmail);
-			UpdateUserMethods.updatePersonSettings(person, binder, enteredEmail);
-			});
+			boolean isSuccessful = getFieldsValues();
+			if (isSuccessful == true) {
+				UpdateUserMethods.updatePersonSettings(person, binder, enteredEmail, password, confirmPassword);
+			}
+			
+		});
 		
 		layoutHBody.addComponents(photoPanel, accountPanel);
 		layoutHBody.setComponentAlignment(accountPanel, Alignment.MIDDLE_CENTER);
@@ -92,7 +101,29 @@ public class UserSettingsView extends VerticalLayout implements View {
 		return layoutVBody;
     }
 	
-	public Panel getPhotoPanel() {
+	private boolean getFieldsValues() {
+		enteredEmail = emailField.getValue();
+		enteredEmail.toUpperCase();
+		if (!passwordField.isEmpty() && passwordField.getValue() == person.getPassword()) {
+			return true;
+		}
+		else if (!passwordField.isEmpty() && (passwordField.getValue() != person.getPassword())) {
+			password = passwordField.getValue();
+			if (!confirmPasswordField.isEmpty()) {
+				confirmPassword = confirmPasswordField.getValue();
+				System.out.println("Confirm password: " + confirmPassword);
+				return true;
+			}
+			else {
+				Notification notif = new Notification("Warning", "Fill in the confirm password field to confirm it!",
+					    Notification.TYPE_WARNING_MESSAGE);
+				notif.show(Page.getCurrent());
+			}
+		}
+		return false;
+	}
+	
+	private Panel getPhotoPanel() {
 		photoPanel = new Panel("Update my photo");
 		FormLayout photoContent = new FormLayout();
 		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();	
@@ -120,12 +151,12 @@ public class UserSettingsView extends VerticalLayout implements View {
 		return photoPanel;
 	}
 	
-	public Panel getAccountpanel() {
+	private Panel getAccountpanel() {
 		accountPanel = new Panel("Update my account");
-		fullNameField = new TextField("Full name:");
-		emailField = new TextField("Email:");
-		passwordField = new PasswordField("Password:");
-		confirmPasswordField = new PasswordField("Confirm password");
+//		fullNameField = new TextField("Full name:");
+//		emailField = new TextField("Email:");
+//		passwordField = new PasswordField("Password:");
+//		confirmPasswordField = new PasswordField("Confirm password:");
 		FormLayout content = new FormLayout();
 		
 		accountPanel.setSizeUndefined();
@@ -139,7 +170,7 @@ public class UserSettingsView extends VerticalLayout implements View {
 		return accountPanel;
 	}
 	
-	public Binder<Person> callBinder() {
+	private Binder<Person> callBinder() {
 		binder = new Binder<Person>();
 		
 		binder.forField(fullNameField)
@@ -157,7 +188,6 @@ public class UserSettingsView extends VerticalLayout implements View {
 		.withValidator(new RegexpValidator("Password should contain at least one digit, one lower, one upper case letter and special symbol (# $ ^ + = ! * () @ % &) "
 				+ "and be at least 8 characters long!", "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[#$^+=!*()@%&]).{8,30}$"))
 		.bind(Person::getPassword, Person::setPassword);
-		//binder.forField(confirmPasswordField).asRequired("Cannot be empty");
 		
 		return binder;
 	}
@@ -165,16 +195,18 @@ public class UserSettingsView extends VerticalLayout implements View {
 	@Override
 	public void enter(ViewChangeEvent event) {
 		View.super.enter(event);
+		binder = callBinder();
 		UI ui = UI.getCurrent();
 		VaadinSession session = ui.getSession();
 		if (session.getAttribute("user-id") != null) {
-			int userId = Integer.valueOf(String.valueOf(session.getAttribute("user-id")));
+			userId = Integer.valueOf(String.valueOf(session.getAttribute("user-id")));
 			UpdateUserMethods.getUserInfo(userId, binder);
 			person = UpdateUserMethods.getPerson();
 		}
 		else {
 			System.out.println("USER ID VAL:" + session.getAttribute("user-id"));
 		}
+		initMainLayout();
 	}
 	
 }

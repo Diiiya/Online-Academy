@@ -47,14 +47,14 @@ public class NewOrderMethods {
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
 				
-				logger.log(Level.SEVERE, "No user with email " + userEmail + " exists. Use an existing email!");
+				logger.log(Level.SEVERE, "No user with email " + userEmail + " exists. Use an existing email!", e);
 			}
 			else if (e.getOrderErrorType() == OrderErrorType.ORDER_FAILED) {
 				Notification notif = new Notification("Warning", "Unexpected error!",
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
 				
-				logger.log(java.util.logging.Level.SEVERE, "Failed to save the new order to the database.");
+				logger.log(java.util.logging.Level.SEVERE, "Failed to save the new order to the database.", e);
 			}
 
 		}

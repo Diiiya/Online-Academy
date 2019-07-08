@@ -39,6 +39,7 @@ public class HomeView extends VerticalLayout implements View {
 	private Grid<com.academy.onlineAcademy.model.Course> grid;
 	private CourseController courseObj;
 	private Button buyCourseButton;
+	private HorizontalLayout layoutH;
 	//private int userId;
 	
 	private int selectedCourseId;
@@ -50,10 +51,10 @@ public class HomeView extends VerticalLayout implements View {
 		navigator = UI.getCurrent().getNavigator();
 		courseObj = new CourseController();
 		orderObj = new OrderController();
-		
+		//initMainlayout();
 	}
 	
-	public VerticalLayout initMainlayout() {
+	private void initMainlayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		mainVLayout.setHeight("100%");
 		
@@ -78,19 +79,16 @@ public class HomeView extends VerticalLayout implements View {
 		mainVLayout.setComponentAlignment(searchHLayout, Alignment.MIDDLE_CENTER);
 		addComponent(mainVLayout);
 		
-		return mainVLayout;
 	}
 			
-	public HorizontalLayout getTopBar() {
+	private HorizontalLayout getTopBar() {
 		HorizontalLayout layoutH = new HorizontalLayout();
 		layoutH.setSpacing(true);
 		layoutH.setWidth("100%");
 		layoutH.setHeight("70px");
 		
 		Button loginButton = new Button("LOGIN", VaadinIcons.SIGN_IN);
-		loginButton.addClickListener(event -> {
-			navigator.navigateTo("Login");
-		});
+		loginButton.addClickListener(event -> navigator.navigateTo("Login"));
 		
 		FileResource logoResource = new FileResource(new File(basepath + "/logo.jpg"));
 		Image logoImage = new Image("", logoResource);
@@ -104,7 +102,7 @@ public class HomeView extends VerticalLayout implements View {
 		return layoutH;
 	}
 	
-	public HorizontalLayout getSearchLayout() {
+	private HorizontalLayout getSearchLayout() {
 		HorizontalLayout searchHLayout = new HorizontalLayout();
 		
 		TextField searchField = new TextField("");
@@ -123,7 +121,7 @@ public class HomeView extends VerticalLayout implements View {
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
 				
-				logger.log(Level.SEVERE, "No course with this name has been found!");
+				logger.log(Level.SEVERE, "No course with this name has been found!", ex);
 			}
 
 		});
@@ -134,7 +132,7 @@ public class HomeView extends VerticalLayout implements View {
 		return searchHLayout;
 	}
 	
-	public void buildGrid() {
+	private void buildGrid() {
 		
 		grid = new Grid<>();
 		List<Course> courses = courseObj.getAllCourses();
@@ -160,7 +158,7 @@ public class HomeView extends VerticalLayout implements View {
 		});
 	}
 	
-	public void placeOrder() {
+	private void placeOrder() {
 		Date date = new Date();
 		int userId = getUserId();
 		if(userId == 0) {
@@ -172,23 +170,25 @@ public class HomeView extends VerticalLayout implements View {
 		}
 		else {
 			Order newOrder = new Order(userId, selectedCourseId, date, false, selectedCourse.getPrice());
+			orderObj.addOrder(newOrder);
+			
 			Notification notif = new Notification("Confirmation","The course has been added!",
 				    Notification.TYPE_WARNING_MESSAGE);
 			notif.show(Page.getCurrent());
 			
 			logger.log(Level.INFO, "The course has been added!");
-			
-			orderObj.addOrder(newOrder);
 		}
 	}
 	
-	public HorizontalLayout getRightTopBar() {
+	private HorizontalLayout getRightTopBar() {
 		HorizontalLayout layoutH = new HorizontalLayout();
 		int userId = getUserId();
 		if (userId != 0) {
-			layoutH = UserViews.getTopBar(navigator);
+			System.out.println(" Home page ID :" + userId);
+			layoutH = UserViews.getTopBar(navigator, userId);
 		}
 		else {
+			System.out.println("Doesn't go inside the else?!");
 			layoutH = getTopBar();
 		}
 		return layoutH;
@@ -203,7 +203,7 @@ public class HomeView extends VerticalLayout implements View {
         grid.setItems(courses);
 	}
 	
-	public int getUserId() {
+	private int getUserId() {
 		int userId;
 		UI ui = UI.getCurrent();
 		VaadinSession session = ui.getSession();

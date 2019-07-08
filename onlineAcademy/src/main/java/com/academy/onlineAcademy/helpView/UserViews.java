@@ -1,26 +1,47 @@
 package com.academy.onlineAcademy.helpView;
 
 import java.io.File;
+import java.util.List;
+import java.util.logging.Level;
 
+import com.academy.onlineAcademy.controller.OrderController;
+import com.academy.onlineAcademy.model.Order;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.server.FileResource;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.MenuBar.MenuItem;
 
 public class UserViews extends VerticalLayout implements View {
 	
-	private static Navigator navigator = UI.getCurrent().getNavigator();;
+	private static Navigator navigator = UI.getCurrent().getNavigator();
+	private static OrderController orderObj = new OrderController();
+	private static int itemsInCartCount;
 	
-	public static HorizontalLayout getTopBar(Navigator navigator) {
+	private static void getOrdersCountOfTheUser(int userId) {
+		try {
+			List<Order> orders = orderObj.getAllOrdersByUser(userId);			
+			itemsInCartCount = orders.size();
+			System.out.println(" !!! User id: " + userId);
+			System.out.println(" !!! Items in cart: " + itemsInCartCount);
+			
+		}
+		catch(Exception ex) {
+		}
+	}
+	
+	public static HorizontalLayout getTopBar(Navigator navigator, int userId) {
 		HorizontalLayout layoutH = new HorizontalLayout();	
 		layoutH.setSpacing(true);
 		layoutH.setWidth("100%");
@@ -33,6 +54,16 @@ public class UserViews extends VerticalLayout implements View {
 		logoImage.setHeight("60px");
 		logoImage.addClickListener(e -> navigator.navigateTo(""));
 		
+		HorizontalLayout rightHorizontalL = new HorizontalLayout();
+		
+		getOrdersCountOfTheUser(userId);
+		Label itemsInCartCountLabel = new Label();
+		itemsInCartCountLabel.setValue(String.valueOf(itemsInCartCount));
+		FileResource shoppingBasketResource = new FileResource(new File(basepath + "/shop-cart.png"));
+		Image shoppingBasketImage = new Image("", shoppingBasketResource);
+		shoppingBasketImage.setHeight("50px");
+		shoppingBasketImage.setWidth("50px");
+		
 		// MENU bar and methods to navigate to different pages	
 		MenuBar profileMenu = new MenuBar();	
 		MenuItem myProfileMainItem = profileMenu.addItem("My profile", VaadinIcons.MENU, null);
@@ -41,10 +72,14 @@ public class UserViews extends VerticalLayout implements View {
 		myProfileMainItem.addItem("Settings", VaadinIcons.USER, createNavigationCommand("Settings"));
 		myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, logoutNavigationCommand(""));
 		
-		layoutH.addComponents(logoImage, profileMenu);
+		rightHorizontalL.addComponents(itemsInCartCountLabel, shoppingBasketImage, profileMenu);
+		rightHorizontalL.setComponentAlignment(itemsInCartCountLabel, Alignment.BOTTOM_RIGHT);
+		rightHorizontalL.setComponentAlignment(profileMenu, Alignment.BOTTOM_RIGHT);
+		layoutH.addComponents(logoImage, rightHorizontalL);
 		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
-		layoutH.setComponentAlignment(profileMenu, Alignment.BOTTOM_RIGHT);
+		layoutH.setComponentAlignment(rightHorizontalL, Alignment.MIDDLE_RIGHT);
 		
+		System.out.println(" Should return the right layout!!");
 		return layoutH;
 	}
 	

@@ -36,42 +36,42 @@ public class NewUserMethods {
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
 				
-				logger.log(Level.SEVERE, "Not all fields are filled in as expected!");
+				logger.log(Level.SEVERE, "Not all fields are filled in as expected!", ex);
 			}
 			else if (ex.getNewUserErrorType() == NewUserErrorType.NO_USER_TYPE) {
 				Notification notif = new Notification("Warning", "ERROR!",
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
 				
-				logger.log(Level.SEVERE, "The type " + userType + " is not recognized.");
+				logger.log(Level.SEVERE, "The type " + userType + " is not recognized.", ex);
 			}
 			else if (ex.getNewUserErrorType() == NewUserErrorType.EXISTING_USERNAME) {
 				Notification notif = new Notification("Warning", "The username already exists! Please use another one or log in!",
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
 				
-				logger.log(Level.SEVERE, "The username " + username + " already exists!");
+				logger.log(Level.SEVERE, "The username " + username + " already exists!", ex);
 			}
 			else if (ex.getNewUserErrorType() == NewUserErrorType.EXISTING_EMAIL) {
 				Notification notif = new Notification("Warning", "The email already exists! Please log in!",
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
 				
-				logger.log(Level.SEVERE, "The email " + email + " already exists!");
+				logger.log(Level.SEVERE, "The email " + email + " already exists!", ex);
 			}
 			else if (ex.getNewUserErrorType() == NewUserErrorType.PASSWORDS_NOT_MATCHING) {
 				Notification notif = new Notification("Warning", "The fields for password and confrim password do not match!",
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
 				
-				logger.log(Level.SEVERE, "The password and confrim password values do not match!");
+				logger.log(Level.SEVERE, "The password and confrim password values do not match!", ex);
 			}
 			else if(ex.getNewUserErrorType() == NewUserErrorType.DATABASE_FAIL) {
 				Notification notif = new Notification("Warning", "Saving to database failed!",
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
 				
-				logger.log(Level.SEVERE, "Failed to save the new user to the database!");
+				logger.log(Level.SEVERE, "Failed to save the new user to the database!", ex);
 			}
 		}
 		

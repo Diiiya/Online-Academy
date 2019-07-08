@@ -85,7 +85,7 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		
 	}
 	
-	public VerticalLayout initMainLayout() {
+	private VerticalLayout initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		mainVLayout.setHeight("100%");
 		
@@ -106,7 +106,7 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		return mainVLayout;
 	}
 	
-	public HorizontalLayout getSearchLayout() {
+	private HorizontalLayout getSearchLayout() {
 		HorizontalLayout searchHLayout = new HorizontalLayout();
 		TextField searchField = new TextField("");
 		searchField.setPlaceholder("SEARCH");
@@ -124,7 +124,7 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 				Notification notif = new Notification("Warning!", "No course with this name has been found!", Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
 				
-				logger.log(java.util.logging.Level.SEVERE, "No course with this name has been found!");
+				logger.log(java.util.logging.Level.SEVERE, "No course with this name has been found!", ex);
 			}
 			
 		});
@@ -134,7 +134,7 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		return searchHLayout;
 	}
 	
-	public void buildGrid() {
+	private void buildGrid() {
 		grid = new Grid<Course>();
 		
 		courses = courseObj.getAllCourses();
@@ -159,7 +159,7 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		});
 	}
 	
-	public HorizontalLayout getButtonsDELIUPDLayout() {
+	private HorizontalLayout getButtonsDELIUPDLayout() {
 		buttonsHLayout = new HorizontalLayout();
 		
 		buttonsHLayout.setVisible(false);
@@ -189,7 +189,7 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		return buttonsHLayout;
 	}
 	
-	public Binder<Course> getBinder() {
+	private Binder<Course> getBinder() {
 		binder = new Binder<>();
 		
 		binder.forField(nameField).withValidator(new StringLengthValidator("Name must be between 3 and 30 characters long!",3, 30)).asRequired("Cannot be empty")
@@ -217,7 +217,7 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		return binder;
 	}
 	
-	public Window callUpdateWindow() { 
+	private Window callUpdateWindow() { 
 		updateWindow = new Window("UPDATE COURSE");
 		updateWindow.setVisible(false);
 	

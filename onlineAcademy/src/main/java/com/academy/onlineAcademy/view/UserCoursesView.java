@@ -27,21 +27,23 @@ public class UserCoursesView extends VerticalLayout implements View {
 	private static Logger logger = Logger.getLogger(UserCoursesView.class.getName());
 	
 	private Navigator navigator;
-	private CourseController courseObj;
+//	private CourseController courseObj;
 	private Grid<com.academy.onlineAcademy.model.Course> grid;
+	private int userId;
 	
 	public UserCoursesView() {
 		
 		navigator = UI.getCurrent().getNavigator();
-		courseObj = new CourseController();
-		initMainLayout();
+//		courseObj = new CourseController();
+		//initMainLayout();
 	
 	}
 					
-	public VerticalLayout initMainLayout() {
+	private VerticalLayout initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		
-		HorizontalLayout layoutH = UserViews.getTopBar(navigator);
+		System.out.println(" User courses ID :" + userId);
+		HorizontalLayout layoutH = UserViews.getTopBar(navigator, userId);
 		VerticalLayout layoutV = getBodyLayout();
 		
 		mainVLayout.addComponents(layoutH, layoutV);
@@ -52,7 +54,7 @@ public class UserCoursesView extends VerticalLayout implements View {
 		return mainVLayout;
 	}
 	
-	public VerticalLayout getBodyLayout() {
+	private VerticalLayout getBodyLayout() {
 		VerticalLayout layoutV = new VerticalLayout();
 		Label myCoursesLabel = new Label("My courses:");
 		layoutV.setSpacing(true);
@@ -63,7 +65,7 @@ public class UserCoursesView extends VerticalLayout implements View {
 		return layoutV;
 	}
 	
-	public void buildGrid() {
+	private void buildGrid() {
 		
 		grid = new Grid<>();
 		grid.setWidth("100%");
@@ -86,15 +88,16 @@ public class UserCoursesView extends VerticalLayout implements View {
 		UI ui = UI.getCurrent();
 		VaadinSession session = ui.getSession();
 		if (session.getAttribute("user-id") != null) {
-			int userId = Integer.valueOf(String.valueOf(session.getAttribute("user-id")));
+			userId = Integer.valueOf(String.valueOf(session.getAttribute("user-id")));
 			getAllTheCoursesOfTheUser(userId);
 		}
 		else {
 			System.out.println("USER ID VAL:" + session.getAttribute("user-id"));
 		}
+		initMainLayout();
 	}
 	
-	public void getAllTheCoursesOfTheUser(int userId) {
+	private void getAllTheCoursesOfTheUser(int userId) {
 		try {
 			//List<Course> courses = courseObj.getAllCoursesByUser(userId);
 			//grid.setItems(courses);
@@ -104,7 +107,7 @@ public class UserCoursesView extends VerticalLayout implements View {
 				    Notification.TYPE_WARNING_MESSAGE);
 			notif.show(Page.getCurrent());
 			
-			logger.log(Level.SEVERE, "No course(s) for this user have been found!");
+			logger.log(Level.SEVERE, "No course(s) for this user have been found!", ex);
 		}
 	}
 	
