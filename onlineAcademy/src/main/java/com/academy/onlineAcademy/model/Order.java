@@ -27,7 +27,8 @@ import javax.persistence.TemporalType;
 @Table(name="TORDER")
 @NamedQueries({
 	@NamedQuery(name = "getAllOrders", query = "SELECT o FROM Order o"),
-	@NamedQuery(name = "getAllOrdersByUser", query = "SELECT o FROM Order o WHERE o.userId = :userId"),
+	@NamedQuery(name = "getAllUnpaidOrdersByUser", query = "SELECT o FROM Order o WHERE o.userId = :userId AND o.isPaid = false"),
+	@NamedQuery(name = "getAllPaidOrdersByUser", query = "SELECT o FROM Order o WHERE o.userId = :userId AND o.isPaid = true"),
 	@NamedQuery(name = "findOrderById", query = "SELECT o FROM Order o WHERE o.id = :id"),
 	@NamedQuery(name = "orderByTotalPriceAsc", query = "SELECT o FROM Order o ORDER BY o.price ASC"),
 	@NamedQuery(name = "orderByDateAsc", query = "SELECT o FROM Order o ORDER BY o.purchaseDate ASC"),

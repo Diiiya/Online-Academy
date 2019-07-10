@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import com.academy.onlineAcademy.controller.CourseController;
 import com.academy.onlineAcademy.controller.OrderController;
 import com.academy.onlineAcademy.helpView.UserViews;
+import com.academy.onlineAcademy.helper.NewOrderMethods;
 import com.academy.onlineAcademy.model.Course;
 import com.academy.onlineAcademy.model.Order;
 import com.vaadin.icons.VaadinIcons;
@@ -39,18 +40,15 @@ public class HomeView extends VerticalLayout implements View {
 	private Grid<com.academy.onlineAcademy.model.Course> grid;
 	private CourseController courseObj;
 	private Button buyCourseButton;
-	private HorizontalLayout layoutH;
 	//private int userId;
 	
 	private int selectedCourseId;
 	private Course selectedCourse;
-	private OrderController orderObj;
 			
 	public HomeView() {
 		
 		navigator = UI.getCurrent().getNavigator();
 		courseObj = new CourseController();
-		orderObj = new OrderController();
 		//initMainlayout();
 	}
 	
@@ -68,11 +66,11 @@ public class HomeView extends VerticalLayout implements View {
 		HorizontalLayout searchHLayout = getSearchLayout();
 		Label topCoursesLabel = new Label("Top courses:");	
 		buildGrid();
-		buyCourseButton = new Button("PURCHASE");
+		buyCourseButton = new Button("ADD");
 		buyCourseButton.setVisible(false);
 		buyCourseButton.addClickListener(e -> {
-			getUserId();
-			placeOrder();
+			int userId = getUserId();
+			NewOrderMethods.placeOrder(userId, selectedCourse);
 		});
 		
 		mainVLayout.addComponents(layoutH, coverImage, searchHLayout, topCoursesLabel, grid, buyCourseButton);
@@ -158,34 +156,12 @@ public class HomeView extends VerticalLayout implements View {
 		});
 	}
 	
-	private void placeOrder() {
-		Date date = new Date();
-		int userId = getUserId();
-		if(userId == 0) {
-			Notification notif = new Notification("Warning","Please log in to continue ... ",
-				    Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-			
-			logger.log(Level.SEVERE, "No user has been logged in, to place order!");
-		}
-		else {
-			Order newOrder = new Order(userId, selectedCourseId, date, false, selectedCourse.getPrice());
-			orderObj.addOrder(newOrder);
-			
-			Notification notif = new Notification("Confirmation","The course has been added!",
-				    Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-			
-			logger.log(Level.INFO, "The course has been added!");
-		}
-	}
-	
 	private HorizontalLayout getRightTopBar() {
 		HorizontalLayout layoutH = new HorizontalLayout();
 		int userId = getUserId();
 		if (userId != 0) {
 			System.out.println(" Home page ID :" + userId);
-			layoutH = UserViews.getTopBar(navigator, userId);
+			layoutH = UserViews.getTopBar(userId);
 		}
 		else {
 			System.out.println("Doesn't go inside the else?!");

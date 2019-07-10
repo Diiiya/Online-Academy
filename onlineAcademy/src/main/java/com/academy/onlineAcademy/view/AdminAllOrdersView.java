@@ -36,7 +36,6 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 	private TextField customerEmailField;
 	private OrderController orderObj;
 	private CourseController courseObj;
-	private PersonController personObj;
 	private Grid<com.academy.onlineAcademy.model.Order> grid;
 	private int selectedOrderId;
 	private ComboBox<String> selectCourseCB;
@@ -46,7 +45,6 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		navigator = UI.getCurrent().getNavigator();
 		orderObj = new OrderController();
 		courseObj = new CourseController();
-		personObj = new PersonController();
 		initMainLayout();
 	
 	}
@@ -171,7 +169,7 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		String courseName = selectCourseCB.getValue();
 		String userEmail = customerEmailField.getValue();
 		if (courseName != null) {
-			NewOrderMethods.placeOrder(userEmail, personObj, orderObj, courseName, courseObj);
+			NewOrderMethods.placeOrder(userEmail, courseName);
 		}
 		else {
 			Notification notif = new Notification("Warning!", "Both fields should be filled in",

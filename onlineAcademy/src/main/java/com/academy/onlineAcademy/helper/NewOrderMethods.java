@@ -19,10 +19,16 @@ import com.vaadin.ui.Notification;
 
 public class NewOrderMethods {
 	
-	static Logger logger = Logger.getLogger(NewOrderMethods.class.getName());
+	private static Logger logger = Logger.getLogger(NewOrderMethods.class.getName());
 	
 	private static Person person;
+	private static OrderController orderObj = new OrderController();
+	private static PersonController personObj = new PersonController();
+	private static CourseController courseObj = new CourseController();
 	
+	///////////////
+	// FOR ADMIN
+	//////////////
 	public static List<String> getCourses(CourseController courseObj) {
 		
 		List<String> courseNames = new ArrayList<>();
@@ -35,11 +41,11 @@ public class NewOrderMethods {
 		return courseNames;
 	}
 	
-	public static void placeOrder(String userEmail, PersonController personObj, OrderController orderObj, String courseName, CourseController courseObj) {
+	public static void placeOrder(String userEmail, String courseName) {
 		try {
-			int courseId = getCourseId(courseName, courseObj);
-			checkIfEmailExists(userEmail, personObj);
-			createNewOrder(courseId, orderObj);
+			int courseId = getCourseId(courseName);
+			checkIfEmailExists(userEmail);
+			createNewOrder(courseId);
 		}
 		catch(OrderException e) {
 			if (e.getOrderErrorType() == OrderErrorType.NOT_EXISTING_EMAIL) {
@@ -60,7 +66,7 @@ public class NewOrderMethods {
 		}
 	}
 	
-	private static void checkIfEmailExists(String email, PersonController personObj) throws OrderException {
+	private static void checkIfEmailExists(String email) throws OrderException {
 		try {
 			person = personObj.getPersonByEmail(email.toUpperCase());
 		}
@@ -69,7 +75,7 @@ public class NewOrderMethods {
 		}
 	}
 	
-	private static void createNewOrder(int courseId, OrderController orderObj) throws OrderException {
+	private static void createNewOrder(int courseId) throws OrderException {
 		try {
 			Date date = new Date();
 			Order newOrder = new Order(person.getId(), courseId, date, true, 0);
@@ -86,10 +92,33 @@ public class NewOrderMethods {
 		
 	}
 	
-	private static int getCourseId(String courseName, CourseController courseObj) {
+	private static int getCourseId(String courseName) {
 		Course course = courseObj.getCourseByName(courseName);
 		int courseId = course.getId();
 		return courseId;
 	}
-
+	
+	//////////////
+	// FOR USER
+	/////////////
+	public static void placeOrder(int userId, Course selectedCourse) {
+		Date date = new Date();
+		if(userId == 0) {
+			Notification notif = new Notification("Warning","Please log in to continue ... ",
+				    Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
+			
+			logger.log(Level.SEVERE, "No user has been logged in, to place order!");
+		}
+		else {
+			Order newOrder = new Order(userId, selectedCourse.getId(), date, false, selectedCourse.getPrice());
+			orderObj.addOrder(newOrder);
+			
+			Notification notif = new Notification("Confirmation","The course has been added!",
+				    Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
+			
+			logger.log(Level.INFO, "The course has been added!");
+		}
+	}
 }

@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.logging.Level;
 
 import com.academy.onlineAcademy.controller.OrderController;
+import com.academy.onlineAcademy.helper.UserOrdersMethods;
 import com.academy.onlineAcademy.model.Order;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
@@ -26,14 +28,14 @@ import com.vaadin.ui.MenuBar.MenuItem;
 public class UserViews extends VerticalLayout implements View {
 	
 	private static Navigator navigator = UI.getCurrent().getNavigator();
+	private static Label itemsInCartCountLabel = new Label();
 	private static OrderController orderObj = new OrderController();
-	private static int itemsInCartCount;
+	private static int itemsInCartCount = 0;	
 	
 	private static void getOrdersCountOfTheUser(int userId) {
 		try {
-			List<Order> orders = orderObj.getAllOrdersByUser(userId);			
+			List<Order> orders = orderObj.getAllUnpaidOrdersByUser(userId);			
 			itemsInCartCount = orders.size();
-			System.out.println(" !!! User id: " + userId);
 			System.out.println(" !!! Items in cart: " + itemsInCartCount);
 			
 		}
@@ -41,7 +43,12 @@ public class UserViews extends VerticalLayout implements View {
 		}
 	}
 	
-	public static HorizontalLayout getTopBar(Navigator navigator, int userId) {
+	public static void setLabelValue() {
+		itemsInCartCountLabel.setValue(String.valueOf(itemsInCartCount));
+		System.out.println(" The label should already be equal to " + itemsInCartCount);
+	}
+	
+	public static HorizontalLayout getTopBar(int userId) {
 		HorizontalLayout layoutH = new HorizontalLayout();	
 		layoutH.setSpacing(true);
 		layoutH.setWidth("100%");
@@ -57,7 +64,7 @@ public class UserViews extends VerticalLayout implements View {
 		HorizontalLayout rightHorizontalL = new HorizontalLayout();
 		
 		getOrdersCountOfTheUser(userId);
-		Label itemsInCartCountLabel = new Label();
+//		Label itemsInCartCountLabel = new Label();
 		itemsInCartCountLabel.setValue(String.valueOf(itemsInCartCount));
 		FileResource shoppingBasketResource = new FileResource(new File(basepath + "/shop-cart.png"));
 		Image shoppingBasketImage = new Image("", shoppingBasketResource);

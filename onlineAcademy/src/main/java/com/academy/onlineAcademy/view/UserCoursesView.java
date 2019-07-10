@@ -1,14 +1,17 @@
 package com.academy.onlineAcademy.view;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.academy.onlineAcademy.controller.CourseController;
+import com.academy.onlineAcademy.controller.OrderController;
 import com.academy.onlineAcademy.helpView.UserViews;
 import com.academy.onlineAcademy.model.Course;
+import com.academy.onlineAcademy.model.Order;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -26,16 +29,18 @@ public class UserCoursesView extends VerticalLayout implements View {
 	
 	private static Logger logger = Logger.getLogger(UserCoursesView.class.getName());
 	
-	private Navigator navigator;
 //	private CourseController courseObj;
 	private Grid<com.academy.onlineAcademy.model.Course> grid;
 	private int userId;
 	
+	private OrderController orderObj = new OrderController();
+	private CourseController courseObj = new CourseController();
+	private List<Course> paidCourses = new ArrayList<Course>();
+	
 	public UserCoursesView() {
 		
-		navigator = UI.getCurrent().getNavigator();
 //		courseObj = new CourseController();
-		//initMainLayout();
+		initMainLayout();
 	
 	}
 					
@@ -43,7 +48,7 @@ public class UserCoursesView extends VerticalLayout implements View {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		
 		System.out.println(" User courses ID :" + userId);
-		HorizontalLayout layoutH = UserViews.getTopBar(navigator, userId);
+		HorizontalLayout layoutH = UserViews.getTopBar(userId);
 		VerticalLayout layoutV = getBodyLayout();
 		
 		mainVLayout.addComponents(layoutH, layoutV);
@@ -80,6 +85,7 @@ public class UserCoursesView extends VerticalLayout implements View {
 		grid.addColumn(com.academy.onlineAcademy.model.Course::getPrice).setCaption("Price in euros");
 		grid.addColumn(com.academy.onlineAcademy.model.Course::getGivesCertificate).setCaption("Gives certificate");
 		
+		
 	}
 
 	@Override
@@ -89,25 +95,31 @@ public class UserCoursesView extends VerticalLayout implements View {
 		VaadinSession session = ui.getSession();
 		if (session.getAttribute("user-id") != null) {
 			userId = Integer.valueOf(String.valueOf(session.getAttribute("user-id")));
-			getAllTheCoursesOfTheUser(userId);
+			getAllPaidOrdersOfTheUser(userId);
 		}
 		else {
 			System.out.println("USER ID VAL:" + session.getAttribute("user-id"));
 		}
-		initMainLayout();
 	}
 	
-	private void getAllTheCoursesOfTheUser(int userId) {
+	private void getAllPaidOrdersOfTheUser(int userId) {
 		try {
-			//List<Course> courses = courseObj.getAllCoursesByUser(userId);
-			//grid.setItems(courses);
+			List<Order> paidOrders = orderObj.getAllPaidOrdersByUser(userId);
+			for (Order order : paidOrders) {
+				int courseId = order.getCourseId();
+				Course course = courseObj.getCourseById(courseId);
+				if(!paidCourses.contains(course)) {
+					paidCourses.add(course);
+				}
+				
+			}
+			grid.setItems(paidCourses);
 		}
-		catch(Exception ex) {
-			Notification notif = new Notification("Warning", "No course(s) for this user have been found!",
-				    Notification.TYPE_WARNING_MESSAGE);
+		catch (Exception ex) {
+			Notification notif = new Notification("Warning!", "No paid orders for this user have been found!");
 			notif.show(Page.getCurrent());
 			
-			logger.log(Level.SEVERE, "No course(s) for this user have been found!", ex);
+			logger.log(Level.SEVERE, "No paid orders for this user have been found!", ex);
 		}
 	}
 	

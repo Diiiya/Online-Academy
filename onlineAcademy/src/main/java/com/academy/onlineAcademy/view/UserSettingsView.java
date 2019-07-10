@@ -31,7 +31,6 @@ import com.vaadin.ui.VerticalLayout;
 
 public class UserSettingsView extends VerticalLayout implements View {
 	
-	private Navigator navigator;
 	private Binder<Person> binder;
 	private Person person;
 	private String password = null;
@@ -41,20 +40,20 @@ public class UserSettingsView extends VerticalLayout implements View {
 	
 	private Panel photoPanel;	
 	private Panel accountPanel;	
-//	private TextField fullNameField;
-//	private TextField emailField;
-//	private PasswordField passwordField;
-	private TextField fullNameField = new TextField("Full name:");
-	private TextField emailField = new TextField("Email:");
-	private PasswordField passwordField = new PasswordField("Password:");
-	private PasswordField confirmPasswordField = new PasswordField("Confirm password:");
-//	private PasswordField confirmPasswordField;
+	private TextField fullNameField;
+	private TextField emailField;
+	private PasswordField passwordField;
+	private PasswordField confirmPasswordField;
 		
 	public UserSettingsView() {
 		
-		navigator = UI.getCurrent().getNavigator();
 		person = new Person();
-		//initMainLayout();
+		fullNameField = new TextField("Full name:");
+		emailField = new TextField("Email:");
+		passwordField = new PasswordField("Password:");
+		confirmPasswordField = new PasswordField("Confirm password:");
+		
+		initMainLayout();
 				
 	}
     
@@ -62,7 +61,7 @@ public class UserSettingsView extends VerticalLayout implements View {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		
 		System.out.println(" User settings ID :" + userId);
-		HorizontalLayout layoutH = UserViews.getTopBar(navigator, userId);
+		HorizontalLayout layoutH = UserViews.getTopBar(userId);
 		VerticalLayout layoutVBody = getBodyLayout();
 		
 //		binder = callBinder();
@@ -153,10 +152,6 @@ public class UserSettingsView extends VerticalLayout implements View {
 	
 	private Panel getAccountpanel() {
 		accountPanel = new Panel("Update my account");
-//		fullNameField = new TextField("Full name:");
-//		emailField = new TextField("Email:");
-//		passwordField = new PasswordField("Password:");
-//		confirmPasswordField = new PasswordField("Confirm password:");
 		FormLayout content = new FormLayout();
 		
 		accountPanel.setSizeUndefined();
@@ -206,7 +201,6 @@ public class UserSettingsView extends VerticalLayout implements View {
 		else {
 			System.out.println("USER ID VAL:" + session.getAttribute("user-id"));
 		}
-		initMainLayout();
 	}
 	
 }

@@ -10,6 +10,7 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import com.academy.onlineAcademy.model.Course;
 import com.academy.onlineAcademy.model.Order;
 import com.academy.onlineAcademy.model.Person;
 
@@ -65,9 +66,15 @@ public class OrderController {
 	    return query.getResultList();
 	}
 	
-	public List<Order> getAllOrdersByUser(int userId) {
+	public List<Order> getAllUnpaidOrdersByUser(int userId) {
 		EntityManager em = emFactoryObj.createEntityManager();
-		TypedQuery<Order> query = em.createNamedQuery("getAllOrdersByUser", Order.class);
+		TypedQuery<Order> query = em.createNamedQuery("getAllUnpaidOrdersByUser", Order.class);
+	    return query.setParameter("userId", userId).getResultList();
+	}
+	
+	public List<Order> getAllPaidOrdersByUser(int userId) {
+		EntityManager em = emFactoryObj.createEntityManager();
+		TypedQuery<Order> query = em.createNamedQuery("getAllPaidOrdersByUser", Order.class);
 	    return query.setParameter("userId", userId).getResultList();
 	}
 	
@@ -75,6 +82,26 @@ public class OrderController {
 		EntityManager em = emFactoryObj.createEntityManager();
 	    TypedQuery<Order> query = em.createNamedQuery("findOrderById", Order.class);
 	    return query.setParameter("id", id).getSingleResult();
+	}
+	
+	public void updateOrder(Order order) {
+		EntityManager emUPD = null;
+		try {
+			emUPD = emFactoryObj.createEntityManager();
+		    emUPD.getTransaction().begin();
+		    
+		    Order newOrder = emUPD.merge(order);
+		    
+		    emUPD.persist(newOrder);
+		    emUPD.getTransaction().commit();
+		} 
+		catch(PersistenceException e) {
+		    emUPD.getTransaction().rollback();
+		    throw e;
+		}
+        finally {
+		    emUPD.close();
+		}
 	}
 	
 	public int deleteOrderById(int id) {
