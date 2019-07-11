@@ -14,7 +14,7 @@ public class UpdateCourseMethods {
 	
 	private static Logger logger = Logger.getLogger(UpdateCourseMethods.class.getName());
 
-	public static void getCourseInfo(int selectedCourseId, Binder<Course> binder, CourseController courseObj, Course selectedCourse) {
+	public void getCourseInfo(int selectedCourseId, Binder<Course> binder, CourseController courseObj, Course selectedCourse) {
 		try {
 			selectedCourse = courseObj.getCourseById(selectedCourseId);
 			binder.readBean(selectedCourse);
@@ -24,7 +24,7 @@ public class UpdateCourseMethods {
 		}
 	}
 	
-	public static boolean updateCourse(int courseId, Binder<Course> binder, CourseController courseObj, Course selectedCourse, String courseName) {
+	public boolean updateCourse(int courseId, Binder<Course> binder, CourseController courseObj, Course selectedCourse, String courseName) {
 		try {
 			existingCourse(courseId, courseObj, selectedCourse, courseName);
 			writeBean(binder, selectedCourse);
@@ -55,7 +55,7 @@ public class UpdateCourseMethods {
 		
 	}
 	
-	private static void existingCourse(int courseId, CourseController courseObj, Course selectedCourse, String courseName) throws CourseException {
+	private void existingCourse(int courseId, CourseController courseObj, Course selectedCourse, String courseName) throws CourseException {
 		try {
 			selectedCourse = courseObj.getCourseByName(courseName);
 		    	if (courseName.equals(selectedCourse.getName())) {
@@ -71,7 +71,7 @@ public class UpdateCourseMethods {
 		
 	}
 	
-	private static void writeBean(Binder<Course> binder, Course selectedCourse) throws CourseException {
+	private void writeBean(Binder<Course> binder, Course selectedCourse) throws CourseException {
 		try {
 			binder.writeBean(selectedCourse);
 		}
@@ -80,7 +80,7 @@ public class UpdateCourseMethods {
 		}
 	}
 	
-	private static void updateInDatabase(CourseController courseObj, Course selectedCourse) throws CourseException {
+	private void updateInDatabase(CourseController courseObj, Course selectedCourse) throws CourseException {
 		try {
 			courseObj.updateCourseById(selectedCourse);
 			Notification notif = new Notification("Confirmation!", "Course successfully updated!", Notification.TYPE_WARNING_MESSAGE);

@@ -9,6 +9,8 @@ import java.util.logging.Logger;
 
 import com.academy.onlineAcademy.controller.CourseController;
 import com.academy.onlineAcademy.controller.OrderController;
+import com.academy.onlineAcademy.exceptions.LoginException;
+import com.academy.onlineAcademy.exceptions.LoginException.LoginErrorType;
 import com.academy.onlineAcademy.helpView.UserViews;
 import com.academy.onlineAcademy.model.Course;
 import com.academy.onlineAcademy.model.Order;
@@ -18,6 +20,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -30,17 +33,26 @@ public class UserCoursesView extends VerticalLayout implements View {
 	private static Logger logger = Logger.getLogger(UserCoursesView.class.getName());
 	
 //	private CourseController courseObj;
+	private Navigator navigator;
+	private Button viewCourse;
 	private Grid<com.academy.onlineAcademy.model.Course> grid;
 	private int userId;
+	private Course selectedCourse;
+	private int courseId;
 	
 	private OrderController orderObj = new OrderController();
 	private CourseController courseObj = new CourseController();
 	private List<Course> paidCourses = new ArrayList<Course>();
+	private UserViews userViews;
 	
 	public UserCoursesView() {
 		
+		userViews = new UserViews();
+		navigator = UI.getCurrent().getNavigator();
+		selectedCourse = new Course();
 //		courseObj = new CourseController();
 		initMainLayout();
+		refreshLayoutData();
 	
 	}
 					
@@ -48,7 +60,7 @@ public class UserCoursesView extends VerticalLayout implements View {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		
 		System.out.println(" User courses ID :" + userId);
-		HorizontalLayout layoutH = UserViews.getTopBar(userId);
+		HorizontalLayout layoutH = userViews.getTopBar(userId);
 		VerticalLayout layoutV = getBodyLayout();
 		
 		mainVLayout.addComponents(layoutH, layoutV);
@@ -64,9 +76,11 @@ public class UserCoursesView extends VerticalLayout implements View {
 		Label myCoursesLabel = new Label("My courses:");
 		layoutV.setSpacing(true);
 		layoutV.setWidth("100%");
-		
+		viewCourse = new Button("View Course");
 		buildGrid();
-		layoutV.addComponents(myCoursesLabel, grid);
+		viewCourse.setVisible(false);
+		viewCourse.addClickListener(e -> getSetCourse(selectedCourse));
+		layoutV.addComponents(myCoursesLabel, grid, viewCourse);
 		return layoutV;
 	}
 	
@@ -85,17 +99,33 @@ public class UserCoursesView extends VerticalLayout implements View {
 		grid.addColumn(com.academy.onlineAcademy.model.Course::getPrice).setCaption("Price in euros");
 		grid.addColumn(com.academy.onlineAcademy.model.Course::getGivesCertificate).setCaption("Gives certificate");
 		
-		
+		grid.addItemClickListener(e -> {
+			selectedCourse = e.getItem();
+			viewCourse.setVisible(true);
+		});
 	}
 
 	@Override
 	public void enter(ViewChangeEvent event) {
-		View.super.enter(event);
+		View.super.enter(event);	
+		refreshLayoutData();
+	}
+	
+	private void refreshLayoutData() {
 		UI ui = UI.getCurrent();
 		VaadinSession session = ui.getSession();
 		if (session.getAttribute("user-id") != null) {
 			userId = Integer.valueOf(String.valueOf(session.getAttribute("user-id")));
 			getAllPaidOrdersOfTheUser(userId);
+			userViews.setLabelValue(userId);
+			System.out.println("USER Courses userId:" + userId);
+			if (session.getAttribute("course-id") != null) {
+				courseId = Integer.valueOf(String.valueOf(session.getAttribute("course-id")));
+				System.out.println("Course id:" + courseId);
+			}
+			else {
+				System.out.println("USER ID VAL:" + session.getAttribute("user-id"));
+			}
 		}
 		else {
 			System.out.println("USER ID VAL:" + session.getAttribute("user-id"));
@@ -121,6 +151,17 @@ public class UserCoursesView extends VerticalLayout implements View {
 			
 			logger.log(Level.SEVERE, "No paid orders for this user have been found!", ex);
 		}
+	}
+
+	
+	private void getSetCourse(Course selectedCourse) {
+		UI ui = UI.getCurrent();
+		VaadinSession session = ui.getSession();
+			
+		session.setAttribute("course-id", selectedCourse.getId());
+		System.out.println("Course id from UserCourses ~ " + selectedCourse.getId());
+		navigator.navigateTo("Course" + "/" + selectedCourse.getName().replaceAll("\\s", "-"));
+		
 	}
 	
 }

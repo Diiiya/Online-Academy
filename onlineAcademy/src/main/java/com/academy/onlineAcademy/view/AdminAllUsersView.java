@@ -63,12 +63,14 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 	private List<Person> personas;
 	private Person selectedPerson;
 	private int selectedPersonId;
+	private UpdateUserMethods updateUserMethods;
 	
 	public AdminAllUsersView() {
 		
 		navigator = UI.getCurrent().getNavigator();
 		selectedPerson = new Person();
 		personObj = new PersonController();
+		updateUserMethods = new UpdateUserMethods();
 		initMainLayout();
 		
 	}
@@ -77,7 +79,8 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		mainVLayout.setHeight("100%");
 		
-		HorizontalLayout layoutH = AdminViews.getTopBar(navigator);
+		AdminViews adminViews = new AdminViews();
+		HorizontalLayout layoutH = adminViews.getTopBar(navigator);
 		HorizontalLayout searchHLayout = getSearchLayout();
 		
 		List<String> types = Stream.of(Type.values()).map(Enum::name).collect(Collectors.toList());
@@ -132,7 +135,7 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		buttonsHLayout.addComponents(updateUserButton, deleteUserButton);
 		
 		updateUserButton.addClickListener(e -> {
-			UpdateUserMethods.getUserInfo(selectedPersonId, binder);
+			updateUserMethods.getUserInfo(selectedPersonId, binder);
 			updateWindow.setVisible(true);
 		});
 		
@@ -207,9 +210,9 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		
 		Button updateFormButton = new Button("Update", VaadinIcons.REFRESH);
 		updateFormButton.addClickListener(e -> {
-			selectedPerson = UpdateUserMethods.getPerson();
+			selectedPerson = updateUserMethods.getPerson();
 			String enteredEmail = emailField.getValue();
-			boolean isSuccessful = UpdateUserMethods.updatePersonSettings(selectedPerson, binder, enteredEmail);
+			boolean isSuccessful = updateUserMethods.updatePersonSettings(selectedPerson, binder, enteredEmail);
 			if (isSuccessful == true) {
 				personas = personObj.getAllUsers();
 		        grid.setItems(personas);

@@ -76,11 +76,13 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 	private Grid<com.academy.onlineAcademy.model.Course> grid;
 	private Course selectedCourse;
 	private int selectedCourseId;
+	UpdateCourseMethods updateCourseMethods;
 	
 	public AdminAllCoursesView() {
 		
 		navigator = UI.getCurrent().getNavigator();
 		courseObj = new CourseController();
+		updateCourseMethods = new UpdateCourseMethods();
 		initMainLayout();		
 		
 	}
@@ -89,7 +91,8 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		mainVLayout.setHeight("100%");
 		
-		HorizontalLayout layoutH = AdminViews.getTopBar(navigator);
+		AdminViews adminViews = new AdminViews();
+		HorizontalLayout layoutH = adminViews.getTopBar(navigator);
 		HorizontalLayout searchHLayout = getSearchLayout();
 		certCheckbox.setValue(true);
 		Label allCoursesLabel = new Label("All courses:");	
@@ -182,7 +185,7 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		});
 		
 		updateCourseButton.addClickListener(e -> {
-			UpdateCourseMethods.getCourseInfo(selectedCourseId, binder, courseObj, selectedCourse);
+			updateCourseMethods.getCourseInfo(selectedCourseId, binder, courseObj, selectedCourse);
 			updateWindow.setVisible(true);
 		});
 		
@@ -251,7 +254,7 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 //					}
 //				}
 			String courseName = nameField.getValue();
-			boolean isSuccessful = UpdateCourseMethods.updateCourse(selectedCourseId, binder, courseObj, selectedCourse, courseName);	
+			boolean isSuccessful = updateCourseMethods.updateCourse(selectedCourseId, binder, courseObj, selectedCourse, courseName);	
 			if (isSuccessful == true) {
 				courses = courseObj.getAllCourses();
 		        grid.setItems(courses);

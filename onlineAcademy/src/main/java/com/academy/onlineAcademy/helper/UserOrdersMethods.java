@@ -17,12 +17,12 @@ import com.vaadin.ui.UI;
 
 public class UserOrdersMethods {
 	
-	private static Logger logger = Logger.getLogger(UserOrdersView.class.getName());
-	private static List<Order> orders = new ArrayList<Order>();
-	private static OrderController orderObj = new OrderController();
-	private static Navigator navigator = UI.getCurrent().getNavigator();
+	private Logger logger = Logger.getLogger(UserOrdersView.class.getName());
+	private List<Order> orders = new ArrayList<Order>();
+	private OrderController orderObj = new OrderController();
+	private Navigator navigator = UI.getCurrent().getNavigator();
 	
-	public static void validateCardDetails(Binder<CardDetails> binder) {
+	public void validateCardDetails(Binder<CardDetails> binder) {
 		if (binder.validate().isOk()) {
 			List<Order> paidOrders = new ArrayList<Order>();
 			for (Order order : orders) {
@@ -44,7 +44,7 @@ public class UserOrdersMethods {
 		
 	}
 	
-	public static List<Order> getAllUnpaidOrdersOfTheUser(int userId) {
+	public List<Order> getAllUnpaidOrdersOfTheUser(int userId) {
 		try {
 			orders = orderObj.getAllUnpaidOrdersByUser(userId);
 //			grid.setItems(orders);
@@ -61,7 +61,7 @@ public class UserOrdersMethods {
 		return orders;
 	}
 	
-	public static double calculateTotalPrice() {
+	public double calculateTotalPrice() {
 		double totalSum = 0;
 		for (Order order : orders) {
 			totalSum += order.getPrice();

@@ -22,14 +22,14 @@ public class NewCourseMethods {
 	
 	static Logger logger = Logger.getLogger(NewCourseMethods.class.getName());
 	
-	private static CourseController courseObj = new CourseController();
-	private static String enteredName;
+	private CourseController courseObj = new CourseController();
+	private String enteredName;
 //	private static File enteredCoverPhoto;
-	private static byte[] convertedCoverPhoto;
-	private static String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-	private static FileInputStream fileStream = null;
+	private byte[] convertedCoverPhoto;
+	private String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+	private FileInputStream fileStream = null;
 	
-	public static void addNewCourse(Binder<Course> binder, String name, String description, String teacherName, int duration, Level level,
+	public void addNewCourse(Binder<Course> binder, String name, String description, String teacherName, int duration, Level level,
 			Category category, double price, boolean givesCertificate /* , File coverPhoto */) {
 		try {
 			//convertInputPhoto(enteredCoverPhoto);
@@ -55,7 +55,7 @@ public class NewCourseMethods {
 		
 	}
 	
-	private static void convertInputPhoto(File photoFileInput) {
+	private void convertInputPhoto(File photoFileInput) {
 		try {
 		fileStream = new FileInputStream(new File(basepath + "/1online-courses_0.jpg"));
 	    //fileStream = new FileInputStream(photoFileInput);
@@ -78,7 +78,7 @@ public class NewCourseMethods {
 		}
 	}
 	
-	private static void existingCourseCheck(String name) throws NewCourseException {
+	private void existingCourseCheck(String name) throws NewCourseException {
 		try {
 	    	courseObj.getCourseByName(name.toUpperCase()).getName();
 	    	throw new NewCourseException(NewCourseTypeError.EXISTING_COURSE);
@@ -87,7 +87,7 @@ public class NewCourseMethods {
 		 }
 	}
 	
-	private static void addCourseToDatabase(String name, String description, String teacherName, int duration, Level level,
+	private void addCourseToDatabase(String name, String description, String teacherName, int duration, Level level,
 			Category category, double price, boolean givesCertificate) {
 		try {
 			courseObj.addCourse(name.toUpperCase(), description, teacherName, duration, level, category, price, givesCertificate, convertedCoverPhoto);

@@ -14,6 +14,7 @@ import com.academy.onlineAcademy.controller.CourseController;
 import com.academy.onlineAcademy.exceptions.NewCourseException;
 import com.academy.onlineAcademy.exceptions.NewCourseException.NewCourseTypeError;
 import com.academy.onlineAcademy.helpView.AdminViews;
+import com.academy.onlineAcademy.helper.ImageUploader;
 import com.academy.onlineAcademy.helper.NewCourseMethods;
 import com.academy.onlineAcademy.helper.NewUserMethods;
 import com.academy.onlineAcademy.model.Category;
@@ -44,6 +45,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.MenuBar.MenuItem;
 
@@ -57,7 +59,8 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 	private final TextField nameField = new TextField("Course name:");
 	private final TextField descriptionField = new TextField("Course description:");
 	private final TextField teacherNameField = new TextField("Teacher's  name:");
-	private final TextField photoField = new TextField("Photo:");	
+//	private final TextField photoField = new TextField("Photo:");
+//	private final Button photoButton = new Button("...");
 	private ComboBox<String> selectCategoryComboBox;
 	private ComboBox<String> selectLevelComboBox;
 	private final TextField durationField = new TextField("Duration:");
@@ -86,7 +89,8 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 	public void initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		
-		HorizontalLayout layoutH = AdminViews.getTopBar(navigator);
+		AdminViews adminViews = new AdminViews();
+		HorizontalLayout layoutH = adminViews.getTopBar(navigator);
 		VerticalLayout layoutVBody = getBodyLayout();
 		callBinder();
 		
@@ -110,8 +114,15 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		selectLevelComboBox.setEmptySelectionAllowed(false);
 		certCheckbox.setValue(true);
 		
+//		HorizontalLayout smallPhotoL = new HorizontalLayout();
+//		smallPhotoL.addComponents(photoField, photoButton);
+//		smallPhotoL.setComponentAlignment(photoButton, Alignment.BOTTOM_RIGHT);
+		
+		ImageUploader receiver = new ImageUploader();
+		Upload uploadCoursePhoto = new Upload("Course cover image", receiver);
+		
 		FormLayout content = new FormLayout();
-		content.addComponents(nameField, descriptionField, teacherNameField, photoField, durationField, priceField,
+		content.addComponents(nameField, descriptionField, teacherNameField, uploadCoursePhoto, durationField, priceField,
 				selectCategoryComboBox, selectLevelComboBox, certCheckbox);
 		content.setSizeUndefined(); 
 		content.setMargin(true);
@@ -149,7 +160,8 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		try {
 			checkValidation();
 			convertInputValues();
-			NewCourseMethods.addNewCourse(binder, name, description, teacherName, duration, level, category, price, givesCertificate);
+			NewCourseMethods newCourseMethods = new NewCourseMethods();
+			newCourseMethods.addNewCourse(binder, name, description, teacherName, duration, level, category, price, givesCertificate);
 		}
 		catch (NewCourseException ex) {
 			if (ex.getNewCourseTypeError() == NewCourseTypeError.VALIDATION_FAILED) {

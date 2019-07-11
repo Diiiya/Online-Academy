@@ -27,15 +27,16 @@ import com.vaadin.ui.MenuBar.MenuItem;
 
 public class UserViews extends VerticalLayout implements View {
 	
-	private static Navigator navigator = UI.getCurrent().getNavigator();
-	private static Label itemsInCartCountLabel = new Label();
-	private static OrderController orderObj = new OrderController();
-	private static int itemsInCartCount = 0;	
+	private Navigator navigator = UI.getCurrent().getNavigator();
+	private Label itemsInCartCountLabel = new Label();
+	private OrderController orderObj = new OrderController();
+	private int itemsInCartCount = 0;	
 	
-	private static void getOrdersCountOfTheUser(int userId) {
+	private void getOrdersCountOfTheUser(int userId) {
 		try {
 			List<Order> orders = orderObj.getAllUnpaidOrdersByUser(userId);			
 			itemsInCartCount = orders.size();
+			System.out.println(" !!!USER ID: " + userId);
 			System.out.println(" !!! Items in cart: " + itemsInCartCount);
 			
 		}
@@ -43,12 +44,13 @@ public class UserViews extends VerticalLayout implements View {
 		}
 	}
 	
-	public static void setLabelValue() {
+	public void setLabelValue(int userId) {
+		getOrdersCountOfTheUser(userId);
 		itemsInCartCountLabel.setValue(String.valueOf(itemsInCartCount));
 		System.out.println(" The label should already be equal to " + itemsInCartCount);
 	}
 	
-	public static HorizontalLayout getTopBar(int userId) {
+	public HorizontalLayout getTopBar(int userId) {
 		HorizontalLayout layoutH = new HorizontalLayout();	
 		layoutH.setSpacing(true);
 		layoutH.setWidth("100%");
@@ -90,7 +92,7 @@ public class UserViews extends VerticalLayout implements View {
 		return layoutH;
 	}
 	
-	static MenuBar.Command createNavigationCommand(String navigationView) {
+	MenuBar.Command createNavigationCommand(String navigationView) {
 		return new MenuBar.Command() {
 		    public void menuSelected(MenuItem selectedItem) {
 		    	System.out.print("LOG");
@@ -99,7 +101,7 @@ public class UserViews extends VerticalLayout implements View {
 		};
 	}
 	
-	static MenuBar.Command logoutNavigationCommand(String navigationView) {
+	MenuBar.Command logoutNavigationCommand(String navigationView) {
 		return new MenuBar.Command() {
 		    public void menuSelected(MenuItem selectedItem) {
 		    	UI ui = UI.getCurrent();

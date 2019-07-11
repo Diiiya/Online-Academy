@@ -55,10 +55,14 @@ public class UserOrdersView extends VerticalLayout implements View {
 	private PasswordField secCodeField;
 	private Binder<CardDetails> binder;
 	
-	List<Order> orders;
+	private List<Order> orders;
+	private UserViews userViews;
+	private UserOrdersMethods userOrdersMethods;
 	
 	public UserOrdersView() {
 		
+		userViews = new UserViews();
+		userOrdersMethods = new UserOrdersMethods();
 		orderObj = new OrderController();
 		cardNumField = new TextField("Card number:");
 		expDateField = new DateField("Expiry date:");
@@ -72,12 +76,10 @@ public class UserOrdersView extends VerticalLayout implements View {
 	private VerticalLayout initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		
-		HorizontalLayout layoutH = UserViews.getTopBar(userId);
+		
+		HorizontalLayout layoutH = userViews.getTopBar(userId);
 		Label myOrdersLabel = new Label("My orders:");
 		buildGrid();
-		
-		
-		
 		Button payButton = new Button("PAY");
 		payButton.setWidth("200px");
 		payButton.addClickListener(e -> {
@@ -165,10 +167,13 @@ public class UserOrdersView extends VerticalLayout implements View {
 		logger.log(Level.INFO, "The course has been successfully removed!");
 		
 		UI.getCurrent().removeWindow(confirmationWindow);
-		orders = UserOrdersMethods.getAllUnpaidOrdersOfTheUser(userId);
+		
+		orders = userOrdersMethods.getAllUnpaidOrdersOfTheUser(userId);
+		////////////
 		grid.setItems(orders);
-		totalSum = UserOrdersMethods.calculateTotalPrice();
+		totalSum = userOrdersMethods.calculateTotalPrice();
 		totalSumLabel1.setValue(String.valueOf(totalSum) + " euros");
+		userViews.setLabelValue(userId);
 	}
 	
 	private void createPaymentWindow() {
@@ -178,7 +183,7 @@ public class UserOrdersView extends VerticalLayout implements View {
 		Label totalSumLabel2 = new Label("Total price: " + String.valueOf(totalSum));
 		Button confirmPaymentDetailsButton = new Button("Make payment");
 		confirmPaymentDetailsButton.setWidth("200px");
-		confirmPaymentDetailsButton.addClickListener(e -> UserOrdersMethods.validateCardDetails(binder));
+		confirmPaymentDetailsButton.addClickListener(e -> userOrdersMethods.validateCardDetails(binder));
 		
 		FormLayout content = new FormLayout();
 		expDateField.setDateFormat("MM/yy");
@@ -227,12 +232,12 @@ public class UserOrdersView extends VerticalLayout implements View {
 		VaadinSession session = ui.getSession();
 		if (session.getAttribute("user-id") != null) {
 			userId = Integer.valueOf(String.valueOf(session.getAttribute("user-id")));
-			orders = UserOrdersMethods.getAllUnpaidOrdersOfTheUser(userId);
+			orders = userOrdersMethods.getAllUnpaidOrdersOfTheUser(userId);
 			grid.setItems(orders);
-			totalSum = UserOrdersMethods.calculateTotalPrice();
+			totalSum = userOrdersMethods.calculateTotalPrice();
 			totalSumLabel1.setValue(String.valueOf(totalSum) + " euros");
-			System.out.println("NEW USER ID ~ " + userId);
-			UserViews.setLabelValue();
+//			System.out.println("NEW USER ID ~ " + userId);
+			userViews.setLabelValue(userId);
 			///////////////////////////////////////////////////
 			// label.setValue to change the coursesCount !!! //
 			///////////////////////////////////////////////////

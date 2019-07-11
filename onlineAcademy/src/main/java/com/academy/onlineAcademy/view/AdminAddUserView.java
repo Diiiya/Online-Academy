@@ -60,7 +60,8 @@ public class AdminAddUserView extends VerticalLayout implements View {
 	private VerticalLayout initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		
-		HorizontalLayout layoutH = AdminViews.getTopBar(navigator);
+		AdminViews adminViews = new AdminViews();
+		HorizontalLayout layoutH = adminViews.getTopBar(navigator);
 		VerticalLayout layoutVBody = getBodyLayout();
 		callBinder();
 		
@@ -98,8 +99,11 @@ public class AdminAddUserView extends VerticalLayout implements View {
 	private Button getAddButton() {
 		Button addButton = new Button("ADD");
 		addButton.setWidth("100");
-		addButton.addClickListener(e -> NewUserMethods.addUser(binder, Type.ADMIN, fullNameField.getValue(), usernameField.getValue(), emailField.getValue(),
-				passwordField.getValue(), confirmPasswordField.getValue()));
+		addButton.addClickListener(e -> {
+			NewUserMethods newUserMethods = new NewUserMethods();
+			newUserMethods.addUser(binder, Type.ADMIN, fullNameField.getValue(), usernameField.getValue(), 
+					emailField.getValue(), passwordField.getValue(), confirmPasswordField.getValue());
+		});
 		
 		return addButton;
 	}

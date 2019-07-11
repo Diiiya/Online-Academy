@@ -20,10 +20,10 @@ public class UpdateUserMethods {
 	
 	private static Logger logger = Logger.getLogger(UpdateUserMethods.class.getName());
 	
-	private static Person selectedPerson;
-	private static PersonController personObj = new PersonController();
+	private Person selectedPerson;
+	private PersonController personObj = new PersonController();
 	
-	public static void getUserInfo(int userId, Binder<Person> binder) {
+	public void getUserInfo(int userId, Binder<Person> binder) {
 		try {
 			selectedPerson = personObj.getPersonById(userId);			
 			binder.readBean(selectedPerson);
@@ -37,11 +37,11 @@ public class UpdateUserMethods {
 		}
 	}
 	
-	public static Person getPerson() {
+	public Person getPerson() {
 		return selectedPerson;
 	}
 	
-	public static boolean updatePersonSettings(Person selectedPerson, Binder<Person> binder, String enteredEmail, String password, String confirmPassword) {
+	public boolean updatePersonSettings(Person selectedPerson, Binder<Person> binder, String enteredEmail, String password, String confirmPassword) {
 		try {
 			existingEmail(enteredEmail);
 			matchingPasswords(password, confirmPassword);
@@ -79,7 +79,7 @@ public class UpdateUserMethods {
 		return false;
 	}
 	
-	public static boolean updatePersonSettings(Person selectedPerson, Binder<Person> binder, String enteredEmail) {
+	public boolean updatePersonSettings(Person selectedPerson, Binder<Person> binder, String enteredEmail) {
 		try {
 			existingEmail(enteredEmail);
 			writeBean(binder);
@@ -109,7 +109,7 @@ public class UpdateUserMethods {
 		return false;
 	}
 	
-	private static void existingEmail(String enteredEmail) {
+	private void existingEmail(String enteredEmail) {
 		try {
 			personObj.getPersonByEmail(enteredEmail);
 			existingEmailUser(selectedPerson, enteredEmail);
@@ -127,7 +127,7 @@ public class UpdateUserMethods {
 		}	
 	}
 	
-	private static void existingEmailUser(Person selectedPerson, String enteredEmail) throws UpdateUserException{
+	private void existingEmailUser(Person selectedPerson, String enteredEmail) throws UpdateUserException{
 		if (selectedPerson.getEmail().equals(enteredEmail)) {
     	}
     	else {
@@ -135,7 +135,7 @@ public class UpdateUserMethods {
     	}
 	}
 	
-	private static void matchingPasswords(String password, String confirmPassword) throws UpdateUserException {
+	private void matchingPasswords(String password, String confirmPassword) throws UpdateUserException {
 		if (password != null) {
 			if (password.equals(confirmPassword)) {
 				
@@ -146,7 +146,7 @@ public class UpdateUserMethods {
 		}	
 	}
 	
-	private static void writeBean(Binder<Person> binder) throws UpdateUserException{
+	private void writeBean(Binder<Person> binder) throws UpdateUserException{
 		try {
 			binder.writeBean(selectedPerson);
 		}
@@ -155,7 +155,7 @@ public class UpdateUserMethods {
 		}
 	}
 	
-	private static void updateInDatabase() throws UpdateUserException {
+	private void updateInDatabase() throws UpdateUserException {
 		try {
 			personObj.updatePerson(selectedPerson);
 			Notification notif = new Notification("Confirmation!", "Profile successfully updated!", Notification.TYPE_WARNING_MESSAGE);

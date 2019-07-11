@@ -21,15 +21,15 @@ public class NewOrderMethods {
 	
 	private static Logger logger = Logger.getLogger(NewOrderMethods.class.getName());
 	
-	private static Person person;
-	private static OrderController orderObj = new OrderController();
-	private static PersonController personObj = new PersonController();
-	private static CourseController courseObj = new CourseController();
+	private Person person;
+	private OrderController orderObj = new OrderController();
+	private PersonController personObj = new PersonController();
+	private CourseController courseObj = new CourseController();
 	
 	///////////////
 	// FOR ADMIN
 	//////////////
-	public static List<String> getCourses(CourseController courseObj) {
+	public List<String> getCourses(CourseController courseObj) {
 		
 		List<String> courseNames = new ArrayList<>();
 		List<Course> courses;
@@ -41,7 +41,7 @@ public class NewOrderMethods {
 		return courseNames;
 	}
 	
-	public static void placeOrder(String userEmail, String courseName) {
+	public void placeOrder(String userEmail, String courseName) {
 		try {
 			int courseId = getCourseId(courseName);
 			checkIfEmailExists(userEmail);
@@ -66,7 +66,7 @@ public class NewOrderMethods {
 		}
 	}
 	
-	private static void checkIfEmailExists(String email) throws OrderException {
+	private void checkIfEmailExists(String email) throws OrderException {
 		try {
 			person = personObj.getPersonByEmail(email.toUpperCase());
 		}
@@ -75,7 +75,7 @@ public class NewOrderMethods {
 		}
 	}
 	
-	private static void createNewOrder(int courseId) throws OrderException {
+	private void createNewOrder(int courseId) throws OrderException {
 		try {
 			Date date = new Date();
 			Order newOrder = new Order(person.getId(), courseId, date, true, 0);
@@ -92,7 +92,7 @@ public class NewOrderMethods {
 		
 	}
 	
-	private static int getCourseId(String courseName) {
+	private int getCourseId(String courseName) {
 		Course course = courseObj.getCourseByName(courseName);
 		int courseId = course.getId();
 		return courseId;
@@ -101,7 +101,7 @@ public class NewOrderMethods {
 	//////////////
 	// FOR USER
 	/////////////
-	public static void placeOrder(int userId, Course selectedCourse) {
+	public void placeOrder(int userId, Course selectedCourse) {
 		Date date = new Date();
 		if(userId == 0) {
 			Notification notif = new Notification("Warning","Please log in to continue ... ",

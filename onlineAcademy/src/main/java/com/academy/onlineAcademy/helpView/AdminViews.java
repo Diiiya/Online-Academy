@@ -18,10 +18,10 @@ import com.vaadin.ui.MenuBar.MenuItem;
 
 public class AdminViews extends VerticalLayout implements View {
 	
-	private static Navigator navigator = UI.getCurrent().getNavigator();
-	private static String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+	private Navigator navigator = UI.getCurrent().getNavigator();
+	private String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 	
-	public static HorizontalLayout getTopBar(Navigator navigator) {
+	public HorizontalLayout getTopBar(Navigator navigator) {
 		HorizontalLayout layoutH = new HorizontalLayout();
 		layoutH.setSpacing(true);
 		layoutH.setWidth("100%");
@@ -50,7 +50,7 @@ public class AdminViews extends VerticalLayout implements View {
 		return layoutH;
 	}
 	
-	static MenuBar.Command createNavigationCommand(String navigationView) {
+	MenuBar.Command createNavigationCommand(String navigationView) {
 		return new MenuBar.Command() {
 		    public void menuSelected(MenuItem selectedItem) {
 		    	navigator.navigateTo(navigationView);
@@ -58,7 +58,7 @@ public class AdminViews extends VerticalLayout implements View {
 		};
 	}
 	
-	static MenuBar.Command logoutNavigationCommand(String navigationView) {
+	MenuBar.Command logoutNavigationCommand(String navigationView) {
 		return new MenuBar.Command() {
 		    public void menuSelected(MenuItem selectedItem) {
 		    	UI ui = UI.getCurrent();

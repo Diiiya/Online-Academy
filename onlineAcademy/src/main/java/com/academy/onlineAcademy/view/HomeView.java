@@ -44,11 +44,13 @@ public class HomeView extends VerticalLayout implements View {
 	
 	private int selectedCourseId;
 	private Course selectedCourse;
+	private UserViews userViews;
 			
 	public HomeView() {
 		
 		navigator = UI.getCurrent().getNavigator();
 		courseObj = new CourseController();
+		userViews = new UserViews();
 		//initMainlayout();
 	}
 	
@@ -70,7 +72,9 @@ public class HomeView extends VerticalLayout implements View {
 		buyCourseButton.setVisible(false);
 		buyCourseButton.addClickListener(e -> {
 			int userId = getUserId();
-			NewOrderMethods.placeOrder(userId, selectedCourse);
+			NewOrderMethods newOrderMethods = new NewOrderMethods();
+			newOrderMethods.placeOrder(userId, selectedCourse);
+			userViews.setLabelValue(userId);
 		});
 		
 		mainVLayout.addComponents(layoutH, coverImage, searchHLayout, topCoursesLabel, grid, buyCourseButton);
@@ -161,7 +165,8 @@ public class HomeView extends VerticalLayout implements View {
 		int userId = getUserId();
 		if (userId != 0) {
 			System.out.println(" Home page ID :" + userId);
-			layoutH = UserViews.getTopBar(userId);
+			
+			layoutH = userViews.getTopBar(userId);
 		}
 		else {
 			System.out.println("Doesn't go inside the else?!");
@@ -173,6 +178,7 @@ public class HomeView extends VerticalLayout implements View {
 	@Override
 	public void enter(ViewChangeEvent event) {
 		View.super.enter(event);
+		getRightTopBar();
 		initMainlayout();
 		
         List<Course> courses = courseObj.getAllCourses();

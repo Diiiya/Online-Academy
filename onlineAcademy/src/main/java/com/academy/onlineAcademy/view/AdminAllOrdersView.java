@@ -39,12 +39,14 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 	private Grid<com.academy.onlineAcademy.model.Order> grid;
 	private int selectedOrderId;
 	private ComboBox<String> selectCourseCB;
+	private NewOrderMethods newOrderMethods;
 	
 	public AdminAllOrdersView() {
 		
 		navigator = UI.getCurrent().getNavigator();
 		orderObj = new OrderController();
 		courseObj = new CourseController();
+		newOrderMethods = new NewOrderMethods();
 		initMainLayout();
 	
 	}
@@ -53,7 +55,8 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		mainVLayout.setHeight("100%");
 		
-		HorizontalLayout layoutH = AdminViews.getTopBar(navigator);
+		AdminViews adminViews = new AdminViews();
+		HorizontalLayout layoutH = adminViews.getTopBar(navigator);
 		HorizontalLayout searchHLayout = getSearchLayout();
 		Label topLabel = new Label("Seach for a specific order by ID:");
 		buildGrid();
@@ -104,7 +107,7 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		
 		selectCourseCB = new ComboBox<>("Select a course");
 		
-		List<String> courseNames = NewOrderMethods.getCourses(courseObj);
+		List<String> courseNames = newOrderMethods.getCourses(courseObj);
 		selectCourseCB.setItems(courseNames);
 		
 		customerEmailField = new TextField("User email: ");
@@ -169,7 +172,7 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		String courseName = selectCourseCB.getValue();
 		String userEmail = customerEmailField.getValue();
 		if (courseName != null) {
-			NewOrderMethods.placeOrder(userEmail, courseName);
+			newOrderMethods.placeOrder(userEmail, courseName);
 		}
 		else {
 			Notification notif = new Notification("Warning!", "Both fields should be filled in",

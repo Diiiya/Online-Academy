@@ -20,9 +20,9 @@ public class NewUserMethods {
 	
 	private static Logger logger = Logger.getLogger(NewUserMethods.class.getName());
 	
-	static PersonController obj = new PersonController();
+	private PersonController obj = new PersonController();
 	
-	public static void addUser(Binder<Person> binder, Type userType, String fullName, String username, String email, String password, String confirmPassword) {
+	public void addUser(Binder<Person> binder, Type userType, String fullName, String username, String email, String password, String confirmPassword) {
 		try {
 			checkValidation(userType, binder);
 			existingUsername(username);
@@ -77,7 +77,7 @@ public class NewUserMethods {
 		
 	}
 	
-	private static void checkValidation(Type userType, Binder<Person> binder) throws NewUserException{
+	private void checkValidation(Type userType, Binder<Person> binder) throws NewUserException{
 		if(userType == Type.ADMIN) {
 			if (binder.validate().isOk() == true) {
 				
@@ -99,7 +99,7 @@ public class NewUserMethods {
 		}
 	}
 	
-	private static void existingUsername(String username) throws NewUserException {
+	private void existingUsername(String username) throws NewUserException {
 		try {
 	    	obj.getPersonByUsername(username.toUpperCase());
 	    	throw new NewUserException(NewUserErrorType.EXISTING_USERNAME);
@@ -109,7 +109,7 @@ public class NewUserMethods {
 		 }
 	}
 	
-	private static void existingEmail(String email) throws NewUserException {
+	private void existingEmail(String email) throws NewUserException {
 		try {
 	    	obj.getPersonByEmail(email.toUpperCase());
 	    	throw new NewUserException(NewUserErrorType.EXISTING_EMAIL);	    	
@@ -119,7 +119,7 @@ public class NewUserMethods {
 		
 	}
 	
-	private static void matchingPasswords(String password, String confirmPassword) throws NewUserException {
+	private void matchingPasswords(String password, String confirmPassword) throws NewUserException {
 		if (password.equals(confirmPassword)) {
 			
 		}
@@ -128,7 +128,7 @@ public class NewUserMethods {
 		}	
 	}
 	
-	private static void addUserToDatabase(String fullName, String username, String email, String password) throws NewUserException {
+	private void addUserToDatabase(String fullName, String username, String email, String password) throws NewUserException {
 		try {
 			obj.addPerson(fullName, username.toUpperCase(), email, password, null, Type.USER, null, null);
 			

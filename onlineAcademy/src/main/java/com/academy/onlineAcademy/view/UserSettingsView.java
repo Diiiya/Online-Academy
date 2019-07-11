@@ -32,6 +32,8 @@ import com.vaadin.ui.VerticalLayout;
 public class UserSettingsView extends VerticalLayout implements View {
 	
 	private Binder<Person> binder;
+	private UserViews userViews;
+	private UpdateUserMethods updateUserMethods;
 	private Person person;
 	private String password = null;
 	private String confirmPassword = null;
@@ -47,6 +49,8 @@ public class UserSettingsView extends VerticalLayout implements View {
 		
 	public UserSettingsView() {
 		
+		updateUserMethods = new UpdateUserMethods();
+		userViews = new UserViews();
 		person = new Person();
 		fullNameField = new TextField("Full name:");
 		emailField = new TextField("Email:");
@@ -59,9 +63,8 @@ public class UserSettingsView extends VerticalLayout implements View {
     
 	private VerticalLayout initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
-		
 		System.out.println(" User settings ID :" + userId);
-		HorizontalLayout layoutH = UserViews.getTopBar(userId);
+		HorizontalLayout layoutH = userViews.getTopBar(userId);
 		VerticalLayout layoutVBody = getBodyLayout();
 		
 //		binder = callBinder();
@@ -85,7 +88,7 @@ public class UserSettingsView extends VerticalLayout implements View {
 		updateButton.addClickListener(e -> {
 			boolean isSuccessful = getFieldsValues();
 			if (isSuccessful == true) {
-				UpdateUserMethods.updatePersonSettings(person, binder, enteredEmail, password, confirmPassword);
+				updateUserMethods.updatePersonSettings(person, binder, enteredEmail, password, confirmPassword);
 			}
 			
 		});
@@ -169,17 +172,18 @@ public class UserSettingsView extends VerticalLayout implements View {
 		binder = new Binder<Person>();
 		
 		binder.forField(fullNameField)
-		.withValidator(new StringLengthValidator("Name must be between 5 and 30 characters long!",3, 50))
 		.asRequired("Cannot be empty")
+		.withValidator(new StringLengthValidator("Name must be between 5 and 30 characters long!",3, 50))
 	    .bind(Person::getFullName, Person::setFullName);
 		
 		binder.forField(emailField)
+		.asRequired("Cannot be empty")
 		.withValidator(new EmailValidator("This doesn't seem to be a valid email address"))
 		.withValidator(email -> email.length() <= 50, "Email address should be max 50 characters long!")
-		.asRequired("Cannot be empty")
 	    .bind(Person::getEmail, Person::setEmail);
 		
-		binder.forField(passwordField).asRequired("Cannot be empty")
+		binder.forField(passwordField)
+		.asRequired("Cannot be empty")
 		.withValidator(new RegexpValidator("Password should contain at least one digit, one lower, one upper case letter and special symbol (# $ ^ + = ! * () @ % &) "
 				+ "and be at least 8 characters long!", "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[#$^+=!*()@%&]).{8,30}$"))
 		.bind(Person::getPassword, Person::setPassword);
@@ -195,8 +199,9 @@ public class UserSettingsView extends VerticalLayout implements View {
 		VaadinSession session = ui.getSession();
 		if (session.getAttribute("user-id") != null) {
 			userId = Integer.valueOf(String.valueOf(session.getAttribute("user-id")));
-			UpdateUserMethods.getUserInfo(userId, binder);
-			person = UpdateUserMethods.getPerson();
+			updateUserMethods.getUserInfo(userId, binder);
+			person = updateUserMethods.getPerson();
+			userViews.setLabelValue(userId);
 		}
 		else {
 			System.out.println("USER ID VAL:" + session.getAttribute("user-id"));
