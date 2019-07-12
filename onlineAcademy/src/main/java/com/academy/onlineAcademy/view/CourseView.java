@@ -1,21 +1,21 @@
 package com.academy.onlineAcademy.view;
 
-import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 import com.academy.onlineAcademy.controller.CourseController;
 import com.academy.onlineAcademy.helpView.UserViews;
+import com.academy.onlineAcademy.helper.InputSource;
 import com.academy.onlineAcademy.model.Course;
-import com.vaadin.data.Binder;
-import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.FileResource;
-import com.vaadin.server.VaadinService;
+import com.vaadin.server.StreamResource;
+import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
@@ -28,12 +28,16 @@ public class CourseView extends VerticalLayout implements View {
 	
 	private Label courseTitleLabel;
 	private Label courseContentLabel;
+	private Image courseImage;
+	private VerticalLayout layoutVL;
 	
 	public CourseView() {
 		
 		course = new Course();
 		courseTitleLabel = new Label();
 		courseContentLabel = new Label();
+		courseImage = new Image();
+		getAndDisplayCourse();
 		initMainlayout();
 		
 	}
@@ -53,12 +57,8 @@ public class CourseView extends VerticalLayout implements View {
 	
 	private HorizontalLayout getLayoutBody() {
 		HorizontalLayout layoutBody = new HorizontalLayout();
-		VerticalLayout layoutVL = new VerticalLayout();
+		layoutVL = new VerticalLayout();
 		layoutVL.setWidth("1200px");
-		
-		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-		FileResource courseImageResource = new FileResource(new File(basepath + "/1online-courses_0.jpg"));
-		Image courseImage = new Image("", courseImageResource);
 		courseImage.setWidth("600px");
 		courseImage.setHeight("300px");
 		layoutVL.addComponents(courseTitleLabel, courseImage, courseContentLabel);
@@ -79,9 +79,7 @@ public class CourseView extends VerticalLayout implements View {
 		UI ui = UI.getCurrent();
 		VaadinSession session = ui.getSession();
 		if (session.getAttribute("course-id") != null) {
-		courseId = Integer.valueOf(String.valueOf(session.getAttribute("course-id")));
-		}
-		else {
+		    courseId = Integer.valueOf(String.valueOf(session.getAttribute("course-id")));
 		}
 	}
 	
@@ -89,11 +87,21 @@ public class CourseView extends VerticalLayout implements View {
 		try {
 			course = courseObj.getCourseById(courseId);
 			courseTitleLabel.setValue(course.getName());
+			StreamSource imagesource = new InputSource(course.getCoverPhoto());
+			StreamResource imageResource = new StreamResource(imagesource, "CoverImage.jpg");
+			courseImage.setSource(imageResource);
+			imageResource.setFilename(generateResourceName());
 			courseContentLabel.setValue(course.getDescription());
 		}
 		catch(Exception ex) {
-			
+			ex.printStackTrace();
 		}
+	}
+	
+	protected String generateResourceName() {
+	    SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+	    String timestamp = df.format(new Date());
+	    return "image_" + timestamp + ".png";
 	}
 	
 	@Override

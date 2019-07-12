@@ -23,16 +23,13 @@ public class NewCourseMethods {
 	static Logger logger = Logger.getLogger(NewCourseMethods.class.getName());
 	
 	private CourseController courseObj = new CourseController();
-	private String enteredName;
-//	private static File enteredCoverPhoto;
 	private byte[] convertedCoverPhoto;
-	private String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 	private FileInputStream fileStream = null;
 	
-	public void addNewCourse(Binder<Course> binder, String name, String description, String teacherName, int duration, Level level,
-			Category category, double price, boolean givesCertificate /* , File coverPhoto */) {
+	public void addNewCourse(Binder<Course> binder, String name, String description, String teacherName, File enteredCoverPhoto, int duration, Level level,
+			Category category, double price, boolean givesCertificate) {
 		try {
-			//convertInputPhoto(enteredCoverPhoto);
+			convertInputPhoto(enteredCoverPhoto);
 			existingCourseCheck(name);
 			addCourseToDatabase(name, description, teacherName, duration, level, category, price, givesCertificate);
 		}
@@ -57,8 +54,7 @@ public class NewCourseMethods {
 	
 	private void convertInputPhoto(File photoFileInput) {
 		try {
-		fileStream = new FileInputStream(new File(basepath + "/1online-courses_0.jpg"));
-	    //fileStream = new FileInputStream(photoFileInput);
+	    fileStream = new FileInputStream(photoFileInput);
 		convertedCoverPhoto = fileStream.readAllBytes();
 		
 		}
