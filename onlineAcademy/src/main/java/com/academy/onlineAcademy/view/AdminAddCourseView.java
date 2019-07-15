@@ -8,6 +8,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.academy.onlineAcademy.converters.StringToCategoryConverter;
+import com.academy.onlineAcademy.converters.StringToLevelConverter;
 import com.academy.onlineAcademy.exceptions.NewCourseException;
 import com.academy.onlineAcademy.exceptions.NewCourseException.NewCourseTypeError;
 import com.academy.onlineAcademy.helpView.AdminViews;
@@ -17,8 +19,10 @@ import com.academy.onlineAcademy.model.Category;
 import com.academy.onlineAcademy.model.Course;
 import com.academy.onlineAcademy.model.Level;
 import com.vaadin.data.Binder;
+import com.vaadin.data.Validator;
 import com.vaadin.data.converter.StringToDoubleConverter;
 import com.vaadin.data.converter.StringToIntegerConverter;
+import com.vaadin.data.validator.IntegerRangeValidator;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
@@ -134,17 +138,44 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 	public void callBinder() {
 		binder = new Binder<>();
 		
-		binder.forField(nameField).withValidator(new StringLengthValidator("Name must be between 3 and 30 characters long!",3, 30)).asRequired("Cannot be empty")
+		binder.forField(nameField)
+		.asRequired("Cannot be empty")
+		.withValidator(new StringLengthValidator("Name must be between 3 and 30 characters long!",3, 30))
 	    .bind(Course::getName, Course::setName);
-		binder.forField(descriptionField).withValidator(description -> description.length() <= 200, "Description max 200 characters long!").asRequired("Cannot be empty")
+		
+		binder.forField(descriptionField)
+		.asRequired("Cannot be empty")
+		.withValidator(description -> description.length() <= 200, "Description max 200 characters long!")
 	    .bind(Course::getDescription, Course::setDescription);
-		binder.forField(teacherNameField).withValidator(new StringLengthValidator("Teacher's name must be between 3 and 30 characters long!",3, 30)).asRequired("Cannot be empty")
+		
+		binder.forField(teacherNameField)
+		.asRequired("Cannot be empty")
+		.withValidator(new StringLengthValidator("Teacher's name must be between 3 and 30 characters long!",3, 30))
 	    .bind(Course::getTeacherName, Course::setTeacherName);
-		binder.forField(durationField).withConverter(new StringToIntegerConverter("Must enter a number!")).asRequired("Cannot be empty")
+		
+		binder.forField(durationField)
+		.asRequired("Cannot be empty")
+		.withConverter(new StringToIntegerConverter("Must enter a number!"))
 		.bind(Course::getDuration, Course::setDuration);
-		binder.forField(priceField).withConverter(new StringToDoubleConverter("Must enter a decimal number!")).asRequired("Cannot be empty")
+		
+		binder.forField(priceField)
+		.asRequired("Cannot be empty")
+		.withConverter(new StringToDoubleConverter("Must enter a decimal number!"))
 		.bind(Course::getPrice, Course::setPrice);
-		binder.forField(selectCategoryComboBox).asRequired("Cannot be empty");
+		
+		binder.forField(selectCategoryComboBox)
+		.asRequired("Cannot be empty")
+		.withConverter(new StringToCategoryConverter())
+		.bind(Course::getCategory, Course::setCategory);
+		
+		binder.forField(selectLevelComboBox)
+		.asRequired("Cannot be empty")
+		.withConverter(new StringToLevelConverter())
+		.bind(Course::getLevel, Course::setLevel);
+		
+		binder.forField(certCheckbox)
+		.asRequired("Cannot be empty")
+		.bind(Course::getGivesCertificate, Course::setGivesCertificate);
 		
 	}
 	
@@ -190,84 +221,87 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		teacherName = teacherNameField.getValue();
 		level = Level.valueOf(selectLevelComboBox.getValue());
 		givesCertificate = certCheckbox.getValue();
+		duration = Integer.parseInt(durationField.getValue());
+		price = Integer.parseInt(priceField.getValue());
+		category = Category.valueOf(selectCategoryComboBox.getValue());
 		
-		try {
-			duration = checkDurationFieldEmpty();
-			price = checkPriceFieldEmpty();
-			category = checkCategoryFieldEmpty();
-		}
-		catch (NewCourseException ex) {
-			if (ex.getNewCourseTypeError() == NewCourseException.NewCourseTypeError.DURATION_NUMERIC_VALUE) {
-				Notification notif = new Notification("Warning", "The duration should be a numeric value!", Notification.TYPE_WARNING_MESSAGE);
-				notif.show(Page.getCurrent());
-				
-				logger.log(java.util.logging.Level.SEVERE, "The duration value should be a number!", ex);
-			}
-			else if (ex.getNewCourseTypeError() == NewCourseTypeError.PRICE_NUMERIC_VALUE) {
-				Notification notif = new Notification("Warning", "The price should be a numeric value!", Notification.TYPE_WARNING_MESSAGE);
-				notif.show(Page.getCurrent());
-				
-				logger.log(java.util.logging.Level.SEVERE, "The price value should be a number!", ex);
-			}
-			else if (ex.getNewCourseTypeError() == NewCourseTypeError.CATEGORY_REQUIRED) {
-				Notification notif = new Notification("Warning", "The category field should be filled in!", Notification.TYPE_WARNING_MESSAGE);
-				notif.show(Page.getCurrent());
-				
-				logger.log(java.util.logging.Level.SEVERE, "The category filed cannot be left empty!", ex);
-			}
-		}
+//		try {
+//			duration = checkDurationFieldEmpty();
+//			price = checkPriceFieldEmpty();
+//			category = checkCategoryFieldEmpty();
+//		}
+//		catch (NewCourseException ex) {
+//			if (ex.getNewCourseTypeError() == NewCourseException.NewCourseTypeError.DURATION_NUMERIC_VALUE) {
+//				Notification notif = new Notification("Warning", "The duration should be a numeric value!", Notification.TYPE_WARNING_MESSAGE);
+//				notif.show(Page.getCurrent());
+//				
+//				logger.log(java.util.logging.Level.SEVERE, "The duration value should be a number!", ex);
+//			}
+//			else if (ex.getNewCourseTypeError() == NewCourseTypeError.PRICE_NUMERIC_VALUE) {
+//				Notification notif = new Notification("Warning", "The price should be a numeric value!", Notification.TYPE_WARNING_MESSAGE);
+//				notif.show(Page.getCurrent());
+//				
+//				logger.log(java.util.logging.Level.SEVERE, "The price value should be a number!", ex);
+//			}
+//			else if (ex.getNewCourseTypeError() == NewCourseTypeError.CATEGORY_REQUIRED) {
+//				Notification notif = new Notification("Warning", "The category field should be filled in!", Notification.TYPE_WARNING_MESSAGE);
+//				notif.show(Page.getCurrent());
+//				
+//				logger.log(java.util.logging.Level.SEVERE, "The category filed cannot be left empty!", ex);
+//			}
+//		}
 	
 	}
 	
-	private int checkDurationFieldEmpty() throws NewCourseException {
-		if (!durationField.getValue().isBlank()) {
-			parseDuration();
-			return duration;
-		}
-		else {
-			throw new NewCourseException(NewCourseTypeError.DURATION_NUMERIC_VALUE);
-		}
-	}
-	
-	private int parseDuration() throws NewCourseException{
-		try {
-			duration = Integer.parseInt(durationField.getValue());
-			return duration;
-		}
-		catch (Exception ex) {
-			throw new NewCourseException(NewCourseTypeError.DURATION_NUMERIC_VALUE);
-		}
-	}
-	
-	private double checkPriceFieldEmpty() throws NewCourseException {
-		if (!priceField.getValue().isBlank()) {
-			parsePrice();
-			return price;
-		}
-		else {
-			throw new NewCourseException(NewCourseTypeError.PRICE_NUMERIC_VALUE);
-		}
-	}
-	
-	private double parsePrice() throws NewCourseException {
-		try {
-			price = Integer.parseInt(priceField.getValue());
-			return price;
-		}
-		catch (Exception ex){
-			throw new NewCourseException(NewCourseTypeError.PRICE_NUMERIC_VALUE);
-		}
-	}
-	
-	private Category checkCategoryFieldEmpty() throws NewCourseException {
-		try {
-			selectCategoryComboBox.getValue();
-			category = Category.valueOf(selectCategoryComboBox.getValue());
-			return category;
-		}
-		catch (Exception ex) {
-			 throw new NewCourseException(NewCourseTypeError.CATEGORY_REQUIRED);
-		}
-	}
+//	private int checkDurationFieldEmpty() throws NewCourseException {
+//		if (!durationField.getValue().isBlank()) {
+//			parseDuration();
+//			return duration;
+//		}
+//		else {
+//			throw new NewCourseException(NewCourseTypeError.DURATION_NUMERIC_VALUE);
+//		}
+//	}
+//	
+//	private int parseDuration() throws NewCourseException{
+//		try {
+//			duration = Integer.parseInt(durationField.getValue());
+//			return duration;
+//		}
+//		catch (Exception ex) {
+//			throw new NewCourseException(NewCourseTypeError.DURATION_NUMERIC_VALUE);
+//		}
+//	}
+//	
+//	private double checkPriceFieldEmpty() throws NewCourseException {
+//		if (!priceField.getValue().isBlank()) {
+//			parsePrice();
+//			return price;
+//		}
+//		else {
+//			throw new NewCourseException(NewCourseTypeError.PRICE_NUMERIC_VALUE);
+//		}
+//	}
+//	
+//	private double parsePrice() throws NewCourseException {
+//		try {
+//			price = Integer.parseInt(priceField.getValue());
+//			return price;
+//		}
+//		catch (Exception ex){
+//			throw new NewCourseException(NewCourseTypeError.PRICE_NUMERIC_VALUE);
+//		}
+//	}
+//	
+//	private Category checkCategoryFieldEmpty() throws NewCourseException {
+//		try {
+//			selectCategoryComboBox.getValue();
+//			category = Category.valueOf(selectCategoryComboBox.getValue());
+//			return category;
+//		}
+//		catch (Exception ex) {
+//			 throw new NewCourseException(NewCourseTypeError.CATEGORY_REQUIRED);
+//		}
+//	}
 
 }

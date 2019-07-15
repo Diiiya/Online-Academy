@@ -96,7 +96,7 @@ public class SignUpView extends VerticalLayout implements View {
 		addButton.addClickListener(e -> {
 			NewUserMethods newUserMethods = new NewUserMethods();
 			newUserMethods.addUser(binder, Type.USER, fullNameField.getValue(), usernameField.getValue(), emailField.getValue(),
-					passwordField.getValue(), confirmPasswordField.getValue()); 
+					passwordField.getValue(), confirmPasswordField.getValue(), Type.USER.toString()); 
 		});
 		
 		

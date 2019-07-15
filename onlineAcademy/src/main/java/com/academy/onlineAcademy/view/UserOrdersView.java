@@ -8,11 +8,13 @@ import java.util.logging.Logger;
 
 import com.academy.onlineAcademy.controller.CourseController;
 import com.academy.onlineAcademy.controller.OrderController;
+import com.academy.onlineAcademy.controller.PersonController;
 import com.academy.onlineAcademy.helpView.UserViews;
 import com.academy.onlineAcademy.helper.UserOrdersMethods;
 import com.academy.onlineAcademy.model.CardDetails;
 import com.academy.onlineAcademy.model.Course;
 import com.academy.onlineAcademy.model.Order;
+import com.academy.onlineAcademy.model.Person;
 import com.vaadin.data.Binder;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.icons.VaadinIcons;
@@ -234,9 +236,9 @@ public class UserOrdersView extends VerticalLayout implements View {
 			userId = Integer.valueOf(String.valueOf(session.getAttribute("user-id")));
 			orders = userOrdersMethods.getAllUnpaidOrdersOfTheUser(userId);
 			grid.setItems(orders);
+			
 			totalSum = userOrdersMethods.calculateTotalPrice();
 			totalSumLabel1.setValue(String.valueOf(totalSum) + " euros");
-//			System.out.println("NEW USER ID ~ " + userId);
 			userViews.setLabelValue(userId);
 			///////////////////////////////////////////////////
 			// label.setValue to change the coursesCount !!! //

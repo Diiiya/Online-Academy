@@ -7,22 +7,22 @@ import com.vaadin.server.StreamResource.StreamSource;
 
 public class InputSource implements StreamSource {
 
-	private byte[] coverPhoto;
+	private byte[] photo;
 	
-	public InputSource(byte[] coverPhotoI) {
-		coverPhoto = coverPhotoI;
+	public InputSource(byte[] inputPhoto) {
+		photo = inputPhoto;
 	}
 	
-	public void getCoverPhoto(byte[] coverPhotoI) {
+	public void getCoverPhoto(byte[] inputPhoto) {
 		// TODO Auto-generated method stub
-		coverPhoto = coverPhotoI;
+		photo = inputPhoto;
 //		return this.coverPhoto;
 	}
 
 	@Override
 	public InputStream getStream() {
 		// TODO Auto-generated method stub
-		InputStream targetStream = new ByteArrayInputStream(coverPhoto);
+		InputStream targetStream = new ByteArrayInputStream(photo);
 		return targetStream;
 	}
 

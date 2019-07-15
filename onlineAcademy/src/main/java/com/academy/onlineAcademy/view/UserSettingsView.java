@@ -2,21 +2,21 @@ package com.academy.onlineAcademy.view;
 
 import java.io.File;
 
-import com.academy.onlineAcademy.controller.PersonController;
 import com.academy.onlineAcademy.helpView.UserViews;
+import com.academy.onlineAcademy.helper.ImageUploader;
+import com.academy.onlineAcademy.helper.InputSource;
 import com.academy.onlineAcademy.helper.UpdateUserMethods;
 import com.academy.onlineAcademy.model.Person;
 import com.vaadin.data.Binder;
 import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.data.validator.StringLengthValidator;
-import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
-import com.vaadin.server.VaadinService;
+import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinSession;
+import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
@@ -27,6 +27,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
 
 public class UserSettingsView extends VerticalLayout implements View {
@@ -39,8 +40,12 @@ public class UserSettingsView extends VerticalLayout implements View {
 	private String confirmPassword = null;
 	private String enteredEmail;
 	private int userId;
+	private final Image image = new Image("Uploaded Image");
+	private Image profileImage;
+	private ImageUploader receiver;
 	
 	private Panel photoPanel;	
+	private FormLayout photoContent;
 	private Panel accountPanel;	
 	private TextField fullNameField;
 	private TextField emailField;
@@ -56,6 +61,8 @@ public class UserSettingsView extends VerticalLayout implements View {
 		emailField = new TextField("Email:");
 		passwordField = new PasswordField("Password:");
 		confirmPasswordField = new PasswordField("Confirm password:");
+		photoContent = new FormLayout();
+		profileImage = new Image();
 		
 		initMainLayout();
 				
@@ -88,7 +95,8 @@ public class UserSettingsView extends VerticalLayout implements View {
 		updateButton.addClickListener(e -> {
 			boolean isSuccessful = getFieldsValues();
 			if (isSuccessful == true) {
-				updateUserMethods.updatePersonSettings(person, binder, enteredEmail, password, confirmPassword);
+				File profileImageFile = receiver.getFile();
+				updateUserMethods.updatePersonSettings(person, binder, enteredEmail, password, confirmPassword, profileImageFile);
 			}
 			
 		});
@@ -127,30 +135,39 @@ public class UserSettingsView extends VerticalLayout implements View {
 	
 	private Panel getPhotoPanel() {
 		photoPanel = new Panel("Update my photo");
-		FormLayout photoContent = new FormLayout();
-		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();	
-		FileResource profileImageResource = new FileResource(new File(basepath + "/1024px-Circle-icons-profile.svg.png"));
-		Image profileImage = new Image("", profileImageResource);
-		HorizontalLayout layoutHsmall = new HorizontalLayout();
-		TextField photoLabel = new TextField("Photo");
-		Button photoAddButton = new Button("Add image");
+		image.setVisible(false);
+		receiver = new ImageUploader(image);
+		Upload uploadProfilePhoto = new Upload("", receiver);
+		uploadProfilePhoto.addSucceededListener(receiver);
+		image.setVisible(true);
 		
 		photoPanel.setSizeUndefined();
 		photoPanel.setHeight("400px");
-		profileImage.setWidth("200px");
-		profileImage.setHeight("200px");
+		profileImage.setWidth("150px");
+		profileImage.setHeight("150px");
+		image.setWidth("50px");
+		image.setHeight("50px");
 		
-		photoContent.addComponent(profileImage);
-		photoContent.setComponentAlignment(profileImage, Alignment.MIDDLE_CENTER);
-		layoutHsmall.addComponents(photoLabel, photoAddButton);
-		layoutHsmall.setComponentAlignment(photoAddButton, Alignment.BOTTOM_RIGHT);
-		photoContent.addComponent(layoutHsmall);
+		photoContent.addComponents(profileImage, image, uploadProfilePhoto);
+		photoContent.setComponentAlignment(profileImage, Alignment.TOP_CENTER);
+		photoContent.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
 		
 		photoContent.setSizeUndefined(); 
 		photoContent.setMargin(true);
 		photoPanel.setContent(photoContent);
 		
 		return photoPanel;
+	}
+	
+	private void setProfileImage() {
+		try {
+			StreamSource imageSource = new InputSource(person.getPhoto());
+			StreamResource imageResource = new StreamResource(imageSource, "ProfileImage.jpg");
+			profileImage.setSource(imageResource);
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 	
 	private Panel getAccountpanel() {
@@ -202,6 +219,7 @@ public class UserSettingsView extends VerticalLayout implements View {
 			updateUserMethods.getUserInfo(userId, binder);
 			person = updateUserMethods.getPerson();
 			userViews.setLabelValue(userId);
+			setProfileImage();
 		}
 		else {
 			System.out.println("USER ID VAL:" + session.getAttribute("user-id"));

@@ -98,7 +98,7 @@ public class CourseView extends VerticalLayout implements View {
 		}
 	}
 	
-	protected String generateResourceName() {
+	private String generateResourceName() {
 	    SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 	    String timestamp = df.format(new Date());
 	    return "image_" + timestamp + ".png";

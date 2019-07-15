@@ -54,9 +54,8 @@ public class NewCourseMethods {
 	
 	private void convertInputPhoto(File photoFileInput) {
 		try {
-	    fileStream = new FileInputStream(photoFileInput);
-		convertedCoverPhoto = fileStream.readAllBytes();
-		
+		    fileStream = new FileInputStream(photoFileInput);
+			convertedCoverPhoto = fileStream.readAllBytes();
 		}
 		catch (Exception ex) {
 			

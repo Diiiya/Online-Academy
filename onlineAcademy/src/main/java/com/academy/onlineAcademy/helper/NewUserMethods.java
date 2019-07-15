@@ -22,13 +22,13 @@ public class NewUserMethods {
 	
 	private PersonController obj = new PersonController();
 	
-	public void addUser(Binder<Person> binder, Type userType, String fullName, String username, String email, String password, String confirmPassword) {
+	public void addUser(Binder<Person> binder, Type userType, String fullName, String username, String email, String password, String confirmPassword, String userTypeCreated) {
 		try {
 			checkValidation(userType, binder);
 			existingUsername(username);
 			existingEmail(email);
 			matchingPasswords(password, confirmPassword);
-			addUserToDatabase(fullName, username, email, password);
+			addUserToDatabase(userType, fullName, username, email, password, userTypeCreated);
 		}
 		catch(NewUserException ex) {
 			if (ex.getNewUserErrorType() == NewUserErrorType.FAILED_VALIDATION) {
@@ -128,9 +128,14 @@ public class NewUserMethods {
 		}	
 	}
 	
-	private void addUserToDatabase(String fullName, String username, String email, String password) throws NewUserException {
+	private void addUserToDatabase(Type userType, String fullName, String username, String email, String password, String userTypeCreated) throws NewUserException {
 		try {
-			obj.addPerson(fullName, username.toUpperCase(), email, password, null, Type.USER, null, null);
+			if(userType == Type.ADMIN) {
+				 obj.addPerson(fullName, username.toUpperCase(), email, password, null, Type.valueOf(userTypeCreated), null, null);
+			}
+			else {
+			    obj.addPerson(fullName, username.toUpperCase(), email, password, null, Type.USER, null, null);
+			}
 			
 			Notification notif = new Notification("Confirmation", "The user has been created!",
 				    Notification.TYPE_WARNING_MESSAGE);

@@ -1,5 +1,8 @@
 package com.academy.onlineAcademy.helper;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,12 +25,12 @@ public class UpdateUserMethods {
 	
 	private Person selectedPerson;
 	private PersonController personObj = new PersonController();
+	private byte[] convertedProfilePhoto;
 	
 	public void getUserInfo(int userId, Binder<Person> binder) {
 		try {
 			selectedPerson = personObj.getPersonById(userId);			
 			binder.readBean(selectedPerson);
-			
 		}
 		catch(Exception ex) {
 			Notification notif = new Notification("Warning", "Could not load data from the database!", Notification.TYPE_WARNING_MESSAGE);
@@ -41,11 +44,12 @@ public class UpdateUserMethods {
 		return selectedPerson;
 	}
 	
-	public boolean updatePersonSettings(Person selectedPerson, Binder<Person> binder, String enteredEmail, String password, String confirmPassword) {
+	public boolean updatePersonSettings(Person selectedPerson, Binder<Person> binder, String enteredEmail, String password, String confirmPassword, File profileImageFile) {
 		try {
 			existingEmail(enteredEmail);
 			matchingPasswords(password, confirmPassword);
 			writeBean(binder);
+			convertInputPhoto(profileImageFile);
 			updateInDatabase();
 			return true;
 		}
@@ -152,6 +156,29 @@ public class UpdateUserMethods {
 		}
 		catch(Exception ex) {
 			throw new UpdateUserException(UpdateUserExErrorType.VALIDATION_FAILED);
+		}
+	}
+	
+	private void convertInputPhoto(File photoFileInput) {
+		FileInputStream fileStream = null;
+		try {
+		    fileStream = new FileInputStream(photoFileInput);
+			convertedProfilePhoto = fileStream.readAllBytes();
+			selectedPerson.setPhoto(convertedProfilePhoto);
+		}
+		catch (Exception ex) {
+			
+		}
+		finally {
+			if (fileStream != null) {
+				try {
+					fileStream.close();
+				} 
+				catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
 		}
 	}
 	

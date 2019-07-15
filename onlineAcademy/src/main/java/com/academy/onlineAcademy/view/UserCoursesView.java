@@ -32,16 +32,15 @@ public class UserCoursesView extends VerticalLayout implements View {
 	
 	private static Logger logger = Logger.getLogger(UserCoursesView.class.getName());
 	
-//	private CourseController courseObj;
 	private Navigator navigator;
 	private Button viewCourse;
 	private Grid<com.academy.onlineAcademy.model.Course> grid;
 	private int userId;
 	private Course selectedCourse;
-	private int courseId;
 	
 	private OrderController orderObj = new OrderController();
 	private CourseController courseObj = new CourseController();
+	private List<Order> paidOrders = new ArrayList<Order>();
 	private List<Course> paidCourses = new ArrayList<Course>();
 	private UserViews userViews;
 	
@@ -50,9 +49,7 @@ public class UserCoursesView extends VerticalLayout implements View {
 		userViews = new UserViews();
 		navigator = UI.getCurrent().getNavigator();
 		selectedCourse = new Course();
-//		courseObj = new CourseController();
 		initMainLayout();
-		refreshLayoutData();
 	
 	}
 					
@@ -117,33 +114,32 @@ public class UserCoursesView extends VerticalLayout implements View {
 		if (session.getAttribute("user-id") != null) {
 			userId = Integer.valueOf(String.valueOf(session.getAttribute("user-id")));
 			getAllPaidOrdersOfTheUser(userId);
+			grid.setItems(paidCourses);
 			userViews.setLabelValue(userId);
-			System.out.println("USER Courses userId:" + userId);
-			if (session.getAttribute("course-id") != null) {
-				courseId = Integer.valueOf(String.valueOf(session.getAttribute("course-id")));
-				System.out.println("Course id:" + courseId);
-			}
-			else {
-				System.out.println("USER ID VAL:" + session.getAttribute("user-id"));
-			}
+//			if (session.getAttribute("course-id") != null) {
+//				int courseId = Integer.valueOf(String.valueOf(session.getAttribute("course-id")));
+//			}
+//			else {
+//			}
 		}
 		else {
-			System.out.println("USER ID VAL:" + session.getAttribute("user-id"));
 		}
 	}
 	
-	private void getAllPaidOrdersOfTheUser(int userId) {
+	private List<Course> getAllPaidOrdersOfTheUser(int userId) {
+		
 		try {
-			List<Order> paidOrders = orderObj.getAllPaidOrdersByUser(userId);
+			paidOrders = orderObj.getAllPaidOrdersByUser(userId);
 			for (Order order : paidOrders) {
 				int courseId = order.getCourseId();
 				Course course = courseObj.getCourseById(courseId);
 				if(!paidCourses.contains(course)) {
 					paidCourses.add(course);
 				}
+				//grid.setItems(paidCourses);
 				
 			}
-			grid.setItems(paidCourses);
+			
 		}
 		catch (Exception ex) {
 			Notification notif = new Notification("Warning!", "No paid orders for this user have been found!");
@@ -151,6 +147,7 @@ public class UserCoursesView extends VerticalLayout implements View {
 			
 			logger.log(Level.SEVERE, "No paid orders for this user have been found!", ex);
 		}
+		return paidCourses;
 	}
 
 	
@@ -159,7 +156,7 @@ public class UserCoursesView extends VerticalLayout implements View {
 		VaadinSession session = ui.getSession();
 			
 		session.setAttribute("course-id", selectedCourse.getId());
-		System.out.println("Course id from UserCourses ~ " + selectedCourse.getId());
+//		System.out.println("Course id from UserCourses ~ " + selectedCourse.getId());
 		navigator.navigateTo("Course" + "/" + selectedCourse.getName().replaceAll("\\s", "-"));
 		
 	}

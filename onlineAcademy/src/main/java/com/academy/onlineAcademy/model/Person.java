@@ -72,16 +72,16 @@ public class Person implements Serializable{
 	private Type type = Type.USER;
 	
 
-	@JoinColumn(name="CCOURSES", updatable=false)
+	@JoinColumn(name="CCOURSES"/*, updatable=false*/)
 	@ManyToMany
 	@JoinTable(name="JOIN_PERSON_COURSE", 
 	              joinColumns = { @JoinColumn(name="Id")},
 	              inverseJoinColumns = { @JoinColumn(name="Id")}) 
-	private List<Course> listOfCourses = null;
+	private List<Course> listOfCourses;
 	
-	@JoinColumn(name="CORDERS", updatable=false)
+	@JoinColumn(name="CORDERS"/*, updatable=false*/)
 	@OneToMany(targetEntity = Order.class, mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval=true)
-	private List<Order> listOfOrders = null;
+	private List<Order> listOfOrders;
 	
 	
 	// Properties
