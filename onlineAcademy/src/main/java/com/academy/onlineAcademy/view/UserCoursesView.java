@@ -40,7 +40,6 @@ public class UserCoursesView extends VerticalLayout implements View {
 	
 	private OrderController orderObj = new OrderController();
 	private CourseController courseObj = new CourseController();
-	private List<Order> paidOrders = new ArrayList<Order>();
 	private List<Course> paidCourses = new ArrayList<Course>();
 	private UserViews userViews;
 	
@@ -56,7 +55,6 @@ public class UserCoursesView extends VerticalLayout implements View {
 	private VerticalLayout initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		
-		System.out.println(" User courses ID :" + userId);
 		HorizontalLayout layoutH = userViews.getTopBar(userId);
 		VerticalLayout layoutV = getBodyLayout();
 		
@@ -116,30 +114,33 @@ public class UserCoursesView extends VerticalLayout implements View {
 			getAllPaidOrdersOfTheUser(userId);
 			grid.setItems(paidCourses);
 			userViews.setLabelValue(userId);
-//			if (session.getAttribute("course-id") != null) {
-//				int courseId = Integer.valueOf(String.valueOf(session.getAttribute("course-id")));
-//			}
-//			else {
-//			}
 		}
 		else {
 		}
 	}
 	
+	private boolean containsCourseWithName(final List<Course> list, final String name){
+	    return list.stream().filter(o -> o.getName().equals(name)).findFirst().isPresent();
+	}
+	
 	private List<Course> getAllPaidOrdersOfTheUser(int userId) {
-		
+		List<Order> paidOrders = new ArrayList<Order>();
+		Course course = new Course();
 		try {
 			paidOrders = orderObj.getAllPaidOrdersByUser(userId);
 			for (Order order : paidOrders) {
 				int courseId = order.getCourseId();
-				Course course = courseObj.getCourseById(courseId);
-				if(!paidCourses.contains(course)) {
-					paidCourses.add(course);
+				try {
+					course = courseObj.getCourseById(courseId);
+					boolean exists = containsCourseWithName(paidCourses, course.getName());
+					if(!exists) {
+						paidCourses.add(course);
+					}
 				}
-				//grid.setItems(paidCourses);
+				catch (Exception ex) {
+				}
 				
 			}
-			
 		}
 		catch (Exception ex) {
 			Notification notif = new Notification("Warning!", "No paid orders for this user have been found!");
@@ -156,7 +157,6 @@ public class UserCoursesView extends VerticalLayout implements View {
 		VaadinSession session = ui.getSession();
 			
 		session.setAttribute("course-id", selectedCourse.getId());
-//		System.out.println("Course id from UserCourses ~ " + selectedCourse.getId());
 		navigator.navigateTo("Course" + "/" + selectedCourse.getName().replaceAll("\\s", "-"));
 		
 	}

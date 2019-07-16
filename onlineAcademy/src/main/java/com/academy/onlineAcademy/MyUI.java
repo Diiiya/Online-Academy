@@ -18,6 +18,8 @@ import com.academy.onlineAcademy.view.SignUpView;
 import com.academy.onlineAcademy.view.UserCoursesView;
 import com.academy.onlineAcademy.view.UserOrdersView;
 import com.academy.onlineAcademy.view.UserSettingsView;
+import com.vaadin.annotations.PreserveOnRefresh;
+import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.navigator.Navigator;
@@ -37,8 +39,9 @@ import com.vaadin.ui.VerticalLayout;
 @Theme("mytheme")
 // URLs without the #!
 @PushStateNavigation
+//@PreserveOnRefresh
 public class MyUI extends UI {
-
+	
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         final VerticalLayout layout = new VerticalLayout();

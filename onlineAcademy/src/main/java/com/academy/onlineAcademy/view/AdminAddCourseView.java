@@ -62,6 +62,7 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 	private final TextField durationField = new TextField("Duration:");
 	private final TextField priceField = new TextField("Price:");	
 	private final CheckBox certCheckbox = new CheckBox("Gives certificate:");
+	private File courseCoverPhotoFile = new File("");
 	
 	private String name;
 	private String description;
@@ -117,7 +118,6 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		receiver = new ImageUploader(image);
 		Upload uploadCoursePhoto = new Upload("Course cover image", receiver);
 		uploadCoursePhoto.addSucceededListener(receiver);
-		System.out.println("Has succeeded with image" + image);
 		content.addComponents(nameField, descriptionField, teacherNameField, uploadCoursePhoto, image, durationField, priceField,
 				selectCategoryComboBox, selectLevelComboBox, certCheckbox);
 		content.setSizeUndefined(); 
@@ -184,8 +184,7 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 			checkValidation();
 			convertInputValues();
 			NewCourseMethods newCourseMethods = new NewCourseMethods();
-			File file = receiver.getFile();
-			newCourseMethods.addNewCourse(binder, name, description, teacherName, file, duration, level, category, price, givesCertificate);
+			newCourseMethods.addNewCourse(binder, name, description, teacherName, courseCoverPhotoFile, duration, level, category, price, givesCertificate);
 		}
 		catch (NewCourseException ex) {
 			if (ex.getNewCourseTypeError() == NewCourseTypeError.VALIDATION_FAILED) {
@@ -224,6 +223,7 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		duration = Integer.parseInt(durationField.getValue());
 		price = Integer.parseInt(priceField.getValue());
 		category = Category.valueOf(selectCategoryComboBox.getValue());
+		courseCoverPhotoFile = receiver.getFile();
 		
 //		try {
 //			duration = checkDurationFieldEmpty();

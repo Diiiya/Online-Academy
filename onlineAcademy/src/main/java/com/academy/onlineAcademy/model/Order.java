@@ -116,10 +116,21 @@ public class Order implements Serializable{
 		this.person = person;
 	}
 	
+	/**
+	 * Class constructor.
+	 */
 	public Order() {
 		
 	}
 	
+	/**
+	 * Parameterized class constructor.
+	 * @param userId - the id of the user that places the order
+	 * @param courseId - the id of the purchased course
+	 * @param purchaseDate - the purchase date
+	 * @param isPaid - whether or not an order is complete: if true - the order has been completed = paid
+	 * @param price - the total price that should be paid to complete the order
+	 */
 	public Order(int userId, int courseId, Date purchaseDate, boolean isPaid, double price) {
 		super();
 		this.userId = userId;

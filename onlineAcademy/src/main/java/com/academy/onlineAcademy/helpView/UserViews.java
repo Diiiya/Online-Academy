@@ -46,7 +46,7 @@ public class UserViews extends VerticalLayout implements View {
 	
 	public void setLabelValue(int userId) {
 		getOrdersCountOfTheUser(userId);
-		itemsInCartCountLabel.setValue(String.valueOf(itemsInCartCount));
+		itemsInCartCountLabel.setValue(String.valueOf(itemsInCartCount));		
 		System.out.println(" The label should already be equal to " + itemsInCartCount);
 	}
 	
@@ -66,7 +66,6 @@ public class UserViews extends VerticalLayout implements View {
 		HorizontalLayout rightHorizontalL = new HorizontalLayout();
 		
 		getOrdersCountOfTheUser(userId);
-//		Label itemsInCartCountLabel = new Label();
 		itemsInCartCountLabel.setValue(String.valueOf(itemsInCartCount));
 		FileResource shoppingBasketResource = new FileResource(new File(basepath + "/shop-cart.png"));
 		Image shoppingBasketImage = new Image("", shoppingBasketResource);

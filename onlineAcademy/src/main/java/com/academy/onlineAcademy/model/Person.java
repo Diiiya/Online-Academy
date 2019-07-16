@@ -140,12 +140,25 @@ public class Person implements Serializable{
 		this.listOfOrders = listOfOrders;
 	}
 	
+	/**
+	 * Class constructor.
+	 */
 	public Person() {
 		
 	}
 	
 	
-	// Constructor
+	/**
+	 * Parameterized class constructor.
+	 * @param fullName - full name of the user
+	 * @param username - unique user name
+	 * @param email - unique user email
+	 * @param password
+	 * @param photo - optional profile photo of the user
+	 * @param type
+	 * @param listOfCourses - null by default, should contain the purchased courses
+	 * @param listOfOrders - null by default, should contain the placed (paid and not paid) orders
+	 */
 	public Person(String fullName, String username, String email, String password, byte[] photo, Type type,
 			List<Course> listOfCourses, List<Order> listOfOrders) {
 		super();

@@ -128,9 +128,9 @@ public class NewUserMethods {
 		}	
 	}
 	
-	private void addUserToDatabase(Type userType, String fullName, String username, String email, String password, String userTypeCreated) throws NewUserException {
+	private void addUserToDatabase(Type userTypeCreator, String fullName, String username, String email, String password, String userTypeCreated) throws NewUserException {
 		try {
-			if(userType == Type.ADMIN) {
+			if(userTypeCreator == Type.ADMIN) {
 				 obj.addPerson(fullName, username.toUpperCase(), email, password, null, Type.valueOf(userTypeCreated), null, null);
 			}
 			else {

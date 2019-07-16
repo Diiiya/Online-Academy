@@ -157,10 +157,25 @@ public class Course implements Serializable{
 		this.listOfPeople = listOfPeople;
 	}
 	
+	/**
+	 * Class constructor.
+	 */
 	public Course() {
 		
 	}
 	
+	/**
+	 * Parameterized class constructor
+	 * @param name - name of the course
+	 * @param description - course description
+	 * @param teacherName - the name of the teacher/author of the course
+	 * @param duration - duration of the course in hours
+	 * @param level - level of difficulty of the course
+	 * @param category - category of the course
+	 * @param price - price for the course
+	 * @param givesCertificate - whether or not after completing the course, it gives a certificate
+	 * @param coverPhoto - image for the course page
+	 */
 	public Course(String name, String description, String teacherName, int duration, Level level,
 			Category category, double price, boolean givesCertificate, byte[] coverPhoto) {
 		super();

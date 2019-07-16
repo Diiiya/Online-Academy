@@ -51,9 +51,9 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 	
 	private Grid<com.academy.onlineAcademy.model.Person> grid;
 	private final TextField fullNameField = new TextField("Full name:");
-	private final TextField usernameField = new TextField("Username:");
 	private final TextField emailField = new TextField("Email:");
 	private final PasswordField passwordField = new PasswordField("Password:");	
+	private final PasswordField confirmPasswordField = new PasswordField("Confirm password:");	
 	private ComboBox<String> selectTypeComboBox;
 	
 	private HorizontalLayout buttonsHLayout;
@@ -170,11 +170,6 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		grid.setWidth("100%");
 		grid.setHeight("100%");
 		
-//		grid.addItemClickListener(e -> {
-//			selectedPerson = e.getItem();
-//			selectedPersonId = selectedPerson.getId();
-//			buttonsHLayout.setVisible(true);
-//		});
 	}
 	
 	private Binder<Person> getBinder() {
@@ -185,11 +180,6 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		.asRequired("Cannot be empty")
 	    .bind(Person::getFullName, Person::setFullName);
 		
-//		binder.forField(usernameField).withValidator(new StringLengthValidator(
-//				"Username must be between 6 and 30 characters long!",3, 30))
-//		.asRequired("Cannot be empty")
-//	    .bind(Person::getUsername, Person::setUsername);
-		
 		binder.forField(emailField).withValidator(new EmailValidator("This doesn't seem to be a valid email address"))
 		.withValidator(email -> email.length() <= 50, "Email address should be max 50 characters long!")
 		.asRequired("Cannot be empty")
@@ -197,6 +187,7 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		
 		binder.forField(passwordField).asRequired("Cannot be empty")
 		.bind(Person::getPassword, Person::setPassword);
+		
 		binder.forField(selectTypeComboBox).asRequired("Cannot be empty")
 		.withConverter(Type::valueOf, String::valueOf, "Input value should be one from the list")
 		.bind(Person::getType, Person::setType);
@@ -212,7 +203,9 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		updateFormButton.addClickListener(e -> {
 			selectedPerson = updateUserMethods.getPerson();
 			String enteredEmail = emailField.getValue();
-			boolean isSuccessful = updateUserMethods.updatePersonSettings(selectedPerson, binder, enteredEmail);
+			String password = passwordField.getValue();
+			String confirmPassword = confirmPasswordField.getValue();
+			boolean isSuccessful = updateUserMethods.updatePersonSettings(Type.ADMIN, selectedPerson, binder, enteredEmail, password, confirmPassword, null);
 			if (isSuccessful == true) {
 				personas = personObj.getAllUsers();
 		        grid.setItems(personas);
@@ -227,7 +220,7 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		});
 		
 		FormLayout content = new FormLayout();
-		content.addComponents(fullNameField, usernameField, emailField, passwordField, selectTypeComboBox, updateFormButton);
+		content.addComponents(fullNameField, emailField, passwordField, confirmPasswordField, selectTypeComboBox, updateFormButton);
 		content.setSizeUndefined(); 
 		content.setMargin(true);
 		

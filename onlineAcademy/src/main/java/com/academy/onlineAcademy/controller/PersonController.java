@@ -26,14 +26,32 @@ public class PersonController {
         emFactoryObj = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
     }
     
+    /**
+     * Creates the Entity Manager object.
+     * @return EntityManager
+     */
     public static EntityManager getEntityManager() {
         return emFactoryObj.createEntityManager();
     }
 	
+    /**
+     * Class constructor
+     */
 	public PersonController() {
 		  
 		}
 
+	/**
+	 * Methods that adds a new user to the database
+	 * @param fullName - full name of the user
+	 * @param username - unique user name
+	 * @param email - unique email of the user
+	 * @param password 
+	 * @param photo - optional profile photo of the user
+	 * @param type
+	 * @param listOfCourses - null by default, should hold the paid orders/courses of the user
+	 * @param listOfOrders - null by default, should hold the unpaid orders of the user
+	 */
 	public void addPerson(String fullName, String username, String email, String password, byte[] photo, Type type,
 			List<Course> listOfCourses, List<Order> listOfOrders) {
 		    EntityManager em = null;
@@ -68,30 +86,54 @@ public class PersonController {
 		}
 	}
 	
+	/**
+	 * Method that gets all the users from the database
+	 * @return List<Person> with all the retrieved results
+	 */
 	public List<Person> getAllUsers() {
 		EntityManager em = emFactoryObj.createEntityManager();
 		TypedQuery<Person> query = em.createNamedQuery("getAllUsers", Person.class);
 	    return query.getResultList();
 	}
 	
+	/**
+	 * Method that gets a person by a specific id from the database
+	 * @param id - unique id of the user
+	 * @return Person object - the retrieved person
+	 */
 	public Person getPersonById(int id) {
 		EntityManager em = emFactoryObj.createEntityManager();	    
 	    TypedQuery<Person> query = em.createNamedQuery("findUserById", Person.class);
 	    return query.setParameter("id", id).getSingleResult();
 	}
 	
+	/**
+	 * Method that gets a person by a specific name from the database
+	 * @param name - the full name of the user
+	 * @return Person object - the retrieved person
+	 */
 	public Person getPersonByName(String name) {
 		EntityManager em = emFactoryObj.createEntityManager();
 		TypedQuery<Person> query = em.createNamedQuery("findUserByName", Person.class);
 		return query.setParameter("name", name).getSingleResult();
 	}
 	
+	/**
+	 * Method that gets a person by a specific user name from the database
+	 * @param username - unique user name 
+	 * @return Person object - the retrieved person
+	 */
 	public Person getPersonByUsername(String username) {
 		EntityManager em = emFactoryObj.createEntityManager();		    
 	    TypedQuery<Person> query = em.createNamedQuery("findUserByUsername", Person.class);
 	    return query.setParameter("username", username).getSingleResult();
 	}
 	
+	/**
+	 * Method that gets a person by a specific email from the database
+	 * @param email - unique user email
+	 * @return Person object - the retrieved person
+	 */
 	public Person getPersonByEmail(String email) {
 		EntityManager em = emFactoryObj.createEntityManager();	    
 	    TypedQuery<Person> query = em.createNamedQuery("findUserByEmail", Person.class);
@@ -125,6 +167,10 @@ public class PersonController {
 //		}
 //	}
 	
+	/**
+	 * Method that updates specific person in the database
+	 * @param person - the specific person object to be updated
+	 */
 	public void updatePerson(Person person) {
 		EntityManager emUPD = null;
 		try {
@@ -147,6 +193,10 @@ public class PersonController {
 		}
 	}
 	
+	/**
+	 * Method that deletes all the users from the database
+	 * @return int - the number of deleted users (person objects)
+	 */
 	public int deleteAllUsers() {
 		EntityManager emDEL = null;
 		try {
@@ -167,6 +217,11 @@ public class PersonController {
 		}
 	}
 	
+	/**
+	 * Method that deletes a specific user from the database
+	 * @param id - unique id of the user that has to be deleted
+	 * @return
+	 */
 	public int deletePersonById(int id) {
 		EntityManager emDEL = null;
 		try {

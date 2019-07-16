@@ -28,6 +28,12 @@ public class CardDetails {
 		this.secCode = secCode;
 	}
 	
+	/** 
+	* Parameterized class constructor.
+	* @param cardNumber - first parameter, for the credit card number
+	* @param expiryDate - second parameter, for the expire date of the card (will be in mm/yy format)
+	* @param secCode - third and last parameter, for the security code of the credit card
+    */
 	public CardDetails(int cardNumber, LocalDate expiryDate, int secCode) {
 		super();
 		this.cardNumber = cardNumber;
@@ -35,6 +41,9 @@ public class CardDetails {
 		this.secCode = secCode;
 	}
 	
+	/** 
+	* Class constructor.
+    */
 	public CardDetails() {
 		
 	}

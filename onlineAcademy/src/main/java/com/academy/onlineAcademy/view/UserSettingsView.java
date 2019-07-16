@@ -7,14 +7,17 @@ import com.academy.onlineAcademy.helper.ImageUploader;
 import com.academy.onlineAcademy.helper.InputSource;
 import com.academy.onlineAcademy.helper.UpdateUserMethods;
 import com.academy.onlineAcademy.model.Person;
+import com.academy.onlineAcademy.model.Type;
 import com.vaadin.data.Binder;
 import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
+import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.ui.Alignment;
@@ -70,7 +73,6 @@ public class UserSettingsView extends VerticalLayout implements View {
     
 	private VerticalLayout initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
-		System.out.println(" User settings ID :" + userId);
 		HorizontalLayout layoutH = userViews.getTopBar(userId);
 		VerticalLayout layoutVBody = getBodyLayout();
 		
@@ -93,11 +95,15 @@ public class UserSettingsView extends VerticalLayout implements View {
 		
 		updateButton.setWidth("800");
 		updateButton.addClickListener(e -> {
-			boolean isSuccessful = getFieldsValues();
-			if (isSuccessful == true) {
-				File profileImageFile = receiver.getFile();
-				updateUserMethods.updatePersonSettings(person, binder, enteredEmail, password, confirmPassword, profileImageFile);
-			}
+			password = passwordField.getValue();
+			confirmPassword = confirmPasswordField.getValue();
+			File profileImageFile = receiver.getFile();
+			updateUserMethods.updatePersonSettings(Type.USER, person, binder, enteredEmail, password, confirmPassword, profileImageFile);
+//			boolean isSuccessful = getFieldsValues();
+//			if (isSuccessful == true) {
+//				File profileImageFile = receiver.getFile();
+//				updateUserMethods.updatePersonSettings(Type.USER, person, binder, enteredEmail, password, confirmPassword, profileImageFile);
+//			}
 			
 		});
 		
@@ -111,27 +117,27 @@ public class UserSettingsView extends VerticalLayout implements View {
 		return layoutVBody;
     }
 	
-	private boolean getFieldsValues() {
-		enteredEmail = emailField.getValue();
-		enteredEmail.toUpperCase();
-		if (!passwordField.isEmpty() && passwordField.getValue() == person.getPassword()) {
-			return true;
-		}
-		else if (!passwordField.isEmpty() && (passwordField.getValue() != person.getPassword())) {
-			password = passwordField.getValue();
-			if (!confirmPasswordField.isEmpty()) {
-				confirmPassword = confirmPasswordField.getValue();
-				System.out.println("Confirm password: " + confirmPassword);
-				return true;
-			}
-			else {
-				Notification notif = new Notification("Warning", "Fill in the confirm password field to confirm it!",
-					    Notification.TYPE_WARNING_MESSAGE);
-				notif.show(Page.getCurrent());
-			}
-		}
-		return false;
-	}
+//	private boolean getFieldsValues() {
+//		enteredEmail = emailField.getValue();
+//		enteredEmail.toUpperCase();
+//		if (!passwordField.isEmpty() && passwordField.getValue() == person.getPassword()) {
+//			return true;
+//		}
+//		else if (!passwordField.isEmpty() && (passwordField.getValue() != person.getPassword())) {
+//			password = passwordField.getValue();
+//			if (!confirmPasswordField.isEmpty()) {
+//				confirmPassword = confirmPasswordField.getValue();
+//				System.out.println("Confirm password: " + confirmPassword);
+//				return true;
+//			}
+//			else {
+//				Notification notif = new Notification("Warning", "Fill in the confirm password field to confirm it!",
+//					    Notification.TYPE_WARNING_MESSAGE);
+//				notif.show(Page.getCurrent());
+//			}
+//		}
+//		return false;
+//	}
 	
 	private Panel getPhotoPanel() {
 		photoPanel = new Panel("Update my photo");
@@ -167,6 +173,9 @@ public class UserSettingsView extends VerticalLayout implements View {
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();
+			String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+			FileResource defaultImageResource = new FileResource(new File(basepath + "/user1.png"));
+			profileImage.setSource(defaultImageResource);
 		}
 	}
 	
