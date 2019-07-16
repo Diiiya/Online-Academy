@@ -12,7 +12,7 @@ public class StringToCategoryConverter implements Converter<String, Category>{
         try {
             return Result.ok(Category.valueOf(value));
         } catch (Exception e) {
-            return Result.error("Please enter a category");
+            return Result.error("Please enter category.");
         }
 	}
 

@@ -13,7 +13,7 @@ public class StringToLevelConverter implements Converter<String, Level> {
 		try {
             return Result.ok(Level.valueOf(value));
         } catch (Exception e) {
-            return Result.error("Please enter a category");
+            return Result.error("Please enter level.");
         }
 	}
 
