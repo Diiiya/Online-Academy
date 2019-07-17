@@ -14,6 +14,13 @@ public class UpdateCourseMethods {
 	
 	private static Logger logger = Logger.getLogger(UpdateCourseMethods.class.getName());
 
+	/**
+	 * Get the data for a specific course that will be updated
+	 * @param selectedCourseId
+	 * @param binder
+	 * @param courseObj
+	 * @param selectedCourse
+	 */
 	public void getCourseInfo(int selectedCourseId, Binder<Course> binder, CourseController courseObj, Course selectedCourse) {
 		try {
 			selectedCourse = courseObj.getCourseById(selectedCourseId);
@@ -24,6 +31,15 @@ public class UpdateCourseMethods {
 		}
 	}
 	
+	/**
+	 * Update a course by calling three submethods
+	 * @param courseId
+	 * @param binder
+	 * @param courseObj
+	 * @param selectedCourse
+	 * @param courseName
+	 * @return boolean if the course has been updated
+	 */
 	public boolean updateCourse(int courseId, Binder<Course> binder, CourseController courseObj, Course selectedCourse, String courseName) {
 		try {
 			existingCourse(courseId, courseObj, selectedCourse, courseName);
@@ -55,6 +71,14 @@ public class UpdateCourseMethods {
 		
 	}
 	
+	/**
+	 * Checks if a course with the same name already exists in the database
+	 * @param courseId
+	 * @param courseObj
+	 * @param selectedCourse
+	 * @param courseName
+	 * @throws CourseException thrown if another course with the same name already exists
+	 */
 	private void existingCourse(int courseId, CourseController courseObj, Course selectedCourse, String courseName) throws CourseException {
 		try {
 			selectedCourse = courseObj.getCourseByName(courseName);
@@ -71,6 +95,12 @@ public class UpdateCourseMethods {
 		
 	}
 	
+	/**
+	 * Validates/Writes the new course object/bean
+	 * @param binder
+	 * @param selectedCourse
+	 * @throws CourseException thrown if the course fails cannot be validated
+	 */
 	private void writeBean(Binder<Course> binder, Course selectedCourse) throws CourseException {
 		try {
 			binder.writeBean(selectedCourse);
@@ -80,6 +110,12 @@ public class UpdateCourseMethods {
 		}
 	}
 	
+	/**
+	 * Updates the selected course in the database
+	 * @param courseObj
+	 * @param selectedCourse
+	 * @throws CourseException - thrown if the course fails to be updated in the database
+	 */
 	private void updateInDatabase(CourseController courseObj, Course selectedCourse) throws CourseException {
 		try {
 			courseObj.updateCourseById(selectedCourse);

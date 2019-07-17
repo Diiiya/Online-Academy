@@ -28,6 +28,11 @@ public class UpdateUserMethods {
 	private PersonController personObj = new PersonController();
 	private byte[] convertedProfilePhoto;
 	
+	/**
+	 * Gets the selected user details from the database
+	 * @param userId
+	 * @param binder
+	 */
 	public void getUserInfo(int userId, Binder<Person> binder) {
 		try {
 			selectedPerson = personObj.getPersonById(userId);			
@@ -45,6 +50,17 @@ public class UpdateUserMethods {
 		return selectedPerson;
 	}
 	
+	/**
+	 * Updates the user details in the database by calling 4 (for admin) - 5 (for user) other methods
+	 * @param userType
+	 * @param selectedPerson
+	 * @param binder
+	 * @param enteredEmail
+	 * @param password
+	 * @param confirmPassword
+	 * @param profileImageFile
+	 * @return boolean - if the update has been successful or not
+	 */
 	public boolean updatePersonSettings(Type userType, Person selectedPerson, Binder<Person> binder, String enteredEmail, String password, String confirmPassword, File profileImageFile) {
 		try {
 			existingEmail(enteredEmail);
@@ -116,6 +132,10 @@ public class UpdateUserMethods {
 //		return false;
 //	}
 	
+	/**
+	 * Checks if another user with the same email already exists
+	 * @param enteredEmail
+	 */
 	private void existingEmail(String enteredEmail) {
 		try {
 			personObj.getPersonByEmail(enteredEmail);
@@ -142,8 +162,13 @@ public class UpdateUserMethods {
     	}
 	}
 	
+	/**
+	 * Checks if the password and confirm password field values match
+	 * @param password
+	 * @param confirmPassword
+	 * @throws UpdateUserException thrown if the two values don't match
+	 */
 	private void matchingPasswords(String password, String confirmPassword) throws UpdateUserException {
-		System.out.println("Password: " + password);
 		if (password != null) {
 			if (password.equals(confirmPassword)) {
 			}
@@ -153,6 +178,11 @@ public class UpdateUserMethods {
 		}	
 	}
 	
+	/**
+	 * Validates the new user details
+	 * @param binder
+	 * @throws UpdateUserException thrown if the validation fails
+	 */
 	private void writeBean(Binder<Person> binder) throws UpdateUserException{
 		try {
 			binder.writeBean(selectedPerson);
@@ -162,6 +192,10 @@ public class UpdateUserMethods {
 		}
 	}
 	
+	/**
+	 * Converts the input image file to file stream
+	 * @param photoFileInput
+	 */
 	private void convertInputPhoto(File photoFileInput) {
 		FileInputStream fileStream = null;
 		try {
@@ -178,13 +212,16 @@ public class UpdateUserMethods {
 					fileStream.close();
 				} 
 				catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
 		}
 	}
 	
+	/**
+	 * Updates the user object in the database
+	 * @throws UpdateUserException
+	 */
 	private void updateInDatabase() throws UpdateUserException {
 		try {
 			personObj.updatePerson(selectedPerson);

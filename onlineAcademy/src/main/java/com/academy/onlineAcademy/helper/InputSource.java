@@ -9,19 +9,20 @@ public class InputSource implements StreamSource {
 
 	private byte[] photo;
 	
+	/**
+	 * Class constructor
+	 * @param inputPhoto
+	 */
 	public InputSource(byte[] inputPhoto) {
 		photo = inputPhoto;
 	}
 	
-	public void getCoverPhoto(byte[] inputPhoto) {
-		// TODO Auto-generated method stub
-		photo = inputPhoto;
-//		return this.coverPhoto;
-	}
+//	public void getCoverPhoto(byte[] inputPhoto) {
+//		photo = inputPhoto;
+//	}
 
 	@Override
 	public InputStream getStream() {
-		// TODO Auto-generated method stub
 		InputStream targetStream = new ByteArrayInputStream(photo);
 		return targetStream;
 	}

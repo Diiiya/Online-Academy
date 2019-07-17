@@ -22,20 +22,27 @@ public class UserOrdersMethods {
 	private OrderController orderObj = new OrderController();
 	private Navigator navigator = UI.getCurrent().getNavigator();
 	
+	/**
+	 * Validates the card details
+	 * If valid - proceeds with the payment
+	 * If not - shows a message
+	 * @param binder
+	 */
 	public void validateCardDetails(Binder<CardDetails> binder) {
 		if (binder.validate().isOk()) {
-			List<Order> paidOrders = new ArrayList<Order>();
-			for (Order order : orders) {
-				order.setPaid(true);
-				orderObj.updateOrder(order);
-				paidOrders.add(order);
-			}
-			orders.removeAll(paidOrders);
-			
-			Notification notif = new Notification("Confirmation", "You have successfully made the payment!", Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-			
-			navigator.navigateTo("UserCourses");
+			makePayment();
+//			List<Order> paidOrders = new ArrayList<Order>();
+//			for (Order order : orders) {
+//				order.setPaid(true);
+//				orderObj.updateOrder(order);
+//				paidOrders.add(order);
+//			}
+//			orders.removeAll(paidOrders);
+//			
+//			Notification notif = new Notification("Confirmation", "You have successfully made the payment!", Notification.TYPE_WARNING_MESSAGE);
+//			notif.show(Page.getCurrent());
+//			
+//			navigator.navigateTo("UserCourses");
 		}
 		else {
 			Notification notif = new Notification("Warning", "The entered payment details are not valid!", Notification.TYPE_WARNING_MESSAGE);
@@ -44,23 +51,47 @@ public class UserOrdersMethods {
 		
 	}
 	
+	/**
+	 * Sets the paid status of an order to true
+	 * Adds the order to the list with paid orders
+	 */
+	private void makePayment() {
+		List<Order> paidOrders = new ArrayList<Order>();
+		for (Order order : orders) {
+			order.setPaid(true);
+			orderObj.updateOrder(order);
+			paidOrders.add(order);
+		}
+		orders.removeAll(paidOrders);
+		
+		Notification notif = new Notification("Confirmation", "You have successfully made the payment!", Notification.TYPE_WARNING_MESSAGE);
+		notif.show(Page.getCurrent());
+		
+		navigator.navigateTo("UserCourses");
+	}
+	
+	/**
+	 * Gets all the unpaid orders of the user from the database 
+	 * @param userId
+	 * @return List<Order> -- the unpaid orders for a specific user
+ 	 */
 	public List<Order> getAllUnpaidOrdersOfTheUser(int userId) {
 		try {
 			orders = orderObj.getAllUnpaidOrdersByUser(userId);
-//			grid.setItems(orders);
 			
 			calculateTotalPrice();
 		}
 		catch(Exception ex) {
-//			Notification notif = new Notification("Warning", "No order(s) for this user have been found!",
-//				    Notification.TYPE_WARNING_MESSAGE);
-//			notif.show(Page.getCurrent());
 			
 			logger.log(Level.SEVERE, "No order(s) for this user have been found!", ex);
 		}
 		return orders;
 	}
 	
+	/**
+	 * Calculates the total price of all courses added to the order
+	 * @return double -  the total price of the order
+	 */
 	public double calculateTotalPrice() {
 		double totalSum = 0;
 		for (Order order : orders) {

@@ -22,6 +22,17 @@ public class NewUserMethods {
 	
 	private PersonController obj = new PersonController();
 	
+	/**
+	 * Adds a new user to the database calling 5 submethods
+	 * @param binder
+	 * @param userType - the type of user that creates the new user
+	 * @param fullName
+	 * @param username
+	 * @param email
+	 * @param password
+	 * @param confirmPassword
+	 * @param userTypeCreated - the type of user that has to be created
+	 */
 	public void addUser(Binder<Person> binder, Type userType, String fullName, String username, String email, String password, String confirmPassword, String userTypeCreated) {
 		try {
 			checkValidation(userType, binder);
@@ -77,6 +88,12 @@ public class NewUserMethods {
 		
 	}
 	
+	/**
+	 * Checks if the binder is valid
+	 * @param userType
+	 * @param binder
+	 * @throws NewUserException thrown if the binder is invalid
+	 */
 	private void checkValidation(Type userType, Binder<Person> binder) throws NewUserException{
 		if(userType == Type.ADMIN) {
 			if (binder.validate().isOk() == true) {
@@ -99,6 +116,11 @@ public class NewUserMethods {
 		}
 	}
 	
+	/**
+	 * Checks if another user with the same username already exists in the database
+	 * @param username
+	 * @throws NewUserException thrown if the username already exists
+	 */
 	private void existingUsername(String username) throws NewUserException {
 		try {
 	    	obj.getPersonByUsername(username.toUpperCase());
@@ -109,6 +131,11 @@ public class NewUserMethods {
 		 }
 	}
 	
+	/**
+	 * Checks if another user with the same email already exists in the database
+	 * @param email
+	 * @throws NewUserException thrown if the email already exists
+	 */
 	private void existingEmail(String email) throws NewUserException {
 		try {
 	    	obj.getPersonByEmail(email.toUpperCase());
@@ -119,6 +146,12 @@ public class NewUserMethods {
 		
 	}
 	
+	/**
+	 * Checks if the password and confirm password fields have the same values
+	 * @param password
+	 * @param confirmPassword
+	 * @throws NewUserException thrown if the two values differ
+	 */
 	private void matchingPasswords(String password, String confirmPassword) throws NewUserException {
 		if (password.equals(confirmPassword)) {
 			
@@ -128,6 +161,16 @@ public class NewUserMethods {
 		}	
 	}
 	
+	/**
+	 * Adds the new user to the database
+	 * @param userTypeCreator
+	 * @param fullName
+	 * @param username
+	 * @param email
+	 * @param password
+	 * @param userTypeCreated
+	 * @throws NewUserException thrown if the user fails to be added to the database
+	 */
 	private void addUserToDatabase(Type userTypeCreator, String fullName, String username, String email, String password, String userTypeCreated) throws NewUserException {
 		try {
 			if(userTypeCreator == Type.ADMIN) {

@@ -18,23 +18,29 @@ public class ImageUploader implements Receiver, SucceededListener {
 	
 	private final Image image;
 	
+	/**
+	 * Class constructor
+	 * @param image
+	 */
 	public ImageUploader(Image image) {
 		this.image = image;
 	}
 
+	/**
+	 * Returns the converted to file image
+	 * @return File 
+	 */
 	public File getFile() {
 		return file;
 	}
 	
 	@Override
 	public void uploadSucceeded(SucceededEvent event) {
-		// TODO Auto-generated method stub
 		this.image.setSource(new FileResource(file));
 	}
 	
 	@Override
 	public OutputStream receiveUpload(String filename, String mimeType) {
-		// TODO Auto-generated method stub
 		file = new File("cover.jpg");
 		try {
 			file.createNewFile(); 

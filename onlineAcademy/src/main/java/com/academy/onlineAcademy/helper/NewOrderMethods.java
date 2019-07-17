@@ -29,6 +29,11 @@ public class NewOrderMethods {
 	///////////////
 	// FOR ADMIN
 	//////////////
+	/**
+	 * Methods that gets all the course names from the database. When admin creates an order he sees that list with the available courses
+	 * @param courseObj
+	 * @return List<String> - list with the names of the courses in the database
+	 */
 	public List<String> getCourses(CourseController courseObj) {
 		
 		List<String> courseNames = new ArrayList<>();
@@ -41,6 +46,11 @@ public class NewOrderMethods {
 		return courseNames;
 	}
 	
+	/**
+	 * Calls two other methods before placing an order as ADMIN
+	 * @param userEmail
+	 * @param courseName
+	 */
 	public void placeOrder(String userEmail, String courseName) {
 		try {
 			int courseId = getCourseId(courseName);
@@ -66,6 +76,11 @@ public class NewOrderMethods {
 		}
 	}
 	
+	/**
+	 * Checks if the admin has entered an existing email or not
+	 * @param email - the email of the user for which the order will be placed
+	 * @throws OrderException - thrown if the email doesn't exists
+	 */
 	private void checkIfEmailExists(String email) throws OrderException {
 		try {
 			person = personObj.getPersonByEmail(email.toUpperCase());
@@ -75,6 +90,11 @@ public class NewOrderMethods {
 		}
 	}
 	
+	/**
+	 * Adds a new order to the database
+	 * @param courseId
+	 * @throws OrderException - thrown if the order fails to be saved to the database
+	 */
 	private void createNewOrder(int courseId) throws OrderException {
 		try {
 			Date date = new Date();
@@ -92,6 +112,11 @@ public class NewOrderMethods {
 		
 	}
 	
+	/**
+	 * Methods that gets the id of a course based on its name
+	 * @param courseName
+	 * @return int - the id of the course
+	 */
 	private int getCourseId(String courseName) {
 		Course course = courseObj.getCourseByName(courseName);
 		int courseId = course.getId();
@@ -101,6 +126,11 @@ public class NewOrderMethods {
 	//////////////
 	// FOR USER
 	/////////////
+	/**
+	 * Adds an order to the database as USER
+	 * @param userId
+	 * @param selectedCourse
+	 */
 	public void placeOrder(int userId, Course selectedCourse) {
 		Date date = new Date();
 		if(userId == 0) {

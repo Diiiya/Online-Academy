@@ -26,6 +26,19 @@ public class NewCourseMethods {
 	private byte[] convertedCoverPhoto;
 	private FileInputStream fileStream = null;
 	
+	/**
+	 * Calls methods to add a new course
+	 * @param binder
+	 * @param name - course name
+	 * @param description - course description
+	 * @param teacherName - teacher of the course
+	 * @param enteredCoverPhoto - the cover image for the course as a file
+	 * @param duration - course duration
+	 * @param level - level of difficulty of the course
+	 * @param category - category to which the course belongs to
+	 * @param price - price of the course
+	 * @param givesCertificate - if the course awards a certificate or not
+	 */
 	public void addNewCourse(Binder<Course> binder, String name, String description, String teacherName, File enteredCoverPhoto, int duration, Level level,
 			Category category, double price, boolean givesCertificate) {
 		try {
@@ -52,6 +65,10 @@ public class NewCourseMethods {
 		
 	}
 	
+	/**
+	 * Converts an image file to a file stream
+	 * @param photoFileInput - the image file for the course cover
+	 */
 	private void convertInputPhoto(File photoFileInput) {
 		try {
 		    fileStream = new FileInputStream(photoFileInput);
@@ -73,6 +90,11 @@ public class NewCourseMethods {
 		}
 	}
 	
+	/**
+	 * Checks if another course with the same name exists in the database
+	 * @param name - unique name of the course
+	 * @throws NewCourseException - if another course with the same name exists, throws an exception
+	 */
 	private void existingCourseCheck(String name) throws NewCourseException {
 		try {
 	    	courseObj.getCourseByName(name.toUpperCase()).getName();
@@ -82,6 +104,17 @@ public class NewCourseMethods {
 		 }
 	}
 	
+	/**
+	 * Add a new course to the database
+	 * @param name - course name
+	 * @param description - course description
+	 * @param teacherName - teacher of the course
+	 * @param duration - course duration
+	 * @param level - level of difficulty of the course
+	 * @param category - category to which the course belongs to
+	 * @param price - price of the course
+	 * @param givesCertificate - if the course awards a certificate or not
+	 */
 	private void addCourseToDatabase(String name, String description, String teacherName, int duration, Level level,
 			Category category, double price, boolean givesCertificate) {
 		try {
