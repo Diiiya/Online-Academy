@@ -72,7 +72,10 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 	private Level level;
 	private double price;
 	private boolean givesCertificate;
-					
+	
+	/**
+	 * Class constructor
+	 */
 	public AdminAddCourseView() {
 		
 		navigator = UI.getCurrent().getNavigator();
@@ -80,6 +83,9 @@ public class AdminAddCourseView extends VerticalLayout implements View {
         
 	}
 	
+	/**
+	 * Builds the main layout
+	 */
 	public void initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		
@@ -95,6 +101,10 @@ public class AdminAddCourseView extends VerticalLayout implements View {
         addComponent(mainVLayout);
 	}
 	
+	/**
+	 * Layout with the fields to add a new course
+	 * @return Vertical layout
+	 */
 	public VerticalLayout getBodyLayout() {
 		VerticalLayout layoutVBody = new VerticalLayout();
 		layoutVBody.setWidth("100%");
@@ -135,6 +145,9 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		return layoutVBody;
 	}
 	
+	/**
+	 * Creates binder for the course fields with validators and convertors
+	 */
 	public void callBinder() {
 		binder = new Binder<>();
 		
@@ -179,6 +192,9 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		
 	}
 	
+	/**
+	 * Adds a new course from the UI; calls the similar method in the controller
+	 */
 	private void addCourse() {
 		try {
 			checkValidation();
@@ -204,6 +220,11 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		}
 	}
 	
+	/**
+	 * Checks if the binder is valid
+	 * @return boolean - valid or not valid
+	 * @throws NewCourseException
+	 */
 	private boolean checkValidation() throws NewCourseException {
 		if (binder.validate().isOk()) {
 			return true;
@@ -213,6 +234,9 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		}
 	}
 	
+	/**
+	 * Converts the input values to values that will be persisted
+	 */
 	private void convertInputValues() {
 		
 		name = nameField.getValue();

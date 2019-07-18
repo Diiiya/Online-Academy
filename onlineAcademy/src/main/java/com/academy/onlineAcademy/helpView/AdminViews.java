@@ -21,6 +21,11 @@ public class AdminViews extends VerticalLayout implements View {
 	private Navigator navigator = UI.getCurrent().getNavigator();
 	private String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 	
+	/**
+	 * Creates the top bar for the Admin view - company's logo and menu
+	 * @param navigator
+	 * @return the top bar
+	 */
 	public HorizontalLayout getTopBar(Navigator navigator) {
 		HorizontalLayout layoutH = new HorizontalLayout();
 		layoutH.setSpacing(true);

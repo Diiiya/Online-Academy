@@ -32,24 +32,35 @@ public class UserViews extends VerticalLayout implements View {
 	private OrderController orderObj = new OrderController();
 	private int itemsInCartCount = 0;	
 	
+	/**
+	 * Counts the number of the orders for the logged in user
+	 * @param userId
+	 */
 	private void getOrdersCountOfTheUser(int userId) {
 		try {
 			List<Order> orders = orderObj.getAllUnpaidOrdersByUser(userId);			
 			itemsInCartCount = orders.size();
-			System.out.println(" !!!USER ID: " + userId);
-			System.out.println(" !!! Items in cart: " + itemsInCartCount);
 			
 		}
 		catch(Exception ex) {
 		}
 	}
 	
+	/**
+	 * Sets the order count to the label in the top bar
+	 * @param userId - the unique id of the logged in user
+	 */
 	public void setLabelValue(int userId) {
 		getOrdersCountOfTheUser(userId);
 		itemsInCartCountLabel.setValue(String.valueOf(itemsInCartCount));		
 		System.out.println(" The label should already be equal to " + itemsInCartCount);
 	}
 	
+	/**
+	 * Creates the top bar for the user view - copmany's logo, number of orders in the basket and navigation menu
+	 * @param userId
+	 * @return top bar 
+	 */
 	public HorizontalLayout getTopBar(int userId) {
 		HorizontalLayout layoutH = new HorizontalLayout();	
 		layoutH.setSpacing(true);
