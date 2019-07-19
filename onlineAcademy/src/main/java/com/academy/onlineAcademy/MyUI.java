@@ -83,17 +83,17 @@ public class MyUI extends UI {
         
         setContent(layout);
         
-//        configureLogging();
+        configureLogging();
     }
     
-//    private void configureLogging() {
-//    	try {
-//            LogManager.getLogManager().readConfiguration(new FileInputStream("logging.properties"));
-//        } 
-//    	catch (SecurityException | IOException e1) {
-//            e1.printStackTrace();
-//        }
-//    }
+    private void configureLogging() {
+    	try {
+            LogManager.getLogManager().readConfiguration(new FileInputStream("/logging.properties"));
+        } 
+    	catch (SecurityException | IOException e1) {
+            e1.printStackTrace();
+        }
+    }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)

@@ -31,6 +31,9 @@ public class CourseView extends VerticalLayout implements View {
 	private Image courseImage;
 	private VerticalLayout layoutVL;
 	
+	/**
+	 * Class constructor
+	 */
 	public CourseView() {
 		
 		course = new Course();
@@ -42,6 +45,10 @@ public class CourseView extends VerticalLayout implements View {
 		
 	}
 	
+	/**
+	 * Initializes the main layout
+	 * @return VertiicalLayout
+	 */
 	private VerticalLayout initMainlayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		
@@ -55,6 +62,10 @@ public class CourseView extends VerticalLayout implements View {
 		return mainVLayout;
 	}		
 	
+	/**
+	 * Creates the body layout - course title, image and content
+	 * @return HorizontalLayout
+	 */
 	private HorizontalLayout getLayoutBody() {
 		HorizontalLayout layoutBody = new HorizontalLayout();
 		layoutVL = new VerticalLayout();
@@ -74,7 +85,9 @@ public class CourseView extends VerticalLayout implements View {
 		return layoutBody;
 	}
 
-	
+	/**
+	 * Gets the selected course id from the session
+	 */
 	private void getSessionCourseId() {
 		UI ui = UI.getCurrent();
 		VaadinSession session = ui.getSession();
@@ -83,6 +96,9 @@ public class CourseView extends VerticalLayout implements View {
 		}
 	}
 	
+	/**
+	 * Gets from the database and displays a course based on the course id in the session
+	 */
 	private void getAndDisplayCourse() {
 		try {
 			course = courseObj.getCourseById(courseId);
@@ -98,6 +114,10 @@ public class CourseView extends VerticalLayout implements View {
 		}
 	}
 	
+	/**
+	 * Generates a random name (based on the time) for the image resource -> to update the cover image in the View (for every course)
+	 * @return String
+	 */
 	private String generateResourceName() {
 	    SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 	    String timestamp = df.format(new Date());

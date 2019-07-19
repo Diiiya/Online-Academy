@@ -65,6 +65,9 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 	private int selectedPersonId;
 	private UpdateUserMethods updateUserMethods;
 	
+	/**
+	 * Class constructor
+	 */
 	public AdminAllUsersView() {
 		
 		navigator = UI.getCurrent().getNavigator();
@@ -75,6 +78,10 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		
 	}
 	
+	/**
+	 * Initializes the main layout
+	 * @return VerticalLayout
+	 */
 	private VerticalLayout initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		mainVLayout.setHeight("100%");
@@ -100,6 +107,10 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		return mainVLayout;
 	}
 	
+	/**
+	 * Creates a search bar for a specific user
+	 * @return HorizontalLayout
+	 */
 	private HorizontalLayout getSearchLayout() {
 		HorizontalLayout searchHLayout = new HorizontalLayout();
 		
@@ -124,6 +135,10 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		return searchHLayout;
 	}
 	
+	/**
+	 * Creates buttons for user update and delete
+	 * @return HorizontalLayout
+	 */
 	private HorizontalLayout buttonsDELIUPDLayout() {
 		buttonsHLayout = new HorizontalLayout();
 		buttonsHLayout.setVisible(false);
@@ -154,6 +169,9 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		return buttonsHLayout;
 	}
 	
+	/**
+	 * Creates a grid for the Person class
+	 */
 	private void buildGrid() {
 		
 		grid = new Grid<>();
@@ -172,6 +190,10 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		
 	}
 	
+	/**
+	 * Creates a binder for person with calidators and converters
+	 * @return
+	 */
 	private Binder<Person> getBinder() {
 		
 		binder = new Binder<>();
@@ -195,6 +217,10 @@ public class AdminAllUsersView extends VerticalLayout implements View {
 		return binder;
 	}
 	
+	/**
+	 * Creates a window with form to update a selected user
+	 * @return Window
+	 */
 	private Window callUpdateWindow() {
 		updateWindow = new Window("UPDATE USER");
 		updateWindow.setVisible(false);

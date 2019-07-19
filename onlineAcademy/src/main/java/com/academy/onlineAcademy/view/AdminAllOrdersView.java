@@ -41,6 +41,9 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 	private ComboBox<String> selectCourseCB;
 	private NewOrderMethods newOrderMethods;
 	
+	/**
+	 * Class constructor
+	 */
 	public AdminAllOrdersView() {
 		
 		navigator = UI.getCurrent().getNavigator();
@@ -51,6 +54,10 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 	
 	}
 	
+	/**
+	 * Initializes the main layout
+	 * @return VerticalLayout
+	 */
 	private VerticalLayout initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		mainVLayout.setHeight("100%");
@@ -71,6 +78,10 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		return mainVLayout;
 	}
 	
+	/**
+	 * Creates a search for a specific user bar
+	 * @return HorizontalLayout
+	 */
 	private HorizontalLayout getSearchLayout() {
 		
 		HorizontalLayout searchHLayout = new HorizontalLayout();
@@ -87,6 +98,10 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		
 	}
 	
+	/**
+	 * Creates buttons for order update and delete
+	 * @return HorizontalLayout
+	 */
 	private HorizontalLayout getDELIUPDButtonsLayout() {
 		buttonsHLayout = new HorizontalLayout();
 		
@@ -102,6 +117,10 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		return buttonsHLayout;
 	}
 	
+	/**
+	 * Layout for the admin -> to create a new order
+	 * @return HorizontalLayout
+	 */
 	private HorizontalLayout getAddOrderLayout() {
 		HorizontalLayout addOrderLayout = new HorizontalLayout();
 		
@@ -120,6 +139,9 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		return addOrderLayout;
 	}
 	
+	/**
+	 * Creates the grid for the Order class
+	 */
 	private void buildGrid() {
 		grid = new Grid<>();
 		
@@ -136,12 +158,14 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		grid.addItemClickListener(e -> {
 			Order selectedOrder = e.getItem();
 			selectedOrderId = selectedOrder.getId();
-			System.out.println(selectedOrderId);
 			buttonsHLayout.setVisible(true);
 		});
 
 	}
 	
+	/**
+	 * Gets and displays an order based on a specified Id
+	 */
 	private void lookForOrderById() {
 		try {
 			Order selectedOrder = orderObj.getOrderById(Integer.parseInt(searchField.getValue()));
@@ -156,6 +180,9 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		}
 	}
 	
+	/**
+	 * Deletes an order based on a specified Id
+	 */
 	private void deleteOrderById() {
 		try {
 			orderObj.deleteOrderById(selectedOrderId);
@@ -168,6 +195,9 @@ public class AdminAllOrdersView extends VerticalLayout implements View {
 		}
 	}
 	
+	/**
+	 * Creates an order 
+	 */
 	private void order() {
 		String courseName = selectCourseCB.getValue();
 		String userEmail = customerEmailField.getValue();

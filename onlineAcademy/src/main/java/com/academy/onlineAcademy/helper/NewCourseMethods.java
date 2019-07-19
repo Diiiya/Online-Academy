@@ -66,7 +66,7 @@ public class NewCourseMethods {
 	}
 	
 	/**
-	 * Converts an image file to a file stream
+	 * Converts an image file to a byte array
 	 * @param photoFileInput - the image file for the course cover
 	 */
 	private void convertInputPhoto(File photoFileInput) {

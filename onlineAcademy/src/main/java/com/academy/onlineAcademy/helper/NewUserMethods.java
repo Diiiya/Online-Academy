@@ -84,6 +84,7 @@ public class NewUserMethods {
 				
 				logger.log(Level.SEVERE, "Failed to save the new user to the database!", ex);
 			}
+
 		}
 		
 	}

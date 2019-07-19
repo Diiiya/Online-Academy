@@ -50,6 +50,9 @@ public class AdminAddUserView extends VerticalLayout implements View {
 	private List<String> types;
 	private ComboBox<String> selectTypeComboBox;
 	
+	/**
+	 * Class constructor
+	 */
 	public AdminAddUserView() {
 		
 		navigator = UI.getCurrent().getNavigator();
@@ -57,6 +60,10 @@ public class AdminAddUserView extends VerticalLayout implements View {
 		
 	}
 	
+	/**
+	 * Initializes the main layout
+	 * @return VerticalLayout
+	 */
 	private VerticalLayout initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		
@@ -71,6 +78,10 @@ public class AdminAddUserView extends VerticalLayout implements View {
         return mainVLayout;
 	}
 	
+	/**
+	 * Creates the body of the page - panel with fields to add a new user
+	 * @return VerticalLayout
+	 */
 	private VerticalLayout getBodyLayout() {
 		VerticalLayout layoutVBody = new VerticalLayout();
 		layoutVBody.setWidth("100%");
@@ -108,6 +119,9 @@ public class AdminAddUserView extends VerticalLayout implements View {
 		return addButton;
 	}
 	
+	/**
+	 * Creates binder with validators for the Person class
+	 */
 	private void callBinder() {
 		
 		binder = new Binder<>();

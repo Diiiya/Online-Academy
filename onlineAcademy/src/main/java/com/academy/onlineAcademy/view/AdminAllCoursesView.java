@@ -78,6 +78,9 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 	private int selectedCourseId;
 	UpdateCourseMethods updateCourseMethods;
 	
+	/**
+	 * Class constructor
+	 */
 	public AdminAllCoursesView() {
 		
 		navigator = UI.getCurrent().getNavigator();
@@ -87,6 +90,10 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		
 	}
 	
+	/**
+	 * Initializes the main layout
+	 * @return vertical layout
+	 */
 	private VerticalLayout initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		mainVLayout.setHeight("100%");
@@ -109,6 +116,10 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		return mainVLayout;
 	}
 	
+	/**
+	 * Creates search field and button for courses
+	 * @return HorizontalLayout
+	 */
 	private HorizontalLayout getSearchLayout() {
 		HorizontalLayout searchHLayout = new HorizontalLayout();
 		TextField searchField = new TextField("");
@@ -119,7 +130,6 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 //				List<Course> selectedCourses = courseObj.getAllCourses();
 //				grid.setItems(selectedCourses);
 				String searchedCourse = searchField.getValue().toUpperCase();
-				System.out.println("COURSE" + searchedCourse);
 				Course selectedCourse = courseObj.getCourseByName(searchedCourse);
 				grid.setItems(selectedCourse);
 			}
@@ -137,6 +147,9 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		return searchHLayout;
 	}
 	
+	/**
+	 * Creates grid that displays Courses data in table
+	 */
 	private void buildGrid() {
 		grid = new Grid<Course>();
 		
@@ -162,6 +175,10 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		});
 	}
 	
+	/**
+	 * Creates a update and delete course buttons with events
+	 * @return
+	 */
 	private HorizontalLayout getButtonsDELIUPDLayout() {
 		buttonsHLayout = new HorizontalLayout();
 		
@@ -192,6 +209,10 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		return buttonsHLayout;
 	}
 	
+	/**
+	 * Creates binder with validators and converters for the Course class
+	 * @return Binder<Course>
+	 */
 	private Binder<Course> getBinder() {
 		binder = new Binder<>();
 		
@@ -220,6 +241,10 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		return binder;
 	}
 	
+	/**
+	 * Creates a window with fields to update a course
+	 * @return Window
+	 */
 	private Window callUpdateWindow() { 
 		updateWindow = new Window("UPDATE COURSE");
 		updateWindow.setVisible(false);
@@ -233,26 +258,6 @@ public class AdminAllCoursesView extends VerticalLayout implements View {
 		
 		Button updateFormButton = new Button("Update", VaadinIcons.REFRESH);
 		updateFormButton.addClickListener(e -> {
-//				CourseController obj = new CourseController();
-//				FileInputStream fileStream = null;
-//				
-//				try {
-//					fileStream = new FileInputStream(new File(basepath + "/1online-courses_0.jpg"));
-//					byte[] coverPhotoBytes = fileStream.readAllBytes();
-//					}
-//					catch (Exception ex) {
-//						ex.printStackTrace();
-//					}
-//				finally {
-//					if (fileStream != null) {
-//						try {
-//							fileStream.close();
-//						} catch (IOException e1) {
-//							// TODO Auto-generated catch block
-//							e1.printStackTrace();
-//						}
-//					}
-//				}
 			String courseName = nameField.getValue();
 			boolean isSuccessful = updateCourseMethods.updateCourse(selectedCourseId, binder, courseObj, selectedCourse, courseName);	
 			if (isSuccessful == true) {

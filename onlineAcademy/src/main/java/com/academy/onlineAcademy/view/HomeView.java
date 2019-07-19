@@ -45,7 +45,10 @@ public class HomeView extends VerticalLayout implements View {
 	private int selectedCourseId;
 	private Course selectedCourse;
 	private UserViews userViews;
-			
+	
+	/**
+	 * Class constructor
+	 */
 	public HomeView() {
 		
 		navigator = UI.getCurrent().getNavigator();
