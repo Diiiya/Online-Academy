@@ -54,7 +54,10 @@ public class UserSettingsView extends VerticalLayout implements View {
 	private TextField emailField;
 	private PasswordField passwordField;
 	private PasswordField confirmPasswordField;
-		
+	
+	/**
+	 * Class constructor
+	 */
 	public UserSettingsView() {
 		
 		updateUserMethods = new UpdateUserMethods();
@@ -71,6 +74,10 @@ public class UserSettingsView extends VerticalLayout implements View {
 				
 	}
     
+	/**
+	 * Initializes the main layout
+	 * @return VerticalLayout
+	 */
 	private VerticalLayout initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		HorizontalLayout layoutH = userViews.getTopBar(userId);
@@ -83,7 +90,11 @@ public class UserSettingsView extends VerticalLayout implements View {
 		
 		return mainVLayout;
 	}
-					
+	
+	/**
+	 * Creates the body layout of the page - panels to update the profile photo and user details
+	 * @return VerticalLayout
+	 */
 	private VerticalLayout getBodyLayout() {
 		VerticalLayout layoutVBody = new VerticalLayout();		
     	layoutVBody.setWidth("100%");
@@ -139,6 +150,10 @@ public class UserSettingsView extends VerticalLayout implements View {
 //		return false;
 //	}
 	
+	/**
+	 * Creates the update profile photo of the user panel
+	 * @return Panel
+	 */
 	private Panel getPhotoPanel() {
 		photoPanel = new Panel("Update my photo");
 		image.setVisible(false);
@@ -165,6 +180,9 @@ public class UserSettingsView extends VerticalLayout implements View {
 		return photoPanel;
 	}
 	
+	/**
+	 * Sets a profile image to a user account
+	 */
 	private void setProfileImage() {
 		try {
 			StreamSource imageSource = new InputSource(person.getPhoto());
@@ -179,6 +197,10 @@ public class UserSettingsView extends VerticalLayout implements View {
 		}
 	}
 	
+	/**
+	 * Creates the panel with user settings
+	 * @return Panel
+	 */
 	private Panel getAccountpanel() {
 		accountPanel = new Panel("Update my account");
 		FormLayout content = new FormLayout();
@@ -194,6 +216,10 @@ public class UserSettingsView extends VerticalLayout implements View {
 		return accountPanel;
 	}
 	
+	/**
+	 * Creates binder for the Person class
+	 * @return
+	 */
 	private Binder<Person> callBinder() {
 		binder = new Binder<Person>();
 		

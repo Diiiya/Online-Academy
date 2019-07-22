@@ -57,6 +57,9 @@ public class HomeView extends VerticalLayout implements View {
 		//initMainlayout();
 	}
 	
+	/**
+	 * Initializes the main layout
+	 */
 	private void initMainlayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		mainVLayout.setHeight("100%");
@@ -85,7 +88,11 @@ public class HomeView extends VerticalLayout implements View {
 		addComponent(mainVLayout);
 		
 	}
-			
+	
+	/**
+	 * Creates the top 
+	 * @return HorizontalLayout
+	 */
 	private HorizontalLayout getTopBar() {
 		HorizontalLayout layoutH = new HorizontalLayout();
 		layoutH.setSpacing(true);
@@ -107,6 +114,10 @@ public class HomeView extends VerticalLayout implements View {
 		return layoutH;
 	}
 	
+	/**
+	 * Creates the seach course bar
+	 * @return HorizontalLayout
+	 */
 	private HorizontalLayout getSearchLayout() {
 		HorizontalLayout searchHLayout = new HorizontalLayout();
 		
@@ -137,6 +148,9 @@ public class HomeView extends VerticalLayout implements View {
 		return searchHLayout;
 	}
 	
+	/**
+	 * Creates the grid for the Course model
+	 */
 	private void buildGrid() {
 		
 		grid = new Grid<>();
@@ -163,6 +177,10 @@ public class HomeView extends VerticalLayout implements View {
 		});
 	}
 	
+	/**
+	 * Returns the right top bar - either for user or admin
+	 * @return HorizontalLayout
+	 */
 	private HorizontalLayout getRightTopBar() {
 		HorizontalLayout layoutH = new HorizontalLayout();
 		int userId = getUserId();
@@ -188,6 +206,10 @@ public class HomeView extends VerticalLayout implements View {
         grid.setItems(courses);
 	}
 	
+	/**
+	 * Gets the user id
+	 * @return int - user id
+	 */
 	private int getUserId() {
 		int userId;
 		UI ui = UI.getCurrent();

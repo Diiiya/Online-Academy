@@ -43,6 +43,9 @@ public class UserCoursesView extends VerticalLayout implements View {
 	private List<Course> paidCourses = new ArrayList<Course>();
 	private UserViews userViews;
 	
+	/**
+	 * Class constructor
+	 */
 	public UserCoursesView() {
 		
 		userViews = new UserViews();
@@ -51,7 +54,11 @@ public class UserCoursesView extends VerticalLayout implements View {
 		initMainLayout();
 	
 	}
-					
+	
+	/**
+	 * Initializes the main layout
+	 * @return VerticalLayout
+	 */
 	private VerticalLayout initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		
@@ -66,6 +73,10 @@ public class UserCoursesView extends VerticalLayout implements View {
 		return mainVLayout;
 	}
 	
+	/**
+	 * Creates the body of the page - list of courses, binder
+	 * @return VerticalLayout
+	 */
 	private VerticalLayout getBodyLayout() {
 		VerticalLayout layoutV = new VerticalLayout();
 		Label myCoursesLabel = new Label("My courses:");
@@ -79,6 +90,9 @@ public class UserCoursesView extends VerticalLayout implements View {
 		return layoutV;
 	}
 	
+	/**
+	 * Creates the grid
+	 */
 	private void buildGrid() {
 		
 		grid = new Grid<>();
@@ -106,6 +120,9 @@ public class UserCoursesView extends VerticalLayout implements View {
 		refreshLayoutData();
 	}
 	
+	/**
+	 * Refreshes the list of user courses
+	 */
 	private void refreshLayoutData() {
 		UI ui = UI.getCurrent();
 		VaadinSession session = ui.getSession();
@@ -119,10 +136,21 @@ public class UserCoursesView extends VerticalLayout implements View {
 		}
 	}
 	
+	/**
+	 * Filters courses list for a course with a specific name
+	 * @param list
+	 * @param name
+	 * @return boolean
+	 */
 	private boolean containsCourseWithName(final List<Course> list, final String name){
 	    return list.stream().filter(o -> o.getName().equals(name)).findFirst().isPresent();
 	}
 	
+	/**
+	 * Gets all the paid orders for a specific user
+	 * @param userId
+	 * @return List<Course>
+	 */
 	private List<Course> getAllPaidOrdersOfTheUser(int userId) {
 		List<Order> paidOrders = new ArrayList<Order>();
 		Course course = new Course();
@@ -151,7 +179,10 @@ public class UserCoursesView extends VerticalLayout implements View {
 		return paidCourses;
 	}
 
-	
+	/**
+	 * Gets and sets the selected course id in the session
+	 * @param selectedCourse
+	 */
 	private void getSetCourse(Course selectedCourse) {
 		UI ui = UI.getCurrent();
 		VaadinSession session = ui.getSession();

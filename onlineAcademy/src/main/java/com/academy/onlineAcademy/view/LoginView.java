@@ -36,6 +36,9 @@ public class LoginView extends VerticalLayout implements View {
 	private final TextField usernameField = new TextField("Type your username:");
 	private final PasswordField passwordField = new PasswordField("Type your password:");
 	
+	/**
+	 * Class constructor
+	 */
 	public LoginView() {
 		
 		navigator = UI.getCurrent().getNavigator();
@@ -43,7 +46,11 @@ public class LoginView extends VerticalLayout implements View {
 		initMainLayout();
 		
 	}			
-			
+	
+	/**
+	 * Initializes the mail layout
+	 * @return verticalLayout
+	 */
     private VerticalLayout initMainLayout() {
     	VerticalLayout layout = new VerticalLayout();
     	
@@ -74,6 +81,10 @@ public class LoginView extends VerticalLayout implements View {
 	    return layout;
     }
     
+    /**
+     * Creates logging button & login event
+     * @return Button
+     */
     private Button getLoginButton() {
     	Button loginButton = new Button("Login");
     	loginButton.setWidth("200px");
@@ -124,6 +135,10 @@ public class LoginView extends VerticalLayout implements View {
  	    return loginButton;
     }
 	
+    /**
+     * Checks if the user name exists
+     * @throws LoginException
+     */
 	private void checkIfTheUsernameExists() throws LoginException {
 		 try {
 			PersonController obj = new PersonController();
@@ -134,6 +149,10 @@ public class LoginView extends VerticalLayout implements View {
 		 }
 	}
 	
+	/**
+	 * Checks if the combination of user name and password is correct
+	 * @throws LoginException
+	 */
 	private void checkUsernamePasswordCombination() throws LoginException {
 		if (currentUser.getPassword().equals(enteredPassword)) {
     	}
@@ -142,6 +161,10 @@ public class LoginView extends VerticalLayout implements View {
     	}
 	}
 	
+	/**
+	 * Checks the type of the logged in user
+	 * @throws LoginException
+	 */
 	private void checkTypeOfUser() throws LoginException {
 		UI ui = UI.getCurrent();
 		VaadinSession session = ui.getSession();

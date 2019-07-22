@@ -61,6 +61,9 @@ public class UserOrdersView extends VerticalLayout implements View {
 	private UserViews userViews;
 	private UserOrdersMethods userOrdersMethods;
 	
+	/**
+	 * Class constructor
+	 */
 	public UserOrdersView() {
 		
 		userViews = new UserViews();
@@ -74,7 +77,11 @@ public class UserOrdersView extends VerticalLayout implements View {
 		initMainLayout();
 		
 	}
-			
+	
+	/**
+	 * Initializes the main layout
+	 * @return VerticalLayout
+	 */
 	private VerticalLayout initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		
@@ -109,6 +116,9 @@ public class UserOrdersView extends VerticalLayout implements View {
 		return mainVLayout;
 	}
 	
+	/**
+	 * Creates the confirm course deletion dialog
+	 */
 	private void confirmMessage() {
 		
 		confirmationWindow = new Window("Sub-window");
@@ -132,6 +142,9 @@ public class UserOrdersView extends VerticalLayout implements View {
         UI.getCurrent().addWindow(confirmationWindow);
 	}
 	
+	/**
+	 * Creates the grid
+	 */
 	private void buildGrid() {
 		
 		grid = new Grid<>();
@@ -152,6 +165,10 @@ public class UserOrdersView extends VerticalLayout implements View {
 		
 	}
 	
+	/**
+	 * Creates the layout for payment details
+	 * @return HorizontalLayout
+	 */
 	private HorizontalLayout getPaymentHorizontalL() {
 		HorizontalLayout paymentHorizontalL = new HorizontalLayout();
 		Label orderTotalSumlabel = new Label("Total:");
@@ -160,6 +177,9 @@ public class UserOrdersView extends VerticalLayout implements View {
 		return paymentHorizontalL;
 	}
 	
+	/**
+	 * Deletes an order
+	 */
 	private void deleteOrder() {
 		orderObj.deleteOrderById(selectedOrderId);
 		
@@ -178,6 +198,9 @@ public class UserOrdersView extends VerticalLayout implements View {
 		userViews.setLabelValue(userId);
 	}
 	
+	/**
+	 * Creates a window with form for payment details - card number, expiry date ..
+	 */
 	private void createPaymentWindow() {
 		paymentWindow = new Window("Payment details");
 		paymentWindow.setVisible(false);
@@ -198,6 +221,9 @@ public class UserOrdersView extends VerticalLayout implements View {
 		UI.getCurrent().addWindow(paymentWindow);
 	}
 	
+	/**
+	 * Creates binder for CardDetails class
+	 */
 	private void callBinder() {
 		
 		binder = new Binder<>();

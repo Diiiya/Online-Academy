@@ -43,12 +43,18 @@ public class SignUpView extends VerticalLayout implements View {
 	private final PasswordField passwordField = new PasswordField("Password: ");
 	private final PasswordField confirmPasswordField = new PasswordField("Repeat password: ");
 	
+	/**
+	 * Class constructor
+	 */
 	public SignUpView() {
 		
 		initMainLayout();
 		
 	}
 	
+	/**
+	 * Initializes the mail layout
+	 */
 	private void initMainLayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		
@@ -60,6 +66,10 @@ public class SignUpView extends VerticalLayout implements View {
 	    addComponent(mainVLayout);		
 	}
 	
+	/**
+	 * Creates the top bar
+	 * @return HorizontalLayout
+	 */
     private HorizontalLayout getTopBar() {
     	HorizontalLayout layoutH = new HorizontalLayout();
     	layoutH.setSpacing(true);
@@ -78,6 +88,10 @@ public class SignUpView extends VerticalLayout implements View {
 		return layoutH;
     }
     
+    /**
+     * Creates the sign up form with fields
+     * @return VerticalLayout
+     */
     private VerticalLayout getLayoutBody() {
     	VerticalLayout layoutVBody = new VerticalLayout();
     	layoutVBody.setWidth("100%");
@@ -107,6 +121,9 @@ public class SignUpView extends VerticalLayout implements View {
         return layoutVBody;
     }
     
+    /**
+     * Calls the binder for Person
+     */
     private void callBinder() {
     	
     	binder = new Binder<>();
