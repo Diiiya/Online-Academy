@@ -85,15 +85,17 @@ public class HomeView extends VerticalLayout implements View {
 	 */
 	private void initMainlayout() {
 		VerticalLayout mainVLayout = new VerticalLayout();
-		mainVLayout.setHeight("100%");
+//		mainVLayout.setHeight("100%");
+//		mainVLayout.setSizeFull();
+		mainVLayout.setMargin(false);
 		
 		HorizontalLayout languagesBar = getLanguagesBar();
 		HorizontalLayout layoutH = getRightTopBar();
 		
-		FileResource coverResource = new FileResource(new File(basepath + "/1online-courses_0.jpg"));
+		FileResource coverResource = new FileResource(new File(basepath + "/cover3.jpg"));
 		Image coverImage = new Image("", coverResource);
 		coverImage.setWidth("100%");
-		coverImage.setHeight("200px");
+		coverImage.setHeight("350px");
 		
 		HorizontalLayout searchHLayout = getSearchLayout();
 		topCoursesLabel = new Label("Top courses");
@@ -165,16 +167,22 @@ public class HomeView extends VerticalLayout implements View {
 		layoutH.setWidth("100%");
 		layoutH.setHeight("70px");
 		
+		HorizontalLayout miniLayoutH = new HorizontalLayout();
+		
+		FileResource logoResource = new FileResource(new File(basepath + "/art.svg"));
+		Image logoImage = new Image("", logoResource);
+		logoImage.setWidth("70px");
+		logoImage.setHeight("70px");
+		
+		Label onlineAcademy = new Label("Online academy");
+		
 		loginButton = new Button("Login", VaadinIcons.SIGN_IN);
 		loginButton.addClickListener(event -> navigator.navigateTo("Login"));
 		
-		FileResource logoResource = new FileResource(new File(basepath + "/logo.jpg"));
-		Image logoImage = new Image("", logoResource);
-		logoImage.setWidth("130px");
-		logoImage.setHeight("60px");
-		
-		layoutH.addComponents(logoImage, loginButton);
-		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
+		miniLayoutH.addComponents(logoImage, onlineAcademy);
+		miniLayoutH.setComponentAlignment(onlineAcademy, Alignment.MIDDLE_LEFT);
+		layoutH.addComponents(miniLayoutH, loginButton);
+		layoutH.setComponentAlignment(miniLayoutH, Alignment.TOP_LEFT);
 		layoutH.setComponentAlignment(loginButton, Alignment.BOTTOM_RIGHT);
 		
 		return layoutH;

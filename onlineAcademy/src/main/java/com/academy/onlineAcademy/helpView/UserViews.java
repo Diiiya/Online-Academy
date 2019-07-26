@@ -67,12 +67,14 @@ public class UserViews extends VerticalLayout implements View {
 		layoutH.setWidth("100%");
 		layoutH.setHeight("70px");
 		
+		HorizontalLayout miniLayoutH = new HorizontalLayout();
 		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-		FileResource logoResource = new FileResource(new File(basepath + "/logo.jpg"));
+		FileResource logoResource = new FileResource(new File(basepath + "/art.svg"));
 		Image logoImage = new Image("", logoResource);
-		logoImage.setWidth("130px");
-		logoImage.setHeight("60px");
+		logoImage.setWidth("70px");
+		logoImage.setHeight("70px");
 		logoImage.addClickListener(e -> navigator.navigateTo(""));
+		Label onlineAcademy = new Label("Online academy");
 		
 		HorizontalLayout rightHorizontalL = new HorizontalLayout();
 		
@@ -91,11 +93,12 @@ public class UserViews extends VerticalLayout implements View {
 		myProfileMainItem.addItem("Settings", VaadinIcons.USER, createNavigationCommand("Settings"));
 		myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, logoutNavigationCommand(""));
 		
+		miniLayoutH.addComponents(logoImage, onlineAcademy);
+		miniLayoutH.setComponentAlignment(onlineAcademy, Alignment.MIDDLE_LEFT);
 		rightHorizontalL.addComponents(itemsInCartCountLabel, shoppingBasketImage, profileMenu);
 		rightHorizontalL.setComponentAlignment(itemsInCartCountLabel, Alignment.BOTTOM_RIGHT);
 		rightHorizontalL.setComponentAlignment(profileMenu, Alignment.BOTTOM_RIGHT);
-		layoutH.addComponents(logoImage, rightHorizontalL);
-		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
+		layoutH.addComponents(miniLayoutH, rightHorizontalL);
 		layoutH.setComponentAlignment(rightHorizontalL, Alignment.MIDDLE_RIGHT);
 		
 		System.out.println(" Should return the right layout!!");

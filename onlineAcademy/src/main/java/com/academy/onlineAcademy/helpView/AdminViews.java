@@ -11,6 +11,7 @@ import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -32,10 +33,12 @@ public class AdminViews extends VerticalLayout implements View {
 		layoutH.setWidth("100%");
 		layoutH.setHeight("90px");
 		
-		FileResource logoResource = new FileResource(new File(basepath + "/logo.jpg"));
+		HorizontalLayout miniLayoutH = new HorizontalLayout();
+		FileResource logoResource = new FileResource(new File(basepath + "/art.svg"));
 		Image logoImage = new Image("", logoResource);
-		logoImage.setWidth("130px");
-		logoImage.setHeight("60px");
+		logoImage.setWidth("70px");
+		logoImage.setHeight("70px");
+		Label onlineAcademy = new Label("Online academy");
 		
 		// MENU bar and methods to navigate to different pages
 		MenuBar profileMenu = new MenuBar();
@@ -48,8 +51,9 @@ public class AdminViews extends VerticalLayout implements View {
 		myProfileMainItem.addItem("Settings", VaadinIcons.USER, createNavigationCommand("Settings"));
 		myProfileMainItem.addItem("Log out", VaadinIcons.EXIT, logoutNavigationCommand(""));
 		
-		layoutH.addComponents(logoImage, profileMenu);
-		layoutH.setComponentAlignment(logoImage, Alignment.TOP_LEFT);
+		miniLayoutH.addComponents(logoImage, onlineAcademy);
+		miniLayoutH.setComponentAlignment(onlineAcademy, Alignment.MIDDLE_LEFT);
+		layoutH.addComponents(miniLayoutH, profileMenu);
 		layoutH.setComponentAlignment(profileMenu, Alignment.BOTTOM_RIGHT);
 		
 		return layoutH;

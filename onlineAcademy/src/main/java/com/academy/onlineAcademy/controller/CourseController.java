@@ -27,6 +27,8 @@ public class CourseController {
 		emFactoryObj = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
 	}
 
+	
+	// NEEDED ???
 	/**
 	 * Creates the Entity Manager object.
 	 * 
