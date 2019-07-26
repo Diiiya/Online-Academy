@@ -65,6 +65,13 @@
 	<classpathentry kind="lib" path="src/main/resources/WEB-INF/lib/osgi-resource-locator-1.0.1.jar"/>
 	<classpathentry kind="lib" path="src/main/resources/WEB-INF/lib/validation-api-2.0.1.Final.jar"/>
 	<classpathentry kind="lib" path="src/main/resources/WEB-INF/lib/yasson-1.0.3.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/WEB-INF/ApplicationMessages.properties"/>
+	<classpathentry kind="lib" path="src/main/resources/WEB-INF/ApplicationMessages_fr_FR.properties"/>
+	<classpathentry kind="lib" path="src/main/resources/logging.properties"/>
+	<classpathentry kind="lib" path="src/main/resources/WEB-INF/spain.svg"/>
+	<classpathentry kind="lib" path="src/main/resources/HomeViewMessagesBundle_en_US.properties"/>
+	<classpathentry kind="lib" path="src/main/resources/HomeViewMessagesBundle_es_ES.properties"/>
+	<classpathentry kind="lib" path="src/main/resources/HomeViewMessagesBundle_fr_FR.properties"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

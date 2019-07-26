@@ -39,7 +39,6 @@ import com.vaadin.ui.VerticalLayout;
 @Theme("mytheme")
 // URLs without the #!
 @PushStateNavigation
-//@PreserveOnRefresh
 public class MyUI extends UI {
 	
     @Override

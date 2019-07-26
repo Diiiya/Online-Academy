@@ -1,17 +1,17 @@
 package com.academy.onlineAcademy.view;
 
 import java.io.File;
-import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 import com.academy.onlineAcademy.controller.CourseController;
-import com.academy.onlineAcademy.controller.OrderController;
 import com.academy.onlineAcademy.helpView.UserViews;
 import com.academy.onlineAcademy.helper.NewOrderMethods;
+import com.academy.onlineAcademy.model.Category;
+import com.academy.onlineAcademy.model.Level;
 import com.academy.onlineAcademy.model.Course;
-import com.academy.onlineAcademy.model.Order;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
@@ -23,6 +23,7 @@ import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
@@ -37,14 +38,35 @@ public class HomeView extends VerticalLayout implements View {
 	private String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 	
 	private Navigator navigator;
-	private Grid<com.academy.onlineAcademy.model.Course> grid;
+	private Grid<Course> grid;
 	private CourseController courseObj;
 	private Button buyCourseButton;
-	//private int userId;
+	private Button loginButton;
+	private Label topCoursesLabel;
+	private TextField searchField;
+	private Button searchButton;
 	
-	private int selectedCourseId;
 	private Course selectedCourse;
 	private UserViews userViews;
+	
+	// I18N fields
+    private String country = new String();
+    private String language = new String();
+    private Locale ukLocale = new Locale("en","UK");
+    private Locale frLocale = new Locale("fr","FR");
+    private Locale esLocale = new Locale("es","ES");
+    private Locale currentLocale = new Locale(language, country);
+    private ResourceBundle bundle;
+    
+    // Grid columns:
+    private Column<Course, String> courseNameCol;
+    private Column<Course, String> courseDescCol;
+    private Column<Course, String> courseTeacherCol;
+    private Column<Course, Category> courseCategoryCol;
+    private Column<Course, Integer> courseDurationCol;
+    private Column<Course, Level> courseLevelCol;
+    private Column<Course, Double> coursePriceCol;
+    private Column<Course, Boolean> courseCertCol;
 	
 	/**
 	 * Class constructor
@@ -54,7 +76,8 @@ public class HomeView extends VerticalLayout implements View {
 		navigator = UI.getCurrent().getNavigator();
 		courseObj = new CourseController();
 		userViews = new UserViews();
-		//initMainlayout();
+		initMainlayout();
+		
 	}
 	
 	/**
@@ -64,6 +87,7 @@ public class HomeView extends VerticalLayout implements View {
 		VerticalLayout mainVLayout = new VerticalLayout();
 		mainVLayout.setHeight("100%");
 		
+		HorizontalLayout languagesBar = getLanguagesBar();
 		HorizontalLayout layoutH = getRightTopBar();
 		
 		FileResource coverResource = new FileResource(new File(basepath + "/1online-courses_0.jpg"));
@@ -72,8 +96,8 @@ public class HomeView extends VerticalLayout implements View {
 		coverImage.setHeight("200px");
 		
 		HorizontalLayout searchHLayout = getSearchLayout();
-		Label topCoursesLabel = new Label("Top courses:");	
-		buildGrid();
+		topCoursesLabel = new Label("Top courses");
+		grid = buildGrid();
 		buyCourseButton = new Button("ADD");
 		buyCourseButton.setVisible(false);
 		buyCourseButton.addClickListener(e -> {
@@ -83,10 +107,52 @@ public class HomeView extends VerticalLayout implements View {
 			userViews.setLabelValue(userId);
 		});
 		
-		mainVLayout.addComponents(layoutH, coverImage, searchHLayout, topCoursesLabel, grid, buyCourseButton);
+		mainVLayout.addComponents(languagesBar, layoutH, coverImage, searchHLayout, topCoursesLabel, grid, buyCourseButton);
+		mainVLayout.setComponentAlignment(languagesBar, Alignment.TOP_RIGHT);
 		mainVLayout.setComponentAlignment(searchHLayout, Alignment.MIDDLE_CENTER);
 		addComponent(mainVLayout);
 		
+	}
+	
+	/**
+	 * Creates a language bar for EN, ES and FR language selection
+	 * @return HorizontalLayout
+	 */
+	private HorizontalLayout getLanguagesBar() {
+		HorizontalLayout layoutH = new HorizontalLayout();
+		
+		FileResource ukResource = new FileResource(new File(basepath + "/united-kingdom.svg"));
+		Image ukFlagImage = new Image("", ukResource);
+		ukFlagImage.setWidth("30px");
+		ukFlagImage.setHeight("30px");
+		
+		ukFlagImage.addClickListener(e -> {
+			currentLocale = ukLocale;
+			setNewValues();
+		});
+		
+		FileResource spainResource = new FileResource(new File(basepath + "/spain.svg"));
+		Image spainFlagImage = new Image("", spainResource);
+		spainFlagImage.setWidth("30px");
+		spainFlagImage.setHeight("30px");
+		
+		spainFlagImage.addClickListener(e -> {
+			currentLocale = esLocale;
+			setNewValues();
+		});
+		
+		FileResource franceResource = new FileResource(new File(basepath + "/france.svg"));
+		Image franceFlagImage = new Image("", franceResource);
+		franceFlagImage.setWidth("30px");
+		franceFlagImage.setHeight("30px");
+		
+		franceFlagImage.addClickListener(e -> {
+			currentLocale = frLocale;
+			setNewValues();
+		});
+		
+		layoutH.addComponents(ukFlagImage, spainFlagImage, franceFlagImage);
+		return layoutH;
 	}
 	
 	/**
@@ -99,7 +165,7 @@ public class HomeView extends VerticalLayout implements View {
 		layoutH.setWidth("100%");
 		layoutH.setHeight("70px");
 		
-		Button loginButton = new Button("LOGIN", VaadinIcons.SIGN_IN);
+		loginButton = new Button("Login", VaadinIcons.SIGN_IN);
 		loginButton.addClickListener(event -> navigator.navigateTo("Login"));
 		
 		FileResource logoResource = new FileResource(new File(basepath + "/logo.jpg"));
@@ -115,15 +181,15 @@ public class HomeView extends VerticalLayout implements View {
 	}
 	
 	/**
-	 * Creates the seach course bar
+	 * Creates the search course bar
 	 * @return HorizontalLayout
 	 */
 	private HorizontalLayout getSearchLayout() {
 		HorizontalLayout searchHLayout = new HorizontalLayout();
 		
-		TextField searchField = new TextField("");
+		searchField = new TextField("");
 		searchField.setPlaceholder("SEARCH");
-		Button searchButton = new Button("Search", VaadinIcons.SEARCH);
+		searchButton = new Button("Search", VaadinIcons.SEARCH);
 		
 		searchButton.addClickListener(e -> {
 			try {
@@ -137,7 +203,7 @@ public class HomeView extends VerticalLayout implements View {
 					    Notification.TYPE_WARNING_MESSAGE);
 				notif.show(Page.getCurrent());
 				
-				logger.log(Level.SEVERE, "No course with this name has been found!", ex);
+				logger.log(java.util.logging.Level.SEVERE, "No course with this name has been found!", ex);
 			}
 
 		});
@@ -151,30 +217,29 @@ public class HomeView extends VerticalLayout implements View {
 	/**
 	 * Creates the grid for the Course model
 	 */
-	private void buildGrid() {
+	private Grid<Course> buildGrid() {
 		
-		grid = new Grid<>();
+		Grid<Course> grid = new Grid<>();
 		List<Course> courses = courseObj.getAllCourses();
 		grid.setItems(courses);		
 		
-		grid.addColumn(com.academy.onlineAcademy.model.Course::getId).setCaption("Id");
-		grid.addColumn(com.academy.onlineAcademy.model.Course::getName).setCaption("Course name");
-		grid.addColumn(com.academy.onlineAcademy.model.Course::getDescription).setCaption("Course description");
-		grid.addColumn(com.academy.onlineAcademy.model.Course::getTeacherName).setCaption("Teacher");
-		grid.addColumn(com.academy.onlineAcademy.model.Course::getCategory).setCaption("Category");
-		grid.addColumn(com.academy.onlineAcademy.model.Course::getDuration).setCaption("Duration");
-		grid.addColumn(com.academy.onlineAcademy.model.Course::getLevel).setCaption("Level");
-		grid.addColumn(com.academy.onlineAcademy.model.Course::getPrice).setCaption("Price in euros");
-		grid.addColumn(com.academy.onlineAcademy.model.Course::getGivesCertificate).setCaption("Gives certificate");
+		courseNameCol = grid.addColumn(com.academy.onlineAcademy.model.Course::getName).setCaption("Course name");
+		courseDescCol = grid.addColumn(com.academy.onlineAcademy.model.Course::getDescription).setCaption("Course description");
+		courseTeacherCol = grid.addColumn(com.academy.onlineAcademy.model.Course::getTeacherName).setCaption("Teacher");
+		courseCategoryCol = grid.addColumn(com.academy.onlineAcademy.model.Course::getCategory).setCaption("Category");
+		courseDurationCol = grid.addColumn(com.academy.onlineAcademy.model.Course::getDuration).setCaption("Duration");
+		courseLevelCol = grid.addColumn(com.academy.onlineAcademy.model.Course::getLevel).setCaption("Level");
+		coursePriceCol = grid.addColumn(com.academy.onlineAcademy.model.Course::getPrice).setCaption("Price in euros");
+		courseCertCol = grid.addColumn(com.academy.onlineAcademy.model.Course::getGivesCertificate).setCaption("Gives certificate");
 		
 		grid.setWidth("100%");
 		
 		grid.addItemClickListener(e -> {
 			buyCourseButton.setVisible(true);
 			selectedCourse = e.getItem();
-			selectedCourseId = selectedCourse.getId();
-			System.out.println(selectedCourseId);
 		});
+		
+		return grid;
 	}
 	
 	/**
@@ -200,7 +265,6 @@ public class HomeView extends VerticalLayout implements View {
 	public void enter(ViewChangeEvent event) {
 		View.super.enter(event);
 		getRightTopBar();
-		initMainlayout();
 		
         List<Course> courses = courseObj.getAllCourses();
         grid.setItems(courses);
@@ -225,6 +289,27 @@ public class HomeView extends VerticalLayout implements View {
 		return userId;
 	}
 	
+	/**
+	 * Sets new values to (translates) fields and buttons based on the selected language
+	 */
+	private void setNewValues() {
+		bundle = ResourceBundle.getBundle("HomeViewMessagesBundle", currentLocale);
 	
+		topCoursesLabel.setValue(bundle.getString("topCoursesLabel"));
+		loginButton.setCaption(bundle.getString("loginButton"));
+		searchField.setPlaceholder(bundle.getString("search"));
+		searchButton.setCaption(bundle.getString("search"));
+		
+		courseNameCol.setCaption(bundle.getString("courseNameCol"));
+		courseDescCol.setCaption(bundle.getString("courseDescCol"));
+		courseTeacherCol.setCaption(bundle.getString("teacherCol"));
+		courseCategoryCol.setCaption(bundle.getString("categoryCol"));
+		courseDurationCol.setCaption(bundle.getString("durationCol"));
+		courseLevelCol.setCaption(bundle.getString("levelCol"));
+		coursePriceCol.setCaption(bundle.getString("priceCol"));
+		courseCertCol.setCaption(bundle.getString("certCol"));
+	}
+	
+
 
 }
