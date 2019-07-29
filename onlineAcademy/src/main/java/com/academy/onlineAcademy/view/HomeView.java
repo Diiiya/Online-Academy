@@ -18,6 +18,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
@@ -28,9 +29,11 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.renderers.ImageRenderer;
 
 public class HomeView extends VerticalLayout implements View {
 	
@@ -47,6 +50,8 @@ public class HomeView extends VerticalLayout implements View {
 	private Button searchButton;
 	
 	private Course selectedCourse;
+	private List<Course> selectedCourses;
+	private Course selected2Course;
 	private UserViews userViews;
 	
 	// I18N fields
@@ -84,9 +89,8 @@ public class HomeView extends VerticalLayout implements View {
 	 * Initializes the main layout
 	 */
 	private void initMainlayout() {
+		
 		VerticalLayout mainVLayout = new VerticalLayout();
-//		mainVLayout.setHeight("100%");
-//		mainVLayout.setSizeFull();
 		mainVLayout.setMargin(false);
 		
 		HorizontalLayout languagesBar = getLanguagesBar();
@@ -200,18 +204,29 @@ public class HomeView extends VerticalLayout implements View {
 		searchButton = new Button("Search", VaadinIcons.SEARCH);
 		
 		searchButton.addClickListener(e -> {
-			try {
-//				List<Course> selectedCourses = courseObj.getAllCourses();
-//				grid.setItems(selectedCourses);
-				Course selectedCourse = courseObj.getCourseByName(searchField.getValue().toUpperCase());
-				grid.setItems(selectedCourse);
+//			try {
+////				List<Course> selectedCourses = courseObj.getAllCourses();
+////				grid.setItems(selectedCourses);
+//				
+//			}
+//			catch(Exception ex) {
+//				Notification notif = new Notification("Warning","No course with such name has been found!",
+//					    Notification.TYPE_WARNING_MESSAGE);
+//				notif.show(Page.getCurrent());
+//				
+//				logger.log(java.util.logging.Level.SEVERE, "No course with this name has been found!", ex);
+//			}
+			getCourses();
+			if(getCourses() == true) {
+				System.out.println("Should set courses");
+				grid.setItems(selectedCourses);
+				System.out.println("First course " + selectedCourses.get(0));
 			}
-			catch(Exception ex) {
-				Notification notif = new Notification("Warning","No course with such name has been found!",
-					    Notification.TYPE_WARNING_MESSAGE);
-				notif.show(Page.getCurrent());
-				
-				logger.log(java.util.logging.Level.SEVERE, "No course with this name has been found!", ex);
+			else if(getCourse() == true) {
+				grid.setItems(selected2Course);
+			}
+			else {
+			System.out.println("Should set courses");
 			}
 
 		});
@@ -220,6 +235,34 @@ public class HomeView extends VerticalLayout implements View {
 		searchHLayout.setComponentAlignment(searchButton, Alignment.BOTTOM_RIGHT);
 		
 		return searchHLayout;
+	}
+	
+	private boolean getCourses() {
+		try {
+			selectedCourses = courseObj.getCoursesByName(searchField.getValue().toUpperCase());
+//			grid.setItems(selectedCourses);
+			return true;
+		}
+		catch (Exception ex) {
+			System.out.println("Exception - no courses found!");
+		}
+		return false;
+	}
+	
+	private boolean getCourse() {
+		try {
+			selected2Course = courseObj.getCourseByName(searchField.getValue().toUpperCase());
+//			grid.setItems(selectedCourse);
+			return true;
+		}
+		catch(Exception ex) {
+			Notification notif = new Notification("Warning","No course with such name has been found!",
+				    Notification.TYPE_WARNING_MESSAGE);
+			notif.show(Page.getCurrent());
+			
+			logger.log(java.util.logging.Level.SEVERE, "No course with this name has been found!", ex);
+		}
+		return false;
 	}
 	
 	/**
@@ -232,6 +275,7 @@ public class HomeView extends VerticalLayout implements View {
 		grid.setItems(courses);		
 		
 		courseNameCol = grid.addColumn(com.academy.onlineAcademy.model.Course::getName).setCaption("Course name");
+		
 		courseDescCol = grid.addColumn(com.academy.onlineAcademy.model.Course::getDescription).setCaption("Course description");
 		courseTeacherCol = grid.addColumn(com.academy.onlineAcademy.model.Course::getTeacherName).setCaption("Teacher");
 		courseCategoryCol = grid.addColumn(com.academy.onlineAcademy.model.Course::getCategory).setCaption("Category");
