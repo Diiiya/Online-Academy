@@ -187,7 +187,6 @@ public class AdminAddCourseView extends VerticalLayout implements View {
 		.bind(Course::getLevel, Course::setLevel);
 		
 		binder.forField(certCheckbox)
-		.asRequired("Cannot be empty")
 		.bind(Course::getGivesCertificate, Course::setGivesCertificate);
 		
 	}

@@ -118,7 +118,7 @@ public class NewOrderMethods {
 	 * @return int - the id of the course
 	 */
 	private int getCourseId(String courseName) {
-		Course course = courseObj.getCourseByName(courseName);
+		Course course = courseObj.getCourseByName(courseName.toUpperCase());
 		int courseId = course.getId();
 		return courseId;
 	}

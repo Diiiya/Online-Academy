@@ -118,6 +118,8 @@ public class UpdateCourseMethods {
 	 */
 	private void updateInDatabase(CourseController courseObj, Course selectedCourse) throws CourseException {
 		try {
+			String courseName = selectedCourse.getName().toUpperCase();
+			selectedCourse.setName(courseName);
 			courseObj.updateCourseById(selectedCourse);
 			Notification notif = new Notification("Confirmation!", "Course successfully updated!", Notification.TYPE_WARNING_MESSAGE);
 			notif.show(Page.getCurrent());

@@ -204,29 +204,19 @@ public class HomeView extends VerticalLayout implements View {
 		searchButton = new Button("Search", VaadinIcons.SEARCH);
 		
 		searchButton.addClickListener(e -> {
-//			try {
-////				List<Course> selectedCourses = courseObj.getAllCourses();
-////				grid.setItems(selectedCourses);
-//				
-//			}
-//			catch(Exception ex) {
-//				Notification notif = new Notification("Warning","No course with such name has been found!",
-//					    Notification.TYPE_WARNING_MESSAGE);
-//				notif.show(Page.getCurrent());
-//				
-//				logger.log(java.util.logging.Level.SEVERE, "No course with this name has been found!", ex);
-//			}
-			getCourses();
-			if(getCourses() == true) {
-				System.out.println("Should set courses");
-				grid.setItems(selectedCourses);
-				System.out.println("First course " + selectedCourses.get(0));
+			try {
+//				List<Course> selectedCourses = courseObj.getAllCourses();
+//				grid.setItems(selectedCourses);
+				Course selectedCourse = courseObj.getCourseByName(searchField.getValue().toUpperCase());
+				grid.setItems(selectedCourse);
+				
 			}
-			else if(getCourse() == true) {
-				grid.setItems(selected2Course);
-			}
-			else {
-			System.out.println("Should set courses");
+			catch(Exception ex) {
+				Notification notif = new Notification("Warning","No course with such name has been found!",
+					    Notification.TYPE_WARNING_MESSAGE);
+				notif.show(Page.getCurrent());
+				
+				logger.log(java.util.logging.Level.SEVERE, "No course with this name has been found!", ex);
 			}
 
 		});
@@ -235,34 +225,6 @@ public class HomeView extends VerticalLayout implements View {
 		searchHLayout.setComponentAlignment(searchButton, Alignment.BOTTOM_RIGHT);
 		
 		return searchHLayout;
-	}
-	
-	private boolean getCourses() {
-		try {
-			selectedCourses = courseObj.getCoursesByName(searchField.getValue().toUpperCase());
-//			grid.setItems(selectedCourses);
-			return true;
-		}
-		catch (Exception ex) {
-			System.out.println("Exception - no courses found!");
-		}
-		return false;
-	}
-	
-	private boolean getCourse() {
-		try {
-			selected2Course = courseObj.getCourseByName(searchField.getValue().toUpperCase());
-//			grid.setItems(selectedCourse);
-			return true;
-		}
-		catch(Exception ex) {
-			Notification notif = new Notification("Warning","No course with such name has been found!",
-				    Notification.TYPE_WARNING_MESSAGE);
-			notif.show(Page.getCurrent());
-			
-			logger.log(java.util.logging.Level.SEVERE, "No course with this name has been found!", ex);
-		}
-		return false;
 	}
 	
 	/**

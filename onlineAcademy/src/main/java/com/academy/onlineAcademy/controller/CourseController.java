@@ -110,12 +110,12 @@ public class CourseController {
 		return query.setParameter("name", name).getSingleResult();
 	}
 	
-	public List<Course> getCoursesByName(String name) {
-		EntityManager em = emFactoryObj.createEntityManager();
-		TypedQuery<Course> query = em.createNamedQuery("findCourseByContainsName", Course.class);
-
-		return query.setParameter("name", name).getResultList();
-	}
+//	public List<Course> getCoursesByName(String name) {
+//		EntityManager em = emFactoryObj.createEntityManager();
+//		TypedQuery<Course> query = em.createNamedQuery("findCourseByContainsName", Course.class);
+//		
+//		return query.setParameter("name", name).getResultList();
+//	}
 
 	/**
 	 * Method that gets a course from the database by the given id
